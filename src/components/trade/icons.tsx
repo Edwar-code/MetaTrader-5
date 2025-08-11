@@ -20,3 +20,20 @@ export const AddOrderIcon = () => (
     <path d="M15.5 12H8.5" stroke="#888888" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
+
+export const SpacedMoreHorizontalIcon = () => (
+  <svg
+    width="42"
+    height="42"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3.75"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="4" cy="12" r="1" />
+    <circle cx="12" cy="12" r="1" />
+    <circle cx="20" cy="12" r="1" />
+  </svg>
+);

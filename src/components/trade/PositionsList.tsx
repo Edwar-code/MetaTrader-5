@@ -1,6 +1,6 @@
 import type { Position } from '@/lib/data';
 import { Separator } from '@/components/ui/separator';
-import { MoreHorizontal } from 'lucide-react';
+import { SpacedMoreHorizontalIcon } from './icons';
 import PositionItem from './PositionItem';
 import { Button } from '../ui/button';
 import { BulkOperationsSheet } from './BulkOperationsSheet';
@@ -21,7 +21,7 @@ export default function PositionsList({ positions }: PositionsListProps) {
               size="icon"
               className="h-8 w-8 text-muted-foreground hover:bg-transparent hover:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
             >
-              <MoreHorizontal size={42} strokeWidth={3.75} />
+              <SpacedMoreHorizontalIcon />
             </Button>
           </BulkOperationsSheet>
         </div>
