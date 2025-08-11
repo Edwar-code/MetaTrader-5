@@ -1,6 +1,6 @@
-import { ChevronsUpDown, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sidebar } from './Sidebar';
+import { SortIcon, AddOrderIcon } from './icons';
 
 interface HeaderProps {
   totalProfit: string;
@@ -23,10 +23,10 @@ export default function Header({ totalProfit }: HeaderProps) {
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-            <ChevronsUpDown className="h-5 w-5" />
+            <SortIcon />
           </Button>
-          <Button variant="outline" size="icon" className="h-8 w-8 text-muted-foreground">
-            <Plus className="h-5 w-5" />
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+            <AddOrderIcon />
           </Button>
         </div>
       </div>
