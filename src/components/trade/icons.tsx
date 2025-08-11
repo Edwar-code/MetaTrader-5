@@ -32,8 +32,8 @@ export const SpacedMoreHorizontalIcon = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <circle cx="4" cy="12" r="1" />
+    <circle cx="2" cy="12" r="1" />
     <circle cx="12" cy="12" r="1" />
-    <circle cx="20" cy="12" r="1" />
+    <circle cx="22" cy="12" r="1" />
   </svg>
 );
