@@ -17,7 +17,7 @@ export default function PositionsList({ positions }: PositionsListProps) {
           <span className="text-[13.5px] text-muted-foreground font-semibold">Positions</span>
           <AnalysisDrawer positions={positions}>
             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-              <MoreHorizontal className="h-5 w-5" />
+              <MoreHorizontal className="h-[23px] w-[23px]" />
             </Button>
           </AnalysisDrawer>
         </div>
