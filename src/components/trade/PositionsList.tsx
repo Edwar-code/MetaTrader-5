@@ -14,7 +14,7 @@ export default function PositionsList({ positions }: PositionsListProps) {
     <div>
       <div className="px-4 py-2 border-t border-b bg-muted/50">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground font-semibold">Positions</span>
+          <span className="text-xs text-muted-foreground font-semibold">Positions</span>
           <AnalysisDrawer positions={positions}>
             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
               <MoreHorizontal className="h-5 w-5" />
@@ -22,7 +22,7 @@ export default function PositionsList({ positions }: PositionsListProps) {
           </AnalysisDrawer>
         </div>
       </div>
-      <div className="max-h-[220px] overflow-y-auto">
+      <div className="overflow-y-auto">
         {positions.map((position, index) => (
           <div key={index}>
             <PositionItem position={position} />
