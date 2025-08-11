@@ -50,7 +50,7 @@ export function Sidebar() {
                 <p className="text-sm text-muted-foreground">103498268 - FBS-Demo</p>
               </div>
             </div>
-            <div className="text-right">
+            <div className="text-center">
                 <a href="#" className="text-primary text-sm font-medium mt-3">Manage accounts</a>
             </div>
           </div>
