@@ -22,10 +22,10 @@ export default function Header({ totalProfit }: HeaderProps) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground">
+          <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0">
             <SortIcon />
           </Button>
-          <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground">
+          <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0">
             <AddOrderIcon />
           </Button>
         </div>
