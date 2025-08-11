@@ -16,7 +16,7 @@ export default function Header({ totalProfit }: HeaderProps) {
           <Sidebar />
           <div>
             <div className="text-[11px] font-medium text-foreground">Trade</div>
-            <div className={`text-base font-semibold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
+            <div className={`text-sm font-semibold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
               {totalProfit} USD
             </div>
           </div>
