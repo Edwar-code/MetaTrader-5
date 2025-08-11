@@ -12,7 +12,7 @@ interface PositionsListProps {
 export default function PositionsList({ positions }: PositionsListProps) {
   return (
     <div>
-      <div className="px-4 py-[4.9px] border-t border-b bg-muted/50">
+      <div className="px-4 py-[2px] border-t border-b bg-muted/50">
         <div className="flex items-center justify-between">
           <span className="text-[13.5px] text-muted-foreground font-semibold">Positions</span>
           <AnalysisDrawer positions={positions}>
