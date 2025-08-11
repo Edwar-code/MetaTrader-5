@@ -11,7 +11,7 @@ export default function PositionItem({ position }: PositionItemProps) {
   return (
     <div className="flex items-center justify-between py-[7px] px-4">
       <div className="flex-1">
-        <div className="flex items-center gap-1 leading-tight">
+        <div className="flex items-center gap-1 leading-none">
           <span className="text-sm font-bold text-card-foreground">{position.symbol},</span>
           <span className={`text-sm font-semibold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
             {position.type}
@@ -20,7 +20,7 @@ export default function PositionItem({ position }: PositionItemProps) {
             {position.volume}
           </span>
         </div>
-        <div className="flex items-center gap-1.5 leading-tight">
+        <div className="flex items-center gap-1.5 leading-none">
           <span className="text-sm font-bold text-muted-foreground">{position.openPrice}</span>
           <span className="text-base font-light text-muted-foreground">→</span>
           <span className="text-sm font-bold text-muted-foreground">{position.currentPrice}</span>
