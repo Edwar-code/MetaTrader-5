@@ -11,7 +11,7 @@ interface AccountSummaryProps {
 const SummaryItem = ({ label, value }: { label: string; value: string }) => {
   const isLoss = parseFloat(value.replace(/ /g, '')) < 0;
   return (
-    <div className="flex justify-between items-center text-base">
+    <div className="flex justify-between items-center text-[13px]">
       <span className="font-semibold text-card-foreground">{label}:</span>
       <div className="flex-1 mx-3 border-b border-dotted border-gray-300"></div>
       <span className={`font-semibold ${isLoss ? 'text-destructive' : 'text-card-foreground'}`}>{value}</span>
