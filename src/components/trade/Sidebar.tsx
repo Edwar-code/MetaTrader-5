@@ -1,0 +1,72 @@
+'use client';
+
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import {
+  Menu,
+  LineChart,
+  Newspaper,
+  Mail,
+  BookText,
+  Settings,
+  Calendar,
+  Users,
+  Send,
+  HelpCircle,
+  Info,
+} from 'lucide-react';
+import { Separator } from '../ui/separator';
+
+const NavItem = ({ icon, label, badge, ad, active }: { icon: React.ReactNode, label: string, badge?: number, ad?: boolean, active?: boolean }) => (
+  <a href="#" className={`flex items-center gap-6 px-6 py-3 text-sm font-medium ${active ? 'bg-primary/10 text-primary' : 'text-foreground'}`}>
+    {icon}
+    <span className="flex-1">{label}</span>
+    {badge && <span className="w-5 h-5 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">{badge}</span>}
+    {ad && <span className="text-xs border border-blue-500 text-blue-500 rounded-full px-2 py-0.5">Ads</span>}
+  </a>
+);
+
+export function Sidebar() {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Menu className="h-5 w-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="w-[76%] p-0 bg-card">
+        <div className="flex flex-col h-full">
+          <div className="p-4 pt-8">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-green-600 flex items-center justify-center rounded-md">
+                <span className="text-white font-bold text-lg">FBS</span>
+              </div>
+              <div>
+                <h2 className="font-semibold text-card-foreground">Market Maker</h2>
+                <p className="text-sm text-muted-foreground">103498268 - FBS-Demo</p>
+              </div>
+            </div>
+            <a href="#" className="block text-primary text-sm font-medium mt-3 ml-1">Manage accounts</a>
+          </div>
+          <Separator className="my-2" />
+          <nav className="flex-1 flex flex-col">
+            <NavItem icon={<LineChart size={24} />} label="Trade" active/>
+            <NavItem icon={<Newspaper size={24} />} label="News" />
+            <NavItem icon={<Mail size={24} />} label="Mailbox" badge={8} />
+            <NavItem icon={<BookText size={24} />} label="Journal" />
+            <NavItem icon={<Settings size={24} />} label="Settings" />
+            <NavItem icon={<Calendar size={24} />} label="Economic calendar" ad/>
+            <NavItem icon={<Users size={24} />} label="Traders Community" />
+            <NavItem icon={<Send size={24} />} label="MQL5 Algo Trading" />
+            <NavItem icon={<HelpCircle size={24} />} label="User guide" />
+            <NavItem icon={<Info size={24} />} label="About" />
+          </nav>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}

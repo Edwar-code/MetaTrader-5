@@ -1,5 +1,6 @@
-import { ChevronsUpDown, Menu, Plus } from 'lucide-react';
+import { ChevronsUpDown, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Sidebar } from './Sidebar';
 
 interface HeaderProps {
   totalProfit: string;
@@ -12,9 +13,7 @@ export default function Header({ totalProfit }: HeaderProps) {
     <header className="shrink-0">
       <div className="flex items-center justify-between pl-2 pr-4 py-3">
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Menu className="h-5 w-5" />
-          </Button>
+          <Sidebar />
           <div>
             <div className="text-sm font-medium text-foreground">Trade</div>
             <div className={`text-base font-semibold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
