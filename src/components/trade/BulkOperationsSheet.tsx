@@ -25,7 +25,7 @@ export function BulkOperationsSheet({ children }: BulkOperationsSheetProps) {
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent side="bottom" className="rounded-t-lg h-auto p-0 bg-card">
-        <SheetHeader className="text-left pt-3 pb-2 px-4">
+        <SheetHeader className="text-center pt-3 pb-2 px-4">
           <SheetTitle className="text-sm font-normal text-muted-foreground">Bulk Operations</SheetTitle>
         </SheetHeader>
         <Separator />
