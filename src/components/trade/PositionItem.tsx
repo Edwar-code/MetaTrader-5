@@ -9,7 +9,7 @@ export default function PositionItem({ position }: PositionItemProps) {
   const isLoss = profitValue < 0;
 
   return (
-    <div className="flex items-start justify-between py-3">
+    <div className="flex items-start justify-between py-2">
       <div className="flex-1">
         <div className="flex items-center gap-1.5">
           <span className="text-lg font-bold text-card-foreground">{position.symbol},</span>
