@@ -1,0 +1,16 @@
+{
+  "name": "TradeView",
+  "short_name": "TradeView",
+  "description": "A trading application.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2196F3",
+  "icons": [
+    {
+      "src": "/mt5.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
