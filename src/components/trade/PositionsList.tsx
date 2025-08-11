@@ -16,7 +16,11 @@ export default function PositionsList({ positions }: PositionsListProps) {
         <div className="flex items-center justify-between">
           <span className="text-[13.5px] text-muted-foreground font-semibold">Positions</span>
           <BulkOperationsSheet>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-muted-foreground hover:bg-transparent hover:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+            >
               <MoreHorizontal className="h-[26px] w-[26px]" />
             </Button>
           </BulkOperationsSheet>
