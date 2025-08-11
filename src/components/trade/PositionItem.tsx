@@ -20,7 +20,7 @@ export default function PositionItem({ position }: PositionItemProps) {
             {position.volume}
           </span>
         </div>
-        <div className="flex items-center gap-1.5 mt-0.5">
+        <div className="flex items-center gap-1.5">
           <span className="text-sm font-bold text-muted-foreground">{position.openPrice}</span>
           <span className="text-base font-light text-muted-foreground">→</span>
           <span className="text-sm font-bold text-muted-foreground">{position.currentPrice}</span>
