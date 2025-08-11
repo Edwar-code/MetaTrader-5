@@ -21,7 +21,7 @@ export default function PositionsList({ positions }: PositionsListProps) {
               size="icon"
               className="h-8 w-8 text-muted-foreground hover:bg-transparent hover:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
             >
-              <MoreHorizontal size={28} strokeWidth={2.5} />
+              <MoreHorizontal size={42} strokeWidth={3.75} />
             </Button>
           </BulkOperationsSheet>
         </div>
