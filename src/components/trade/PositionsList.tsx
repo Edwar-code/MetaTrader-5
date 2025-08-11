@@ -14,7 +14,7 @@ export default function PositionsList({ positions }: PositionsListProps) {
     <div>
       <div className="px-4 py-2 border-t border-b bg-muted/50">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground font-semibold">Positions</span>
+          <span className="text-[13.5px] text-muted-foreground font-semibold">Positions</span>
           <AnalysisDrawer positions={positions}>
             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
               <MoreHorizontal className="h-5 w-5" />
