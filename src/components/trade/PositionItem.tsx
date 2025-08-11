@@ -10,7 +10,7 @@ export default function PositionItem({ position }: PositionItemProps) {
 
   return (
     <div className="flex items-center justify-between py-[7px] px-4">
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col">
         <div className="flex items-center gap-1">
           <span className="text-sm font-bold text-card-foreground">{position.symbol},</span>
           <span className={`text-sm font-semibold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
