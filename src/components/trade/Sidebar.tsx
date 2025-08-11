@@ -38,7 +38,7 @@ export function Sidebar() {
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[81%] p-0 bg-card">
+      <SheetContent side="left" className="w-[81%] p-0 bg-card [&>[data-state=open]]:hidden">
         <div className="flex flex-col h-full">
           <div className="p-4 pt-8">
             <div className="flex items-center gap-3">
@@ -50,7 +50,9 @@ export function Sidebar() {
                 <p className="text-sm text-muted-foreground">103498268 - FBS-Demo</p>
               </div>
             </div>
-            <a href="#" className="block text-primary text-sm font-medium mt-3">Manage accounts</a>
+            <div className="text-right">
+                <a href="#" className="text-primary text-sm font-medium mt-3">Manage accounts</a>
+            </div>
           </div>
           <Separator className="my-2" />
           <nav className="flex-1 flex flex-col">
