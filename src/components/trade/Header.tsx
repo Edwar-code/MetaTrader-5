@@ -1,6 +1,5 @@
 import { ChevronsUpDown, Menu, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 
 interface HeaderProps {
   totalProfit: string;
@@ -11,7 +10,7 @@ export default function Header({ totalProfit }: HeaderProps) {
 
   return (
     <header className="shrink-0">
-      <div className="flex items-center justify-between px-4 py-3">
+      <div className="flex items-center justify-between pl-2 pr-4 py-3 border-b border-border">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <Menu className="h-5 w-5" />
@@ -32,7 +31,6 @@ export default function Header({ totalProfit }: HeaderProps) {
           </Button>
         </div>
       </div>
-      <Separator />
     </header>
   );
 }
