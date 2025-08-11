@@ -17,7 +17,7 @@ const NavItem = ({ icon, label, isActive = false }: { icon: React.ReactNode; lab
 
 export default function BottomNav() {
   return (
-    <footer className="border-t bg-card shrink-0">
+    <footer className="absolute bottom-0 left-0 right-0 border-t bg-card">
       <div className="flex items-center justify-around px-2 py-1">
         <NavItem icon={<ArrowLeftRight size={20} />} label="Quotes" />
         <NavItem icon={<AreaChart size={20} />} label="Charts" />
