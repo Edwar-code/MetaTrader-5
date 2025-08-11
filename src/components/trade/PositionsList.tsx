@@ -22,7 +22,7 @@ export default function PositionsList({ positions }: PositionsListProps) {
           </AnalysisDrawer>
         </div>
       </div>
-      <div className="px-4">
+      <div>
         {positions.map((position, index) => (
           <div key={index}>
             <PositionItem position={position} />

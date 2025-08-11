@@ -9,10 +9,10 @@ export default function PositionItem({ position }: PositionItemProps) {
   const isLoss = profitValue < 0;
 
   return (
-    <div className="flex items-center justify-between py-1">
+    <div className="flex items-center justify-between py-1 px-4">
       <div className="flex-1">
         <div className="flex items-center gap-1">
-          <span className="text-sm font-bold text-card-foreground">{position.symbol},</span>
+          <span className="text-xs font-bold text-card-foreground">{position.symbol},</span>
           <span className={`text-xs font-semibold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
             {position.type}
           </span>
@@ -27,7 +27,7 @@ export default function PositionItem({ position }: PositionItemProps) {
         </div>
       </div>
       <div className="text-right">
-        <span className={`text-sm font-bold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
+        <span className={`text-xs font-bold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
           {position.profit}
         </span>
       </div>
