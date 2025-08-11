@@ -2,8 +2,8 @@ import type { Position } from '@/lib/data';
 import { Separator } from '@/components/ui/separator';
 import { MoreHorizontal } from 'lucide-react';
 import PositionItem from './PositionItem';
-import { AnalysisDrawer } from './AnalysisDrawer';
 import { Button } from '../ui/button';
+import { BulkOperationsSheet } from './BulkOperationsSheet';
 
 interface PositionsListProps {
   positions: Position[];
@@ -15,11 +15,11 @@ export default function PositionsList({ positions }: PositionsListProps) {
       <div className="px-4 py-[1.7px] border-t border-b bg-muted/50">
         <div className="flex items-center justify-between">
           <span className="text-[13.5px] text-muted-foreground font-semibold">Positions</span>
-          <AnalysisDrawer positions={positions}>
+          <BulkOperationsSheet>
             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
               <MoreHorizontal className="h-[26px] w-[26px]" />
             </Button>
-          </AnalysisDrawer>
+          </BulkOperationsSheet>
         </div>
       </div>
       <div className="overflow-y-auto">
