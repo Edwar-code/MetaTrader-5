@@ -4,30 +4,21 @@
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Cell } from 'recharts';
 
 const data = [
-    { time: '12 Aug 09:31', open: 3351.50, high: 3351.80, low: 3350.20, close: 3350.50 },
-    { time: '12 Aug 09:37', open: 3350.50, high: 3351.00, low: 3349.50, close: 3349.80 },
-    { time: '12 Aug 09:43', open: 3349.80, high: 3350.10, low: 3348.00, close: 3348.20 },
-    { time: '12 Aug 09:49', open: 3348.20, high: 3349.00, low: 3347.50, close: 3348.80 },
-    { time: '12 Aug 09:55', open: 3348.80, high: 3349.20, low: 3348.00, close: 3348.40 },
-    { time: '12 Aug 10:01', open: 3348.40, high: 3348.90, low: 3347.00, close: 3347.20 },
-    { time: '12 Aug 10:07', open: 3347.20, high: 3348.00, low: 3346.50, close: 3347.80 },
-    { time: '12 Aug 10:13', open: 3347.80, high: 3348.10, low: 3347.00, close: 3347.20 },
-    { time: '12 Aug 10:19', open: 3347.20, high: 3347.50, low: 3346.00, close: 3346.30 },
-    { time: '12 Aug 10:25', open: 3346.30, high: 3346.80, low: 3345.50, close: 3345.80 },
-    { time: '12 Aug 10:31', open: 3344.00, high: 3345.00, low: 3343.50, close: 3344.80 },
-    { time: '12 Aug 10:37', open: 3344.80, high: 3345.50, low: 3344.00, close: 3344.20 },
-    { time: '12 Aug 10:43', open: 3344.20, high: 3344.50, low: 3342.00, close: 3342.50 },
-    { time: '12 Aug 10:49', open: 3342.50, high: 3343.50, low: 3341.00, close: 3343.20 },
-    { time: '12 Aug 10:55', open: 3342.00, high: 3342.80, low: 3339.00, close: 3339.50 },
-    { time: '12 Aug 11:01', open: 3339.50, high: 3341.50, low: 3338.00, close: 3341.00 },
-    { time: '12 Aug 11:07', open: 3341.00, high: 3342.50, low: 3340.50, close: 3341.80 },
-    { time: '12 Aug 11:13', open: 3341.80, high: 3342.20, low: 3339.00, close: 3339.50 },
-    { time: '12 Aug 11:19', open: 3339.50, high: 3345.00, low: 3339.00, close: 3344.50 },
-    { time: '12 Aug 11:25', open: 3344.50, high: 3348.00, low: 3344.00, close: 3347.50 },
-    { time: '12 Aug 11:31', open: 3347.50, high: 3351.00, low: 3347.00, close: 3350.50 },
-    { time: '12 Aug 11:37', open: 3350.50, high: 3352.00, low: 3350.00, close: 3351.50 },
-    { time: '12 Aug 11:43', open: 3351.50, high: 3352.50, low: 3350.80, close: 3351.00 },
-    { time: '12 Aug 11:49', open: 3351.00, high: 3351.80, low: 3350.00, close: 3350.20 },
+    { time: '12 Aug 13:40', open: 3350.50, high: 3351.80, low: 3350.20, close: 3351.50 }, // Bullish
+    { time: '12 Aug 13:46', open: 3351.50, high: 3352.00, low: 3349.50, close: 3349.80 }, // Bearish
+    { time: '12 Aug 13:52', open: 3349.80, high: 3350.10, low: 3348.00, close: 3348.20 }, // Bearish
+    { time: '12 Aug 13:58', open: 3348.20, high: 3349.00, low: 3347.50, close: 3348.80 }, // Bullish
+    { time: '12 Aug 14:04', open: 3348.80, high: 3349.20, low: 3348.00, close: 3348.40 }, // Bearish
+    { time: '12 Aug 14:10', open: 3348.40, high: 3348.90, low: 3347.00, close: 3347.20 }, // Bearish
+    { time: '12 Aug 14:16', open: 3347.20, high: 3348.00, low: 3346.50, close: 3347.80 }, // Bullish
+    { time: '12 Aug 14:22', open: 3347.80, high: 3348.10, low: 3347.00, close: 3347.20 }, // Bearish
+    { time: '12 Aug 14:28', open: 3347.20, high: 3347.50, low: 3346.00, close: 3346.30 }, // Bearish
+    { time: '12 Aug 14:34', open: 3346.30, high: 3346.80, low: 3345.50, close: 3345.80 }, // Bearish
+    { time: '12 Aug 14:40', open: 3345.80, high: 3346.00, low: 3344.00, close: 3344.20 }, // Bearish
+    { time: '12 Aug 14:46', open: 3344.20, high: 3345.50, low: 3342.50, close: 3345.00 }, // Bullish
+    { time: '12 Aug 14:52', open: 3345.00, high: 3345.50, low: 3343.00, close: 3343.50 }, // Bearish
+    { time: '12 Aug 14:58', open: 3343.50, high: 3344.00, low: 3342.00, close: 3343.80 }, // Bullish
+    { time: '12 Aug 15:04', open: 3343.80, high: 3344.50, low: 3343.00, close: 3344.20 }, // Bullish
 ];
 
 const Candlestick = (props: any) => {
@@ -62,7 +53,7 @@ export default function CandlestickChart() {
       yTicks.push(i);
   }
 
-  const xAxisData = data.filter((_, index) => index % 3 === 0).map(d => d.time);
+  const xAxisData = data.filter((_, index) => index % 4 === 0).map(d => d.time);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -83,8 +74,7 @@ export default function CandlestickChart() {
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
           axisLine={true} 
           tickLine={true} 
-          ticks={xAxisData} 
-          tickFormatter={(value) => value.replace(' ', '\n')}
+          ticks={xAxisData}
         />
         <YAxis
           domain={yDomain}
