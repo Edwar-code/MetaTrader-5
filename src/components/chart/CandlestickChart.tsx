@@ -18,23 +18,25 @@ const data = [
 ];
 
 const Candlestick = (props: any) => {
-  const { x, y, width, height, open, close, high, low } = props;
+  const { x, y, width, height, open, close, high, low, yAxis } = props;
   const isBullish = close >= open;
   const fill = isBullish ? '#00b179' : '#ff4040';
-  
-  // recharts provides the y and height for the bar based on the `dataKey`.
-  // We need to calculate the body and wick positions relative to these values.
-  const yAxisDomain: [number, number] = props.yAxis.domain;
+
+  if (!yAxis) {
+    return null; // or some fallback rendering
+  }
+
+  const yAxisDomain: [number, number] = yAxis.domain;
   const yRange = yAxisDomain[1] - yAxisDomain[0];
-  const pixelsPerUnit = props.yAxis.height / yRange;
+  const pixelsPerUnit = yAxis.height / yRange;
 
-  const bodyTop = y + (Math.max(open, close) - yAxisDomain[1]) * pixelsPerUnit;
-  const bodyBottom = y + (Math.min(open, close) - yAxisDomain[1]) * pixelsPerUnit;
-  const bodyHeight = Math.abs(bodyTop - bodyBottom);
-  const bodyY = Math.min(bodyTop, bodyBottom);
+  const bodyTopY = yAxis.height - (Math.max(open, close) - yAxisDomain[0]) * pixelsPerUnit + yAxis.y;
+  const bodyBottomY = yAxis.height - (Math.min(open, close) - yAxisDomain[0]) * pixelsPerUnit + yAxis.y;
+  const bodyHeight = Math.abs(bodyTopY - bodyBottomY);
+  const bodyY = Math.min(bodyTopY, bodyBottomY);
 
-  const highY = y + (high - yAxisDomain[1]) * pixelsPerUnit;
-  const lowY = y + (low - yAxisDomain[1]) * pixelsPerUnit;
+  const highY = yAxis.height - (high - yAxisDomain[0]) * pixelsPerUnit + yAxis.y;
+  const lowY = yAxis.height - (low - yAxisDomain[0]) * pixelsPerUnit + yAxis.y;
 
   return (
     <g stroke={fill} fill={fill} strokeWidth="1">
@@ -76,6 +78,8 @@ export default function CandlestickChart() {
           tickLine={false}
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
           tickFormatter={(value) => (typeof value === 'number' ? value.toFixed(2) : value)}
+          // Pass the yAxis props to the chart
+          yAxisId="left"
         />
         <Tooltip
           cursor={{ fill: 'hsla(var(--muted-foreground), 0.1)' }}
@@ -85,7 +89,7 @@ export default function CandlestickChart() {
           }}
           labelStyle={{ color: 'hsl(var(--foreground))' }}
           formatter={(value: any, name: any, props: any) => {
-            if (name === 'value') {
+            if (name === 'close') {
                return [
                   `O: ${props.payload.open}`,
                   `H: ${props.payload.high}`,
@@ -97,7 +101,7 @@ export default function CandlestickChart() {
           }}
           itemSorter={() => 1}
         />
-        <Bar dataKey="close" shape={<Candlestick />}>
+        <Bar dataKey="close" shape={(props) => <Candlestick {...props} />} yAxisId="left">
             {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.close >= entry.open ? '#00b179' : '#ff4040'} />
             ))}
