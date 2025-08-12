@@ -68,7 +68,7 @@ export default function ChartPage() {
         </div>
 
         {/* Chart */}
-        <div className="flex-1 bg-gray-50 flex items-center justify-center p-2">
+        <div className="flex-1 bg-gray-50 flex items-center justify-center">
           <CandlestickChart />
         </div>
       </div>
