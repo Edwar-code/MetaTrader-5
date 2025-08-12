@@ -76,15 +76,15 @@ export default function CandlestickChart() {
         <XAxis 
           dataKey="time" 
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
-          axisLine={true} 
-          tickLine={true} 
+          axisLine={{ stroke: 'hsl(var(--border))' }}
+          tickLine={{ stroke: 'hsl(var(--border))' }}
           ticks={xAxisData}
         />
         <YAxis
           domain={yDomain}
           orientation="right"
-          axisLine={false}
-          tickLine={false}
+          axisLine={true}
+          tickLine={true}
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }}
           tickFormatter={(value) => (typeof value === 'number' ? value.toFixed(2) : value)}
           yAxisId="left"
