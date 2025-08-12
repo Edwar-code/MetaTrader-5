@@ -31,8 +31,8 @@ export default function ChartPage() {
         {/* SELL/BUY Section with Lots Feature - EXACT REPLICA */}
         <div className="flex">
           {/* SELL Section - Exact Red */}
-          <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer relative px-2 flex justify-center flex-col pt-[1px]">
-            <div className="font-normal opacity-90 text-left text-[10px] w-full leading-none">SELL</div>
+          <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer relative pl-3 pr-1 flex justify-center flex-col">
+            <div className="font-normal opacity-90 text-left text-[10px] w-full leading-none pt-1">SELL</div>
             <div className="leading-none text-center mb-1">
               <span className="text-[13px] font-bold">3346</span>
               <span className="text-[22px] font-bold">.12</span>
@@ -58,8 +58,8 @@ export default function ChartPage() {
           </div>
 
           {/* BUY Section - Exact Blue */}
-          <div className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer relative px-2 flex justify-center flex-col pt-[1px]">
-            <div className="font-normal opacity-90 text-left text-[10px] w-full leading-none">BUY</div>
+          <div className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer relative pl-3 pr-1 flex justify-center flex-col">
+            <div className="font-normal opacity-90 text-left text-[10px] w-full leading-none pt-1">BUY</div>
             <div className="leading-none text-center mb-1">
               <span className="text-[13px] font-bold">3346</span>
               <span className="text-[22px] font-bold">.32</span>
