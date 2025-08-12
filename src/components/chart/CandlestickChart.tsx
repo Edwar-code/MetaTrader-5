@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Cell } from 'recharts';
 
 const data = [
     { time: '10:00', open: 3343.50, high: 3345.00, low: 3342.50, close: 3344.00 },
@@ -39,8 +39,8 @@ const Candlestick = (props: any) => {
 };
 
 export default function CandlestickChart() {
-  const yMin = Math.min(...data.map(d => d.low)) - 2;
-  const yMax = Math.max(...data.map(d => d.high)) + 2;
+  const yMin = Math.min(...data.map(d => d.low)) - 5;
+  const yMax = Math.max(...data.map(d => d.high)) + 5;
   const yDomain: [number, number] = [yMin, yMax];
   
   const interval = 0.45;
@@ -73,26 +73,6 @@ export default function CandlestickChart() {
           tickFormatter={(value) => (typeof value === 'number' ? value.toFixed(2) : value)}
           yAxisId="left"
           ticks={yTicks}
-        />
-        <Tooltip
-          cursor={{ fill: 'hsla(var(--muted-foreground), 0.1)' }}
-          contentStyle={{
-            backgroundColor: 'hsl(var(--background))',
-            borderColor: 'hsl(var(--border))',
-          }}
-          labelStyle={{ color: 'hsl(var(--foreground))' }}
-          formatter={(value: any, name: any, props: any) => {
-            if (name === 'close') {
-               return [
-                  `O: ${props.payload.open.toFixed(2)}`,
-                  `H: ${props.payload.high.toFixed(2)}`,
-                  `L: ${props.payload.low.toFixed(2)}`,
-                  `C: ${props.payload.close.toFixed(2)}`,
-                ];
-            }
-            return null;
-          }}
-          itemSorter={() => 1}
         />
         <Bar dataKey="close" shape={(props) => <Candlestick {...props} />} yAxisId="left">
             {data.map((entry, index) => (
