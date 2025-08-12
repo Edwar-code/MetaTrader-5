@@ -31,7 +31,7 @@ export default function ChartPage() {
         {/* SELL/BUY Section with Lots Feature - EXACT REPLICA */}
         <div className="flex">
           {/* SELL Section - Exact Red */}
-          <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer relative px-2 py-0">
+          <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer relative px-2 py-0 flex flex-col justify-center">
             <div className="font-normal opacity-90 text-left text-[10px] w-full leading-none">SELL</div>
             <div className="leading-none text-center">
               <span className="text-[13px] font-bold">3346</span>
@@ -58,7 +58,7 @@ export default function ChartPage() {
           </div>
 
           {/* BUY Section - Exact Blue */}
-          <div className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer relative px-2 py-0">
+          <div className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer relative px-2 py-0 flex flex-col justify-center">
             <div className="font-normal opacity-90 text-left text-[10px] w-full leading-none">BUY</div>
             <div className="leading-none text-center">
               <span className="text-[13px] font-bold">3346</span>
