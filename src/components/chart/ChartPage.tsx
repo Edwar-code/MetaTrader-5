@@ -2,6 +2,7 @@
 'use client';
 
 import BottomNav from '../trade/BottomNav';
+import CandlestickChart from './CandlestickChart';
 
 export default function ChartPage() {
   return (
@@ -99,9 +100,9 @@ export default function ChartPage() {
           </div>
         </div>
 
-        {/* Placeholder for rest of content */}
-        <div className="flex-1 bg-gray-50 flex items-center justify-center px-[20px]">
-          <div className="text-gray-500 text-lg">Chart section will be built next after SELL/BUY is perfect</div>
+        {/* Chart */}
+        <div className="flex-1 bg-gray-50 flex items-center justify-center p-4">
+          <CandlestickChart />
         </div>
       </div>
       <BottomNav />
