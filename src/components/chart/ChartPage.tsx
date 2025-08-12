@@ -1,12 +1,18 @@
 
 'use client';
 
+import { useState } from 'react';
 import BottomNav from '../trade/BottomNav';
-import CandlestickChart from './CandlestickChart';
+import { TradeChart } from '../trade/TradeChart';
 import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 import { Sidebar } from '../trade/Sidebar';
 
 export default function ChartPage() {
+  const [chartInterval, setChartInterval] = useState('1m');
+  const [chartType, setChartType] = useState('candle');
+  const asset = "frxXAUUSD"; // Deriv symbol for Gold/USD
+  const assetLabel = "Gold/USD";
+
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       <div className="h-screen bg-white flex flex-col">
@@ -70,13 +76,14 @@ export default function ChartPage() {
 
           {/* Chart */}
           <div className="absolute inset-0 bg-gray-50 flex items-center justify-center pb-[2.35rem]">
-            <div className="absolute top-12 left-2 z-10 text-gray-600">
-              <div className="text-[13px] font-medium text-foreground">
-                <span className="text-primary">XAUUSD</span>, <span className="font-normal">M1</span>
-              </div>
-              <div className="text-[11px] text-muted-foreground">Gold Spot</div>
-            </div>
-            <CandlestickChart />
+             <TradeChart 
+                asset={asset}
+                assetLabel={assetLabel}
+                chartInterval={chartInterval}
+                setChartInterval={setChartInterval}
+                chartType={chartType}
+                setChartType={setChartType}
+             />
           </div>
         </div>
       </div>

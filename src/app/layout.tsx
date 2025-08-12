@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
+import { DerivProvider } from '@/context/DerivContext';
 
 export const metadata: Metadata = {
   title: 'TradeView',
@@ -32,8 +33,10 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/mt5.svg" />
       </head>
       <body className="font-body antialiased">
-        {children}
-        <Toaster />
+        <DerivProvider>
+          {children}
+          <Toaster />
+        </DerivProvider>
       </body>
     </html>
   );
