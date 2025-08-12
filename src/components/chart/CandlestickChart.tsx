@@ -83,8 +83,8 @@ export default function CandlestickChart() {
         <YAxis
           domain={yDomain}
           orientation="right"
-          axisLine={true}
-          tickLine={true}
+          axisLine={{ stroke: 'hsl(var(--border))' }}
+          tickLine={{ stroke: 'hsl(var(--border))' }}
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }}
           tickFormatter={(value) => (typeof value === 'number' ? value.toFixed(2) : value)}
           yAxisId="left"
