@@ -59,9 +59,6 @@ export default function InstallPrompt() {
   }
 
   return (
-    <div className="p-4">
-    
-      
-    </div>
+   
   );
 }
