@@ -22,19 +22,23 @@ const data = [
 ];
 
 const Candlestick = (props: any) => {
-  const { x, y, width, height, open, close, high, low, fill } = props;
+  const { x, y, width, height, open, close, high, low } = props;
   const isBullish = close >= open;
+  const color = isBullish ? '#00b179' : '#ff4040';
 
+  // Calculate y-coordinates and heights based on price range
+  const priceRange = Math.max(...data.map(d => d.high)) - Math.min(...data.map(d => d.low));
   const yRatio = height / (high - low);
-  const bodyHeight = Math.abs(open - close) * yRatio;
+  
   const bodyY = isBullish
     ? y + (high - close) * yRatio
     : y + (high - open) * yRatio;
-
+  const bodyHeight = Math.max(1, Math.abs(open - close) * yRatio);
+  
   return (
-    <g stroke={isBullish ? '#00b179' : '#ff4040'} fill={isBullish ? '#00b179' : '#ff4040'} strokeWidth="1">
+    <g stroke={color} fill={color} strokeWidth="1">
       {/* Wick */}
-      <line x1={x + width / 2} y1={y} x2={x + width / 2} y2={y + height} strokeWidth="1" />
+      <line x1={x + width / 2} y1={y} x2={x + width / 2} y2={y + height} />
       
       {/* Body */}
       <rect x={x} y={bodyY} width={width} height={bodyHeight} />
@@ -62,10 +66,10 @@ export default function CandlestickChart() {
         barCategoryGap="20%"
         data={data}
         margin={{
-          top: 20,
+          top: 5,
           right: 0,
           left: -10,
-          bottom: 0,
+          bottom: 20,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
