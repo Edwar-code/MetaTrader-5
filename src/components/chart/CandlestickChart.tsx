@@ -58,7 +58,7 @@ export default function CandlestickChart() {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-        <XAxis dataKey="time" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+        <XAxis dataKey="time" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} axisLine={true} tickLine={true} />
         <YAxis
           domain={yDomain}
           orientation="right"
