@@ -57,8 +57,6 @@ export default function CandlestickChart() {
       yTicks.push(i);
   }
 
-  const xAxisData = data.filter((_, index) => index % 4 === 0).map(d => d.time);
-
   return (
     <ResponsiveContainer width="100%" height="100%">
        <BarChart
@@ -78,7 +76,8 @@ export default function CandlestickChart() {
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
           axisLine={{ stroke: 'hsl(var(--border))' }}
           tickLine={{ stroke: 'hsl(var(--border))' }}
-          ticks={xAxisData}
+          tickFormatter={(value, index) => index % 4 === 0 ? value : ''}
+          interval={0}
         />
         <YAxis
           domain={yDomain}
