@@ -18,33 +18,28 @@ const data = [
 ];
 
 const Candlestick = (props: any) => {
-  const { x, y, width, height, open, close, high, low, yAxis } = props;
+  const { x, y, width, height, open, close, high, low } = props;
   const isBullish = close >= open;
   const fill = isBullish ? '#00b179' : '#ff4040';
 
-  if (!yAxis) {
-    return null; // or some fallback rendering
-  }
+  const bodyHeight = Math.abs(y - (y + height));
+  const bodyY = isBullish ? y + height : y;
 
-  const yAxisDomain: [number, number] = yAxis.domain;
-  const yRange = yAxisDomain[1] - yAxisDomain[0];
-  const pixelsPerUnit = yAxis.height / yRange;
+  const highWickY = y - (open > close ? (high - open) / (high-low) * height : (high - close) / (high-low) * height)
+  const lowWickY = y + height;
 
-  const bodyTopY = yAxis.height - (Math.max(open, close) - yAxisDomain[0]) * pixelsPerUnit + yAxis.y;
-  const bodyBottomY = yAxis.height - (Math.min(open, close) - yAxisDomain[0]) * pixelsPerUnit + yAxis.y;
-  const bodyHeight = Math.abs(bodyTopY - bodyBottomY);
-  const bodyY = Math.min(bodyTopY, bodyBottomY);
 
-  const highY = yAxis.height - (high - yAxisDomain[0]) * pixelsPerUnit + yAxis.y;
-  const lowY = yAxis.height - (low - yAxisDomain[0]) * pixelsPerUnit + yAxis.y;
+  const yRatio = height / (high-low)
+  const bodyAbsHeight = Math.abs(open - close) * yRatio
+  const bodyStart = isBullish ? y + ((high - close) * yRatio) : y + ((high - open) * yRatio);
 
   return (
     <g stroke={fill} fill={fill} strokeWidth="1">
       {/* Wick */}
-      <line x1={x + width / 2} y1={highY} x2={x + width / 2} y2={lowY} />
+      <line x1={x + width / 2} y1={y} x2={x + width / 2} y2={y + height} strokeWidth="1" />
       
       {/* Body */}
-      <rect x={x} y={bodyY} width={width} height={bodyHeight} />
+      <rect x={x} y={bodyStart} width={width} height={bodyAbsHeight} />
     </g>
   );
 };
@@ -69,7 +64,7 @@ export default function CandlestickChart() {
           bottom: 0,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
         <XAxis dataKey="time" tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
         <YAxis
           domain={yDomain}
@@ -78,7 +73,6 @@ export default function CandlestickChart() {
           tickLine={false}
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
           tickFormatter={(value) => (typeof value === 'number' ? value.toFixed(2) : value)}
-          // Pass the yAxis props to the chart
           yAxisId="left"
         />
         <Tooltip

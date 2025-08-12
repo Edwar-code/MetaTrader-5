@@ -3,6 +3,7 @@
 
 import BottomNav from '../trade/BottomNav';
 import CandlestickChart from './CandlestickChart';
+import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 
 export default function ChartPage() {
   return (
@@ -20,44 +21,16 @@ export default function ChartPage() {
             </div>
           </div>
 
+          <div className="flex items-center text-sm font-semibold">
+              XAUUSD, M1
+          </div>
+
           {/* Right side - ALL other elements */}
-          <div className="flex items-center space-x-3">
-            {/* Plus Icon - Exact cross */}
-            <div className="w-5 h-5 flex items-center justify-center cursor-pointer">
-              <div className="relative">
-                <div className="w-3.5 h-0.5 bg-gray-700"></div>
-                <div className="w-0.5 h-3.5 bg-gray-700 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
-              </div>
-            </div>
-
-            {/* Chart/Trend Icon - Exact zigzag line */}
-            <div className="w-5 h-5 flex items-center justify-center cursor-pointer">
-              <svg width="16" height="16" viewBox="0 0 16 16" className="text-gray-700">
-                <path
-                  d="M2 12L6 6L10 10L14 4"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-
-            {/* M1 Button - Exact styling */}
-            <div className="bg-gray-100 border border-gray-300 px-2.5 py-1 rounded text-xs font-medium text-gray-800 cursor-pointer">
-              M1
-            </div>
-
-            {/* First Circle - Red with white center dot - EXACT MATCH */}
-            <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center border border-gray-300 shadow-sm cursor-pointer">
-              <div className="w-3 h-3 bg-white rounded-full"></div>
-            </div>
-
-            {/* Second Circle - Blue with MT text - EXACT MATCH */}
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold border border-gray-300 shadow-sm cursor-pointer">
-              MT
-            </div>
+          <div className="flex items-center space-x-4">
+             <CrosshairIcon />
+             <FunctionIcon />
+             <ClockIcon />
+             <ShapesIcon />
           </div>
         </div>
 
