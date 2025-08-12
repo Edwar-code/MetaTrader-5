@@ -2,8 +2,8 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, Label, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot } from 'recharts';
-import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
+import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, Label } from 'recharts';
+import { Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -62,35 +62,23 @@ const CandleStick = (props: any) => {
     if (high === undefined || low === undefined || open === undefined || close === undefined || !isFinite(high) || !isFinite(low)) return null;
 
     // FIX: Handle division by zero when price doesn't move.
-    if (high - low === 0) {
-        // This is a doji candle or a flat line. Draw a simple horizontal line for the body.
+    const domain = high - low;
+    if (domain === 0) {
         const color = close >= open ? '#22c55e' : '#ef4444';
-        return (
-             <path d={`M${x},${y + height/2} L${x + width},${y + height/2}`} stroke={color} strokeWidth="1.5" />
-        );
+        return <path d={`M${x},${y + height/2} L${x + width},${y + height/2}`} stroke={color} strokeWidth="1.5" />;
     }
     
     const isUp = close >= open;
     const color = isUp ? '#22c55e' : '#ef4444';
 
-    // The ratio of the body height to the total candle height (wick to wick)
-    const bodyHeightRatio = Math.abs(open - close) / (high - low);
-    // The actual pixel height of the candle body, with a minimum of 1px to be visible
+    const bodyHeightRatio = Math.abs(open - close) / domain;
     const bodyHeight = isFinite(bodyHeightRatio) ? Math.max(1, bodyHeightRatio * height) : 1;
     
-    // Calculate the Y position of the top of the candle body
-    // 'y' from props is the top of the whole candle area (top of the high wick)
-    // We calculate the position based on whether the candle is up or down
-    const bodyY = y + (isUp 
-        ? height - ((close - low) / (high - low)) * height // Position for up candle
-        : height - ((open - low) / (high - low)) * height) // Position for down candle
-        - bodyHeight;
+    const bodyY = y + ((high - Math.max(open, close)) / domain) * height;
 
     return (
       <g stroke={color} fill={isUp ? color : 'none'} strokeWidth="1">
-        {/* This path draws the wicks */}
         <path d={`M${x + width / 2},${y} L${x + width / 2},${y + height}`} />
-        {/* This rect draws the body */}
         <rect x={x} y={bodyY} width={width} height={bodyHeight} fill={color} />
       </g>
     );
@@ -128,12 +116,12 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
             <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false}>
               {lastTick && (
                   <Label
-                      value={String(lastTick.quote).slice(-1)}
+                      value={String(lastTick.quote.toFixed(2)).slice(-3)}
                       position="right"
                       offset={10}
                       fontSize="14"
                       fontWeight="bold"
-                      fill="hsl(var(--foreground))"
+                      fill={isUp ? "text-green-500" : "text-red-500"}
                       style={{ pointerEvents: 'none' }}
                   />
               )}
@@ -148,9 +136,9 @@ LiveAreaChart.displayName = 'LiveAreaChart';
 const LiveCandlestickChart = ({ data, yAxisDomain, markers }: { data: (Candle & {body: [number, number]})[], yAxisDomain: (string|number)[], markers?: ChartMarker[] }) => {
     return (
         <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }} animationDuration={0}>
+            <ComposedChart data={data} margin={{ top: 5, right: 30, left: -10, bottom: 5 }} animationDuration={0}>
                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
-                <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} />
+                <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} />
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="body" shape={<CandleStick />} isAnimationActive={false} />
@@ -163,9 +151,6 @@ LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 
 export function TradeChart({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, staticData = [] }: TradeChartProps) {
-    const { chartError: liveChartError } = useDerivState();
-    
-    // Local state for chart data, initialized with staticData
     const [ticks, setTicks] = useState<Tick[]>([]);
     const [candles, setCandles] = useState<Candle[]>(staticData);
     const [chartError, setChartError] = useState<string | null>(null);
@@ -174,25 +159,24 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
 
     // Effect for simulating live data
     useEffect(() => {
-      // Clear any existing interval
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
       
       const isTick = chartInterval === 'tick';
-      const updateInterval = isTick ? 1000 : (intervalMap[chartInterval] || 60) * 1000;
+      const updateInterval = 1000; // Update every second for a fluid feel
 
       intervalRef.current = setInterval(() => {
         if (isTick) {
           setTicks(prevTicks => {
-            const lastTick = prevTicks.length > 0 ? prevTicks[prevTicks.length - 1] : { epoch: Math.floor(Date.now() / 1000), quote: 2331.80 };
-            const change = (Math.random() - 0.5) * 0.1;
+            if(prevTicks.length === 0) return [];
+            const lastTick = prevTicks[prevTicks.length - 1];
+            const change = (Math.random() - 0.5) * 0.2; // Smaller, more realistic tick changes
             const newTick: Tick = {
               epoch: Math.floor(Date.now() / 1000),
               quote: lastTick.quote + change,
               symbol: asset,
             };
-            // Keep the last 200 ticks
             return [...prevTicks, newTick].slice(-200);
           });
         } else {
@@ -200,34 +184,32 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
             if (prevCandles.length === 0) return [];
             
             const lastCandle = prevCandles[prevCandles.length - 1];
-            const change = (Math.random() - 0.48) * (lastCandle.high - lastCandle.low); // Bias slightly upwards
-            let newClose = lastCandle.close + change;
-
             const timeSinceLastCandle = (Date.now() / 1000) - lastCandle.epoch;
+            const candleDuration = intervalMap[chartInterval] || 60;
             
             // If it's time for a new candle
-            if (timeSinceLastCandle > (intervalMap[chartInterval] || 60)) {
+            if (timeSinceLastCandle > candleDuration) {
                 const newCandle: Candle = {
-                    epoch: lastCandle.epoch + (intervalMap[chartInterval] || 60),
+                    epoch: lastCandle.epoch + candleDuration,
                     open: lastCandle.close,
-                    close: newClose,
-                    high: Math.max(lastCandle.close, newClose),
-                    low: Math.min(lastCandle.close, newClose),
+                    close: lastCandle.close,
+                    high: lastCandle.close,
+                    low: lastCandle.close,
                 };
                 return [...prevCandles, newCandle].slice(-100);
             } else { // Otherwise, update the current candle
                 const updatedCandles = [...prevCandles];
                 const currentCandle = updatedCandles[updatedCandles.length - 1];
-                currentCandle.close = newClose;
-                currentCandle.high = Math.max(currentCandle.high, newClose);
-                currentCandle.low = Math.min(currentCandle.low, newClose);
+                const change = (Math.random() - 0.49) * 0.3; // Bias slightly upwards, smaller change
+                currentCandle.close += change;
+                currentCandle.high = Math.max(currentCandle.high, currentCandle.close);
+                currentCandle.low = Math.min(currentCandle.low, currentCandle.close);
                 return updatedCandles;
             }
           });
         }
       }, updateInterval);
 
-      // Cleanup on unmount or when dependencies change
       return () => {
         if (intervalRef.current) {
           clearInterval(intervalRef.current);
@@ -239,41 +221,40 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
     // This effect now primarily manages errors from the live context
     useEffect(() => {
       // Only show an error if we don't have static data to display
-      if (liveChartError && staticData.length === 0) {
-        setChartError(liveChartError);
+      const chartHasData = ticks.length > 0 || candles.length > 0;
+      if (!chartHasData && staticData.length === 0) {
+        setChartError('Deriv API connection is offline.');
       } else {
         setChartError(null);
       }
-    }, [liveChartError, staticData]);
+    }, [ticks, candles, staticData]);
 
 
     const { lastPrice, priceChange, isUp } = React.useMemo(() => {
-        const data = chartInterval === 'tick' ? ticks : candles;
-        if (data.length === 0) return { lastPrice: 0, priceChange: 0, isUp: true };
-
-        if (chartInterval === 'tick' && ticks.length > 0) {
+        if (chartInterval === 'tick') {
+            if (ticks.length < 2) return { lastPrice: 0, priceChange: 0, isUp: true };
             const last = ticks[ticks.length - 1].quote;
-            const secondLast = ticks.length > 1 ? ticks[ticks.length - 2].quote : last;
+            const secondLast = ticks[ticks.length - 2].quote;
             return { lastPrice: last, priceChange: last - secondLast, isUp: last >= secondLast };
-        } else if (chartInterval !== 'tick' && candles.length > 0) {
+        } else {
+            if (candles.length === 0) return { lastPrice: 0, priceChange: 0, isUp: true };
             const lastCandle = candles[candles.length - 1];
             return { lastPrice: lastCandle.close, priceChange: lastCandle.close - lastCandle.open, isUp: lastCandle.close >= lastCandle.open };
         }
-        return { lastPrice: 0, priceChange: 0, isUp: true };
     }, [ticks, candles, chartInterval]);
 
-    const yAxisDomain = React.useMemo(() => {
+    const yAxisDomain = React.useMemo((): [number, number] => {
         const dataSet = chartInterval === 'tick' ? ticks : candles;
-        if (!dataSet || dataSet.length === 0) return ['auto', 'auto'];
+        if (!dataSet || dataSet.length === 0) return [0,0];
 
         const pricesFromData = dataSet.flatMap((d: any) => d.quote !== undefined ? [d.quote] : [d.low, d.high]);
         const finitePrices = pricesFromData.filter(p => isFinite(p));
 
-        if (finitePrices.length === 0) return ['auto', 'auto'];
+        if (finitePrices.length === 0) return [0,0];
         
         const min = Math.min(...finitePrices);
         const max = Math.max(...finitePrices);
-        const padding = (max - min) * 0.05 || 0.0001; 
+        const padding = (max - min) * 0.1 || 0.1; // Increased padding
 
         return [min - padding, max + padding];
     }, [ticks, candles, chartInterval]);
@@ -311,7 +292,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                           setCandles([]); // Clear candles
                            // Seed with some initial ticks if empty
                           if(ticks.length === 0) {
-                            setTicks(staticData.slice(-20).map(c => ({ epoch: c.epoch, quote: c.close, symbol: asset })));
+                            setTicks(staticData.slice(-50).map(c => ({ epoch: c.epoch, quote: c.close, symbol: asset })));
                           }
                         } else {
                           setChartType('candle');
@@ -332,7 +313,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
             </CardHeader>
             <CardContent className="flex-1 min-h-0 w-full relative">
                 <div className="h-full w-full">
-                    {chartError && staticData.length === 0 ? (
+                    {chartError ? (
                         <div className="flex items-center justify-center h-full text-destructive flex-col gap-2 p-4 text-center">
                             <AlertTriangle className="h-8 w-8" />
                             <p className="font-semibold">Chart Unavailable</p>
