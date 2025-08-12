@@ -70,6 +70,12 @@ export default function ChartPage() {
 
           {/* Chart */}
           <div className="absolute inset-0 bg-gray-50 flex items-center justify-center">
+            <div className="absolute top-[52px] left-2 z-10 text-gray-600">
+              <div className="text-[13px] font-medium text-foreground">
+                XAUUSD<span className="text-primary">, M1</span>
+              </div>
+              <div className="text-[11px] text-muted-foreground">Gold Spot</div>
+            </div>
             <CandlestickChart />
           </div>
         </div>
