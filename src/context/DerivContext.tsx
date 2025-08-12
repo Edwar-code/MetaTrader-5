@@ -2,7 +2,7 @@
 
 import { useToast } from "@/hooks/use-toast";
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef, useMemo } from "react";
-import DerivAPI from '@deriv/deriv-api';
+// import DerivAPI from '@deriv/deriv-api';
 
 // #region Types
 export interface RunningTrade {
@@ -103,7 +103,7 @@ const DerivChartContext = createContext<DerivChartState | undefined>(undefined);
 
 
 export function DerivProvider({ children }: { children: ReactNode }) {
-    const apiRef = useRef<DerivAPI | null>(null);
+    const apiRef = useRef<any | null>(null);
     const [connectionState, setConnectionState] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [balance, setBalance] = useState<Balance | null>(null);
@@ -248,8 +248,9 @@ export function DerivProvider({ children }: { children: ReactNode }) {
             setActiveToken(initialToken);
         } else {
             // Fallback for demo if no token
-            setConnectionState('connected'); 
-            setIsAuthenticated(true);
+            setConnectionState('disconnected'); 
+            setIsAuthenticated(false);
+            setChartError('Deriv API connection is offline.');
         }
     }, []);
     
@@ -262,86 +263,91 @@ export function DerivProvider({ children }: { children: ReactNode }) {
             return;
         }
 
-        const api = new DerivAPI({ app_id: 82243 });
+        // const api = new DerivAPI({ app_id: 82243 });
+        const api = null; // API is disabled
         apiRef.current = api;
         
         const connect = async () => {
             setConnectionState('connecting');
             const logsClearedInitially = localStorage.getItem('deriv_trade_logs_cleared') === 'true';
             setAreLogsCleared(logsClearedInitially);
+
+            setChartError('Deriv API connection is offline.');
+            setConnectionState('disconnected');
+            setIsAuthenticated(false);
             
-            try {
-                const cachedSymbolsStr = localStorage.getItem('deriv_active_symbols');
-                if (cachedSymbolsStr) {
-                    try {
-                        const cachedSymbols = JSON.parse(cachedSymbolsStr);
-                        if (Array.isArray(cachedSymbols) && cachedSymbols.length > 0) setActiveSymbols(cachedSymbols);
-                    } catch (e) {
-                        localStorage.removeItem('deriv_active_symbols');
-                    }
-                }
+            // try {
+            //     const cachedSymbolsStr = localStorage.getItem('deriv_active_symbols');
+            //     if (cachedSymbolsStr) {
+            //         try {
+            //             const cachedSymbols = JSON.parse(cachedSymbolsStr);
+            //             if (Array.isArray(cachedSymbols) && cachedSymbols.length > 0) setActiveSymbols(cachedSymbols);
+            //         } catch (e) {
+            //             localStorage.removeItem('deriv_active_symbols');
+            //         }
+            //     }
 
-                const authResponse = await api.basic.authorize({ authorize: activeToken });
-                if (authResponse.error) throw new Error(authResponse.error.message);
+            //     const authResponse = await api.basic.authorize({ authorize: activeToken });
+            //     if (authResponse.error) throw new Error(authResponse.error.message);
                 
-                setIsAuthenticated(true);
-                setConnectionState('connected');
-                setFullname(authResponse.authorize?.fullname || null);
-                setEmail(authResponse.authorize?.email || null);
-                setAccountId(authResponse.authorize?.loginid || null);
+            //     setIsAuthenticated(true);
+            //     setConnectionState('connected');
+            //     setFullname(authResponse.authorize?.fullname || null);
+            //     setEmail(authResponse.authorize?.email || null);
+            //     setAccountId(authResponse.authorize?.loginid || null);
                 
-                const [balanceResponse, symbolsResponse, profitTableResponse, accountStatusResponse] = await Promise.all([
-                    api.basic.balance(),
-                    api.basic.activeSymbols({ active_symbols: 'brief', product_type: 'basic' }),
-                    logsClearedInitially ? Promise.resolve(null) : api.basic.profitTable({ limit: 25, description: 1, sort: "DESC" }),
-                    api.basic.getAccountStatus()
-                ]);
+            //     const [balanceResponse, symbolsResponse, profitTableResponse, accountStatusResponse] = await Promise.all([
+            //         api.basic.balance(),
+            //         api.basic.activeSymbols({ active_symbols: 'brief', product_type: 'basic' }),
+            //         logsClearedInitially ? Promise.resolve(null) : api.basic.profitTable({ limit: 25, description: 1, sort: "DESC" }),
+            //         api.basic.getAccountStatus()
+            //     ]);
 
-                if (accountStatusResponse.get_account_status?.authentication?.document?.status) {
-                    setProofOfAddressStatus(accountStatusResponse.get_account_status.authentication.document.status as VerificationStatus);
-                } else {
-                    setProofOfAddressStatus('none');
-                }
+            //     if (accountStatusResponse.get_account_status?.authentication?.document?.status) {
+            //         setProofOfAddressStatus(accountStatusResponse.get_account_status.authentication.document.status as VerificationStatus);
+            //     } else {
+            //         setProofOfAddressStatus('none');
+            //     }
                 
-                if (balanceResponse.balance) setBalance({ value: balanceResponse.balance.balance, currency: balanceResponse.balance.currency });
-                if(symbolsResponse.active_symbols) {
-                    setActiveSymbols(symbolsResponse.active_symbols);
-                    localStorage.setItem('deriv_active_symbols', JSON.stringify(symbolsResponse.active_symbols));
-                }
+            //     if (balanceResponse.balance) setBalance({ value: balanceResponse.balance.balance, currency: balanceResponse.balance.currency });
+            //     if(symbolsResponse.active_symbols) {
+            //         setActiveSymbols(symbolsResponse.active_symbols);
+            //         localStorage.setItem('deriv_active_symbols', JSON.stringify(symbolsResponse.active_symbols));
+            //     }
                 
-                if (profitTableResponse?.profit_table?.transactions) {
-                    const initialTrades: CompletedTrade[] = profitTableResponse.profit_table.transactions.map((t: any) => ({
-                        contract_id: t.contract_id, longcode: t.longcode, symbol: t.symbol, contract_type: t.contract_type,
-                        buy_price: parseFloat(t.buy_price), sell_price: parseFloat(t.sell_price),
-                        profit_loss: parseFloat(t.sell_price) - parseFloat(t.buy_price),
-                        start_time: t.purchase_time, end_time: t.sell_time, 
-                        entry_spot: parseFloat(t.entry_spot) || null,
-                        exit_spot: parseFloat(t.exit_tick) || null,
-                        exit_tick_time: t.exit_tick_time || t.sell_time,
-                        transaction_id: t.transaction_id,
-                    }));
-                    setProfitTable(initialTrades);
-                } else {
-                    setProfitTable([]);
-                }
+            //     if (profitTableResponse?.profit_table?.transactions) {
+            //         const initialTrades: CompletedTrade[] = profitTableResponse.profit_table.transactions.map((t: any) => ({
+            //             contract_id: t.contract_id, longcode: t.longcode, symbol: t.symbol, contract_type: t.contract_type,
+            //             buy_price: parseFloat(t.buy_price), sell_price: parseFloat(t.sell_price),
+            //             profit_loss: parseFloat(t.sell_price) - parseFloat(t.buy_price),
+            //             start_time: t.purchase_time, end_time: t.sell_time, 
+            //             entry_spot: parseFloat(t.entry_spot) || null,
+            //             exit_spot: parseFloat(t.exit_tick) || null,
+            //             exit_tick_time: t.exit_tick_time || t.sell_time,
+            //             transaction_id: t.transaction_id,
+            //         }));
+            //         setProfitTable(initialTrades);
+            //     } else {
+            //         setProfitTable([]);
+            //     }
 
-                balanceSubscription.current = await api.basic.subscribe({ balance: 1 });
-                balanceSubscription.current.subscribe((response: any) => {
-                    if (response.balance) setBalance({ value: response.balance.balance, currency: response.balance.currency });
-                });
+            //     balanceSubscription.current = await api.basic.subscribe({ balance: 1 });
+            //     balanceSubscription.current.subscribe((response: any) => {
+            //         if (response.balance) setBalance({ value: response.balance.balance, currency: response.balance.currency });
+            //     });
 
-                openContractsSubscription.current = await api.basic.subscribe({ proposal_open_contract: 1 });
-                openContractsSubscription.current.subscribe(stableHandleContractUpdate);
+            //     openContractsSubscription.current = await api.basic.subscribe({ proposal_open_contract: 1 });
+            //     openContractsSubscription.current.subscribe(stableHandleContractUpdate);
 
-                transactionSubscription.current = await api.basic.subscribe({ transaction: 1 });
-                transactionSubscription.current.subscribe(stableHandleTransactionUpdate);
+            //     transactionSubscription.current = await api.basic.subscribe({ transaction: 1 });
+            //     transactionSubscription.current.subscribe(stableHandleTransactionUpdate);
 
-            } catch (e: any) {
-                console.error("Deriv connection failed:", e);
-                toast({ title: "Connection Failed", description: (e as Error).message || "An unknown error occurred.", variant: "destructive" });
-                setIsAuthenticated(false);
-                setConnectionState('disconnected');
-            }
+            // } catch (e: any) {
+            //     console.error("Deriv connection failed:", e);
+            //     toast({ title: "Connection Failed", description: (e as Error).message || "An unknown error occurred.", variant: "destructive" });
+            //     setIsAuthenticated(false);
+            //     setConnectionState('disconnected');
+            // }
         };
 
         connect();
