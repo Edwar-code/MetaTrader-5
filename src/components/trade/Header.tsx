@@ -7,7 +7,11 @@ interface HeaderProps {
 }
 
 export default function Header({ totalProfit }: HeaderProps) {
-  const isLoss = parseFloat(totalProfit.replace(/ /g, '')) < 0;
+  const profitValue = parseFloat(totalProfit.replace(/ /g, ''));
+  const isLoss = profitValue < 0;
+  const isZero = profitValue === 0;
+
+  const profitString = isLoss ? totalProfit : `+${totalProfit}`;
 
   return (
     <header className="shrink-0">
@@ -16,8 +20,8 @@ export default function Header({ totalProfit }: HeaderProps) {
           <Sidebar />
           <div>
             <div className="text-[11px] font-medium text-foreground">Trade</div>
-            <div className={`text-sm font-semibold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
-              {totalProfit} USD
+            <div className={`text-sm font-semibold ${isLoss ? 'text-destructive' : 'text-sky-500'}`}>
+              {profitString} USD
             </div>
           </div>
         </div>

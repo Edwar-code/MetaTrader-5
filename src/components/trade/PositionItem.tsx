@@ -8,15 +8,18 @@ export default function PositionItem({ position }: PositionItemProps) {
   const profitValue = parseFloat(position.profit.replace(/ /g, ''));
   const isLoss = profitValue < 0;
 
+  const profitString = isLoss ? position.profit : `+${position.profit}`;
+  const profitColor = isLoss ? 'text-destructive' : 'text-sky-500';
+
   return (
     <div className="flex items-center justify-between py-[2.1px] px-4">
       <div className="flex-1">
         <div className="flex items-center gap-1 leading-none">
           <span className="text-sm font-bold text-card-foreground">{position.symbol},</span>
-          <span className={`text-sm font-semibold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
+          <span className={`text-sm font-semibold ${profitColor}`}>
             {position.type}
           </span>
-          <span className={`text-sm font-semibold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
+          <span className={`text-sm font-semibold ${profitColor}`}>
             {position.volume}
           </span>
         </div>
@@ -27,8 +30,8 @@ export default function PositionItem({ position }: PositionItemProps) {
         </div>
       </div>
       <div className="text-right">
-        <span className={`text-sm font-bold ${isLoss ? 'text-destructive' : 'text-green-500'}`}>
-          {position.profit}
+        <span className={`text-sm font-bold ${profitColor}`}>
+          {profitString}
         </span>
       </div>
     </div>
