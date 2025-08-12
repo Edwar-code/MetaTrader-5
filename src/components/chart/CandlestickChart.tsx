@@ -39,8 +39,8 @@ const Candlestick = (props: any) => {
 };
 
 export default function CandlestickChart() {
-  const yMin = Math.min(...data.map(d => d.low)) - 0.5;
-  const yMax = Math.max(...data.map(d => d.high)) + 0.5;
+  const yMin = Math.min(...data.map(d => d.low)) - 2;
+  const yMax = Math.max(...data.map(d => d.high)) + 2;
   const yDomain: [number, number] = [yMin, yMax];
   
   const interval = 0.45;
