@@ -59,7 +59,7 @@ export default function CandlestickChart() {
         data={data}
         margin={{
           top: 20,
-          right: 20,
+          right: 0,
           left: -10,
           bottom: 0,
         }}
@@ -71,7 +71,7 @@ export default function CandlestickChart() {
           orientation="right"
           axisLine={false}
           tickLine={false}
-          tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+          tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }}
           tickFormatter={(value) => (typeof value === 'number' ? value.toFixed(2) : value)}
           yAxisId="left"
         />
