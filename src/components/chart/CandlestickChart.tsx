@@ -18,32 +18,25 @@ const data = [
 ];
 
 const Candlestick = (props: any) => {
-  const { x, y, width, height, open, close, high, low } = props;
+  const { x, y, width, height, open, close, high, low, fill } = props;
   const isBullish = close >= open;
-  const fill = isBullish ? '#00b179' : '#ff4040';
 
-  const bodyHeight = Math.abs(y - (y + height));
-  const bodyY = isBullish ? y + height : y;
-
-  const highWickY = y - (open > close ? (high - open) / (high-low) * height : (high - close) / (high-low) * height)
-  const lowWickY = y + height;
-
-
-  const yRatio = height / (high-low)
-  const bodyAbsHeight = Math.abs(open - close) * yRatio
-  const bodyStart = isBullish ? y + ((high - close) * yRatio) : y + ((high - open) * yRatio);
+  const yRatio = height / (high - low);
+  const bodyHeight = Math.abs(open - close) * yRatio;
+  const bodyY = isBullish
+    ? y + (high - close) * yRatio
+    : y + (high - open) * yRatio;
 
   return (
-    <g stroke={fill} fill={fill} strokeWidth="1">
+    <g stroke={isBullish ? '#00b179' : '#ff4040'} fill={isBullish ? '#00b179' : '#ff4040'} strokeWidth="1">
       {/* Wick */}
       <line x1={x + width / 2} y1={y} x2={x + width / 2} y2={y + height} strokeWidth="1" />
       
       {/* Body */}
-      <rect x={x} y={bodyStart} width={width} height={bodyAbsHeight} />
+      <rect x={x} y={bodyY} width={width} height={bodyHeight} />
     </g>
   );
 };
-
 
 export default function CandlestickChart() {
   const yDomain: [number, number] = [
@@ -55,7 +48,7 @@ export default function CandlestickChart() {
     <ResponsiveContainer width="100%" height="100%">
        <BarChart
         barGap={4}
-        barCategoryGap="30%"
+        barCategoryGap="40%"
         data={data}
         margin={{
           top: 20,
@@ -65,7 +58,7 @@ export default function CandlestickChart() {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-        <XAxis dataKey="time" tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+        <XAxis dataKey="time" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
         <YAxis
           domain={yDomain}
           orientation="right"
@@ -85,10 +78,10 @@ export default function CandlestickChart() {
           formatter={(value: any, name: any, props: any) => {
             if (name === 'close') {
                return [
-                  `O: ${props.payload.open}`,
-                  `H: ${props.payload.high}`,
-                  `L: ${props.payload.low}`,
-                  `C: ${props.payload.close}`,
+                  `O: ${props.payload.open.toFixed(2)}`,
+                  `H: ${props.payload.high.toFixed(2)}`,
+                  `L: ${props.payload.low.toFixed(2)}`,
+                  `C: ${props.payload.close.toFixed(2)}`,
                 ];
             }
             return null;

@@ -31,11 +31,11 @@ export default function ChartPage() {
         {/* SELL/BUY Section with Lots Feature - EXACT REPLICA */}
         <div className="flex">
           {/* SELL Section - Exact Red */}
-          <div className="bg-red-500 text-white flex-grow-[0.3] py-1 flex flex-col cursor-pointer relative px-2">
-            <div className="font-normal opacity-90 text-left text-[11px]">SELL</div>
+          <div className="bg-red-500 text-white flex-grow-[0.3] flex flex-col cursor-pointer relative px-2">
+            <div className="font-normal opacity-90 text-left text-[10px]">SELL</div>
             <div className="text-center">
-              <span className="text-xl font-bold">3346</span>
-              <span className="text-lg font-bold">.12</span>
+              <span className="text-lg font-bold">3346</span>
+              <span className="text-base font-bold">.12</span>
             </div>
           </div>
 
@@ -48,7 +48,7 @@ export default function ChartPage() {
               </div>
 
               {/* Lots Number */}
-              <span className="text-base font-medium text-gray-800 min-w-[18px] text-center">10</span>
+              <span className="text-sm font-normal text-gray-800 min-w-[18px] text-center">10</span>
 
               {/* Up Arrow - Exact CSS Triangle */}
               <div className="cursor-pointer p-1">
@@ -58,11 +58,11 @@ export default function ChartPage() {
           </div>
 
           {/* BUY Section - Exact Blue */}
-          <div className="bg-blue-600 text-white flex-grow-[0.3] py-1 flex flex-col cursor-pointer relative px-2">
-            <div className="font-normal opacity-90 text-left text-[11px]">BUY</div>
+          <div className="bg-blue-600 text-white flex-grow-[0.3] flex flex-col cursor-pointer relative px-2">
+            <div className="font-normal opacity-90 text-left text-[10px]">BUY</div>
             <div className="text-center">
-              <span className="text-xl font-bold">3346</span>
-              <span className="text-lg font-bold">.32</span>
+              <span className="text-lg font-bold">3346</span>
+              <span className="text-base font-bold">.32</span>
             </div>
           </div>
         </div>
