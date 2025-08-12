@@ -18,29 +18,42 @@ const data = [
 ];
 
 const Candlestick = (props: any) => {
-  const { x, y, width, height, low, high, open, close } = props;
-
+  const { x, y, width, height, open, close, high, low } = props;
   const isBullish = close >= open;
   const fill = isBullish ? '#00b179' : '#ff4040';
-  const wickStroke = '#a7a7a7';
+  
+  // recharts provides the y and height for the bar based on the `dataKey`.
+  // We need to calculate the body and wick positions relative to these values.
+  const yAxisDomain: [number, number] = props.yAxis.domain;
+  const yRange = yAxisDomain[1] - yAxisDomain[0];
+  const pixelsPerUnit = props.yAxis.height / yRange;
 
-  const bodyY = isBullish ? y + height : y;
-  const bodyHeight = height;
+  const bodyTop = y + (Math.max(open, close) - yAxisDomain[1]) * pixelsPerUnit;
+  const bodyBottom = y + (Math.min(open, close) - yAxisDomain[1]) * pixelsPerUnit;
+  const bodyHeight = Math.abs(bodyTop - bodyBottom);
+  const bodyY = Math.min(bodyTop, bodyBottom);
+
+  const highY = y + (high - yAxisDomain[1]) * pixelsPerUnit;
+  const lowY = y + (low - yAxisDomain[1]) * pixelsPerUnit;
 
   return (
-    <g stroke={wickStroke} strokeWidth="1">
+    <g stroke={fill} fill={fill} strokeWidth="1">
       {/* Wick */}
-      <path d={`M ${x + width / 2} ${y} L ${x + width / 2} ${y - (high - Math.max(open, close))}`} />
-      <path d={`M ${x + width / 2} ${y + height} L ${x + width / 2} ${y + height + (Math.min(open, close) - low)}`} />
+      <line x1={x + width / 2} y1={highY} x2={x + width / 2} y2={lowY} />
       
       {/* Body */}
-      <rect x={x} y={bodyY} width={width} height={bodyHeight} fill={fill} />
+      <rect x={x} y={bodyY} width={width} height={bodyHeight} />
     </g>
   );
 };
 
 
 export default function CandlestickChart() {
+  const yDomain: [number, number] = [
+    Math.min(...data.map(d => d.low)) - 2,
+    Math.max(...data.map(d => d.high)) + 2
+  ];
+
   return (
     <ResponsiveContainer width="100%" height="100%">
        <BarChart
@@ -57,7 +70,7 @@ export default function CandlestickChart() {
         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
         <XAxis dataKey="time" tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
         <YAxis
-          domain={['dataMin - 1', 'dataMax + 1']}
+          domain={yDomain}
           orientation="right"
           axisLine={false}
           tickLine={false}
@@ -65,20 +78,24 @@ export default function CandlestickChart() {
           tickFormatter={(value) => (typeof value === 'number' ? value.toFixed(2) : value)}
         />
         <Tooltip
+          cursor={{ fill: 'hsla(var(--muted-foreground), 0.1)' }}
           contentStyle={{
             backgroundColor: 'hsl(var(--background))',
             borderColor: 'hsl(var(--border))',
           }}
           labelStyle={{ color: 'hsl(var(--foreground))' }}
           formatter={(value: any, name: any, props: any) => {
-            const { open, high, low, close } = props.payload;
-            return [
-              `Open: ${open}`,
-              `High: ${high}`,
-              `Low: ${low}`,
-              `Close: ${close}`,
-            ].join('\n');
+            if (name === 'value') {
+               return [
+                  `O: ${props.payload.open}`,
+                  `H: ${props.payload.high}`,
+                  `L: ${props.payload.low}`,
+                  `C: ${props.payload.close}`,
+                ];
+            }
+            return null;
           }}
+          itemSorter={() => 1}
         />
         <Bar dataKey="close" shape={<Candlestick />}>
             {data.map((entry, index) => (
