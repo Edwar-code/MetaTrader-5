@@ -1,12 +1,9 @@
-// src/components/chart/ChartPage.tsx - CORRECTED VERSION
+// src/components/chart/ChartPage.tsx - FINAL VERSION
 
 'use client';
 
-// =========================================================================================
-// 1. IMPORT the correct, upgraded CandlestickChart component
-// =========================================================================================
-import CandlestickChart from './CandlestickChart';
-// =========================================================================================
+// 1. We now import our new, high-performance chart
+import { RealtimeTradingViewChart } from './RealtimeTradingViewChart';
 
 import BottomNav from '../trade/BottomNav';
 import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
@@ -16,7 +13,7 @@ export default function ChartPage() {
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       <div className="h-screen bg-white flex flex-col">
-        {/* Top Navigation - This stays exactly the same */}
+        {/* Top Navigation - Stays the same */}
         <div className="flex items-center justify-between px-3 py-2.5 bg-white border-b border-gray-300 z-20">
           <div className="flex items-center">
             <Sidebar />
@@ -31,7 +28,7 @@ export default function ChartPage() {
         </div>
 
         <div className="relative flex-1">
-          {/* SELL/BUY Section - This stays exactly the same */}
+          {/* SELL/BUY Section - Stays the same */}
           <div className="flex z-10 relative">
             <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
               <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
@@ -61,7 +58,7 @@ export default function ChartPage() {
           </div>
 
           {/* Chart Area */}
-          <div className="absolute inset-0 bg-gray-50 flex items-center justify-center pb-[2.35rem]">
+          <div className="absolute inset-0 bg-white flex items-center justify-center pb-[2.35rem]">
             <div className="absolute top-12 left-2 z-10 text-gray-600">
               <div className="text-[13px] font-medium text-foreground">
                 <span className="text-primary">XAUUSD</span>, <span className="font-normal">M1</span>
@@ -69,11 +66,8 @@ export default function ChartPage() {
               <div className="text-[11px] text-muted-foreground">Gold Spot</div>
             </div>
             
-            {/* =================================================================== */}
-            {/* 2. Use the correct CandlestickChart component */}
-            {/* =================================================================== */}
-            <CandlestickChart />
-            {/* =================================================================== */}
+            {/* 2. We use our NEW high-performance chart component here */}
+            <RealtimeTradingViewChart />
             
           </div>
         </div>
