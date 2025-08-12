@@ -1,7 +1,8 @@
+
 'use client';
 
 import React, { useEffect } from 'react';
-import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, ReferenceLabel } from 'recharts';
+import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, Label } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -109,7 +110,6 @@ MarkerDot.displayName = 'MarkerDot';
 
 const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers?: ChartMarker[] }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
-    const lastDigit = lastTick ? String(lastTick.quote).slice(-1) : '';
 
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -124,21 +124,20 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
             <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} />
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
             <Tooltip content={<CustomTooltip />} />
-            <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
+            <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false}>
+              {lastTick && (
+                  <Label
+                      value={String(lastTick.quote).slice(-1)}
+                      position="right"
+                      offset={10}
+                      fontSize="14"
+                      fontWeight="bold"
+                      fill="hsl(var(--foreground))"
+                      style={{ pointerEvents: 'none' }}
+                  />
+              )}
+            </Area>
             {markers?.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
-            {lastTick && (
-                <ReferenceLabel
-                    x={lastTick.epoch}
-                    y={lastTick.quote}
-                    value={lastDigit}
-                    position="right"
-                    fontSize="14"
-                    fontWeight="bold"
-                    fill="hsl(var(--foreground))"
-                    stroke="hsl(var(--background))"
-                    strokeWidth={2}
-                />
-            )}
             </AreaChart>
         </ResponsiveContainer>
     );
@@ -273,3 +272,5 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
         </Card>
     );
 }
+
+    
