@@ -168,16 +168,17 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
     // Local state for chart data, initialized with staticData
     const [ticks, setTicks] = useState<Tick[]>([]);
     const [candles, setCandles] = useState<Candle[]>(staticData);
-    const [chartError, setChartError] = useState<string | null>(null);
+    const [chartError, setChartError] = useState<string | null>(liveChartError);
 
     // This effect now primarily manages errors from the live context
     useEffect(() => {
-        if (liveChartError) {
-            setChartError(liveChartError);
-        } else {
-            setChartError(null);
-        }
-    }, [liveChartError]);
+      // Only show an error if we don't have static data to display
+      if (liveChartError && staticData.length === 0) {
+        setChartError(liveChartError);
+      } else {
+        setChartError(null);
+      }
+    }, [liveChartError, staticData]);
 
     // This effect handles switching to static data if the connection fails,
     // but primarily we are now driving the chart from static data passed via props.
