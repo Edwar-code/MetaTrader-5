@@ -3,7 +3,6 @@
 
 import BottomNav from '../trade/BottomNav';
 import CandlestickChart from './CandlestickChart';
-import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 
 export default function ChartPage() {
   return (
@@ -21,16 +20,10 @@ export default function ChartPage() {
             </div>
           </div>
 
-          <div className="flex items-center text-sm font-semibold">
-              XAUUSD, M1
-          </div>
+          <div className="flex-1"></div>
 
-          {/* Right side - ALL other elements */}
+          {/* Right side - Empty for now */}
           <div className="flex items-center space-x-4">
-             <CrosshairIcon />
-             <FunctionIcon />
-             <ClockIcon />
-             <ShapesIcon />
           </div>
         </div>
 
