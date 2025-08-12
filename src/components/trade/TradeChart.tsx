@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, Label, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -163,12 +163,78 @@ LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 
 export function TradeChart({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, staticData = [] }: TradeChartProps) {
-    const { connectionState, isAuthenticated, chartError: liveChartError } = useDerivState();
+    const { chartError: liveChartError } = useDerivState();
     
     // Local state for chart data, initialized with staticData
     const [ticks, setTicks] = useState<Tick[]>([]);
     const [candles, setCandles] = useState<Candle[]>(staticData);
-    const [chartError, setChartError] = useState<string | null>(liveChartError);
+    const [chartError, setChartError] = useState<string | null>(null);
+
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Effect for simulating live data
+    useEffect(() => {
+      // Clear any existing interval
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      
+      const isTick = chartInterval === 'tick';
+      const updateInterval = isTick ? 1000 : (intervalMap[chartInterval] || 60) * 1000;
+
+      intervalRef.current = setInterval(() => {
+        if (isTick) {
+          setTicks(prevTicks => {
+            const lastTick = prevTicks.length > 0 ? prevTicks[prevTicks.length - 1] : { epoch: Math.floor(Date.now() / 1000), quote: 2331.80 };
+            const change = (Math.random() - 0.5) * 0.1;
+            const newTick: Tick = {
+              epoch: Math.floor(Date.now() / 1000),
+              quote: lastTick.quote + change,
+              symbol: asset,
+            };
+            // Keep the last 200 ticks
+            return [...prevTicks, newTick].slice(-200);
+          });
+        } else {
+          setCandles(prevCandles => {
+            if (prevCandles.length === 0) return [];
+            
+            const lastCandle = prevCandles[prevCandles.length - 1];
+            const change = (Math.random() - 0.48) * (lastCandle.high - lastCandle.low); // Bias slightly upwards
+            let newClose = lastCandle.close + change;
+
+            const timeSinceLastCandle = (Date.now() / 1000) - lastCandle.epoch;
+            
+            // If it's time for a new candle
+            if (timeSinceLastCandle > (intervalMap[chartInterval] || 60)) {
+                const newCandle: Candle = {
+                    epoch: lastCandle.epoch + (intervalMap[chartInterval] || 60),
+                    open: lastCandle.close,
+                    close: newClose,
+                    high: Math.max(lastCandle.close, newClose),
+                    low: Math.min(lastCandle.close, newClose),
+                };
+                return [...prevCandles, newCandle].slice(-100);
+            } else { // Otherwise, update the current candle
+                const updatedCandles = [...prevCandles];
+                const currentCandle = updatedCandles[updatedCandles.length - 1];
+                currentCandle.close = newClose;
+                currentCandle.high = Math.max(currentCandle.high, newClose);
+                currentCandle.low = Math.min(currentCandle.low, newClose);
+                return updatedCandles;
+            }
+          });
+        }
+      }, updateInterval);
+
+      // Cleanup on unmount or when dependencies change
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+      };
+    }, [chartInterval, asset]);
+
 
     // This effect now primarily manages errors from the live context
     useEffect(() => {
@@ -179,15 +245,6 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
         setChartError(null);
       }
     }, [liveChartError, staticData]);
-
-    // This effect handles switching to static data if the connection fails,
-    // but primarily we are now driving the chart from static data passed via props.
-    useEffect(() => {
-        if (connectionState !== 'connected' && staticData.length > 0) {
-            setCandles(staticData);
-            setTicks([]); // Clear ticks if we're using static candle data
-        }
-    }, [connectionState, staticData]);
 
 
     const { lastPrice, priceChange, isUp } = React.useMemo(() => {
@@ -251,11 +308,15 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                     <Tabs value={chartInterval} onValueChange={(val) => {
                         if (val === 'tick') {
                           setChartType('area');
-                          setCandles([]);
-                          // In a real scenario, you might fetch tick data here.
-                          // For now, we'll just switch and it might show 'no data' if no live ticks.
+                          setCandles([]); // Clear candles
+                           // Seed with some initial ticks if empty
+                          if(ticks.length === 0) {
+                            setTicks(staticData.slice(-20).map(c => ({ epoch: c.epoch, quote: c.close, symbol: asset })));
+                          }
                         } else {
+                          setChartType('candle');
                           setCandles(staticData); // reload static candles
+                          setTicks([]); // Clear ticks
                         }
                         setChartInterval(val);
                     }} className="w-auto">
@@ -271,7 +332,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
             </CardHeader>
             <CardContent className="flex-1 min-h-0 w-full relative">
                 <div className="h-full w-full">
-                    {chartError ? (
+                    {chartError && staticData.length === 0 ? (
                         <div className="flex items-center justify-center h-full text-destructive flex-col gap-2 p-4 text-center">
                             <AlertTriangle className="h-8 w-8" />
                             <p className="font-semibold">Chart Unavailable</p>
@@ -292,3 +353,5 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
         </Card>
     );
 }
+
+    
