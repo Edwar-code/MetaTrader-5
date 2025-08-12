@@ -72,7 +72,7 @@ export default function ChartPage() {
           <div className="absolute inset-0 bg-gray-50 flex items-center justify-center">
             <div className="absolute top-[52px] left-2 z-10 text-gray-600">
               <div className="text-[13px] font-medium text-foreground">
-                <span className="text-primary">XAUUSD</span>, M1
+                <span className="text-primary">XAUUSD</span>, <span className="font-normal">M1</span>
               </div>
               <div className="text-[11px] text-muted-foreground">Gold Spot</div>
             </div>
