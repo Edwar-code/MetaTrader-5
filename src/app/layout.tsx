@@ -1,21 +1,17 @@
-// src/app/layout.tsx - CORRECTED PATHS
+// src/app/layout.tsx - CORRECTED
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
-// CORRECTED PATH: Assumes theme-provider is in 'src/components'
-import { ThemeProvider } from "@/components/theme-provider"; 
+import { ThemeProvider } from "@/components/theme-provider"; // Now this path is correct
 import { Toaster } from "@/components/ui/toaster";
-
-// CORRECTED PATH: Assumes DerivContext is in 'src/context'
-import { DerivProvider } from "@/context/DerivContext"; 
+import { DerivProvider } from "@/context/DerivContext"; // Now this path is correct
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Deriv Trading App",
-  description: "Advanced trading terminal",
+  title: "Deriv Trading Terminal",
+  description: "Built with Deriv API",
 };
 
 export default function RootLayout({
