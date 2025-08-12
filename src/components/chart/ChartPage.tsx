@@ -32,9 +32,9 @@ export default function ChartPage() {
         <div className="flex">
           {/* SELL Section - Exact Red */}
           <div className="bg-red-500 text-white flex-1 py-2 flex flex-col cursor-pointer relative sm:py-[3px] px-[17px]">
-            <div className="font-normal opacity-90 text-left text-[14px] my-[0px]">SELL</div>
+            <div className="font-normal opacity-90 text-left text-[11px] my-[0px]">SELL</div>
             <div className="text-center">
-              <span className="text-2xl font-bold sm:text-[18px]">3346</span>
+              <span className="text-2xl font-bold sm:text-[19px]">3346</span>
               <span className="text-lg font-bold sm:text-[24px]">.12</span>
             </div>
           </div>
@@ -48,7 +48,7 @@ export default function ChartPage() {
               </div>
 
               {/* Lots Number */}
-              <span className="text-lg font-medium text-gray-800 mx-3 min-w-[20px] text-center">10</span>
+              <span className="text-lg font-medium text-gray-800 mx-3 min-w-[18px] text-center">10</span>
 
               {/* Up Arrow - Exact CSS Triangle */}
               <div className="cursor-pointer p-1 sm:mx-[20px] mx-[29px]">
@@ -59,7 +59,7 @@ export default function ChartPage() {
 
           {/* BUY Section - Exact Blue */}
           <div className="bg-blue-600 text-white flex-1 py-2 flex flex-col cursor-pointer relative sm:py-[3px] px-[17px]">
-            <div className="font-normal opacity-90 text-left text-[14px] my-[0px]">BUY</div>
+            <div className="font-normal opacity-90 text-left text-[11px] my-[0px]">BUY</div>
             <div className="text-center">
               <span className="text-2xl font-bold sm:text-[19px]">3346</span>
               <span className="text-lg font-bold sm:text-[24px]">.32</span>
