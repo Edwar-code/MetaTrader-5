@@ -3,6 +3,7 @@
 
 import BottomNav from '../trade/BottomNav';
 import CandlestickChart from './CandlestickChart';
+import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 
 export default function ChartPage() {
   return (
@@ -11,13 +12,17 @@ export default function ChartPage() {
         {/* Top Navigation - EXACT REPLICA */}
         <div className="flex items-center justify-between px-3 py-2.5 bg-white border-b border-gray-300">
           {/* Left side - ONLY hamburger menu */}
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             {/* Hamburger Menu - Exact 3 lines */}
             <div className="w-5 h-5 flex flex-col justify-center items-center cursor-pointer">
               <div className="w-4 h-0.5 bg-gray-700 mb-0.5"></div>
               <div className="w-4 h-0.5 bg-gray-700 mb-0.5"></div>
               <div className="w-4 h-0.5 bg-gray-700"></div>
             </div>
+            <CrosshairIcon />
+            <FunctionIcon />
+            <ClockIcon />
+            <ShapesIcon />
           </div>
 
           <div className="flex-1"></div>
