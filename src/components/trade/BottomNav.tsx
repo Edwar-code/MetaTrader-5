@@ -1,5 +1,5 @@
-import { AreaChart, ArrowLeftRight, History, MessageSquare } from 'lucide-react';
-import { TradeIcon } from './icons';
+import { ArrowUpDown, History } from 'lucide-react';
+import { TradeIcon, ChartIcon, MessagesIcon } from './icons';
 
 const NavItem = ({ icon, label, isActive = false }: { icon: React.ReactNode; label: string; isActive?: boolean }) => {
   return (
@@ -19,11 +19,11 @@ export default function BottomNav() {
   return (
     <footer className="absolute bottom-0 left-0 right-0 border-t bg-card">
       <div className="flex items-center justify-around px-2 py-1">
-        <NavItem icon={<ArrowLeftRight size={20} />} label="Quotes" />
-        <NavItem icon={<AreaChart size={20} />} label="Charts" />
+        <NavItem icon={<ArrowUpDown size={20} />} label="Quotes" />
+        <NavItem icon={<ChartIcon />} label="Charts" />
         <NavItem icon={<TradeIcon />} label="Trade" isActive />
         <NavItem icon={<History size={20} />} label="History" />
-        <NavItem icon={<MessageSquare size={20} />} label="Messages" />
+        <NavItem icon={<MessagesIcon />} label="Messages" />
       </div>
     </footer>
   );

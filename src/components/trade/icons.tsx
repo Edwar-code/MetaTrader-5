@@ -1,9 +1,34 @@
 export const TradeIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="h-6 w-6">
-      <path d="M12 3L21 7L12 11L3 7L12 3Z" fill="currentColor"/>
-      <path d="M3 12L12 16L21 12" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-      <path d="M3 17L12 21L21 17" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-    </svg>
+  <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4.66602 16.333L9.33268 11.6663L13.9993 16.333L23.3327 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="4.66602" cy="16.333" r="2.33333" fill="currentColor"/>
+    <circle cx="9.33268" cy="11.666" r="2.33333" fill="currentColor"/>
+    <circle cx="13.9993" cy="16.333" r="2.33333" fill="currentColor"/>
+    <circle cx="23.3327" cy="2" r="2.33333" transform="translate(0 5)" fill="currentColor"/>
+  </svg>
+);
+
+export const ChartIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9 4V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9 17V20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <rect x="7" y="7" width="4" height="10" rx="1" fill="currentColor"/>
+    <path d="M17 8V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M17 14V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <rect x="15" y="10" width="4" height="4" rx="1" fill="currentColor"/>
+  </svg>
+);
+
+export const MessagesIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 14H8.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M17 10H17.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 14H12.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M13 10H13.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9 10H9.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M5.5 18.5L8.225 16.3C8.42857 16.1333 8.68117 16.0353 8.945 16H15C18.3137 16 21 13.3137 21 10C21 6.68629 18.3137 4 15 4H7C3.68629 4 1 6.68629 1 10C1 12.3328 2.29267 14.3333 4.055 15.355" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M18.5 19.5L16.5 17.5H15C14.0772 17.5 13.2081 17.1189 12.5534 16.4466C13.8866 14.7433 14.75 12.5186 14.75 10.125C14.75 6.5414 11.9586 3.75 8.375 3.75" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
 );
 
 export const SortIcon = () => (
