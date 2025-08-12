@@ -1,8 +1,8 @@
 
 'use client';
 
-import React, { useEffect } from 'react';
-import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, Label } from 'recharts';
+import React, { useEffect, useState } from 'react';
+import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, Label, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -24,6 +24,7 @@ interface TradeChartProps {
     setChartInterval: (interval: string) => void;
     chartType: string;
     setChartType: (type: string) => void;
+    staticData?: Candle[];
 }
 
 const intervalMap: { [key: string]: number } = {
@@ -161,20 +162,32 @@ const LiveCandlestickChart = ({ data, yAxisDomain, markers }: { data: (Candle & 
 LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 
-export function TradeChart({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType }: TradeChartProps) {
-    const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, isAuthenticated, ticks, chartError } = useDerivState();
-    const { candles } = useDerivChart();
+export function TradeChart({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, staticData = [] }: TradeChartProps) {
+    const { connectionState, isAuthenticated, chartError: liveChartError } = useDerivState();
+    
+    // Local state for chart data, initialized with staticData
+    const [ticks, setTicks] = useState<Tick[]>([]);
+    const [candles, setCandles] = useState<Candle[]>(staticData);
+    const [chartError, setChartError] = useState<string | null>(null);
 
+    // This effect now primarily manages errors from the live context
     useEffect(() => {
-        if ((isAuthenticated || connectionState === 'connected') && asset) {
-            if (chartInterval === 'tick') {
-                subscribeToTicks(asset);
-            } else {
-                subscribeToCandles(asset, intervalMap[chartInterval]);
-            }
+        if (liveChartError) {
+            setChartError(liveChartError);
+        } else {
+            setChartError(null);
         }
-        return () => { if (isAuthenticated) unsubscribeFromChart(); };
-    }, [asset, chartInterval, connectionState, isAuthenticated, subscribeToTicks, subscribeToCandles, unsubscribeFromChart]);
+    }, [liveChartError]);
+
+    // This effect handles switching to static data if the connection fails,
+    // but primarily we are now driving the chart from static data passed via props.
+    useEffect(() => {
+        if (connectionState !== 'connected' && staticData.length > 0) {
+            setCandles(staticData);
+            setTicks([]); // Clear ticks if we're using static candle data
+        }
+    }, [connectionState, staticData]);
+
 
     const { lastPrice, priceChange, isUp } = React.useMemo(() => {
         const data = chartInterval === 'tick' ? ticks : candles;
@@ -230,19 +243,25 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                 <div className="flex flex-wrap gap-2">
                     <Tabs value={chartType} onValueChange={setChartType} className="w-auto">
                         <TabsList>
-                            <TabsTrigger value="area">Area</TabsTrigger>
+                            <TabsTrigger value="area" disabled={chartType !== 'area' && chartInterval !== 'tick'}>Area</TabsTrigger>
                             <TabsTrigger value="candle" disabled={isTickChart}>Candle</TabsTrigger>
                         </TabsList>
                     </Tabs>
                     <Tabs value={chartInterval} onValueChange={(val) => {
-                        if (val === 'tick') setChartType('area');
+                        if (val === 'tick') {
+                          setChartType('area');
+                          setCandles([]);
+                          // In a real scenario, you might fetch tick data here.
+                          // For now, we'll just switch and it might show 'no data' if no live ticks.
+                        } else {
+                          setCandles(staticData); // reload static candles
+                        }
                         setChartInterval(val);
                     }} className="w-auto">
                         <TabsList>
                             <TabsTrigger value="tick">Tick</TabsTrigger>
                             <TabsTrigger value="1m">1m</TabsTrigger>
                             <TabsTrigger value="5m">5m</TabsTrigger>
-                            <TabsTrigger value="15m">15m</TabsTrigger>
                             <TabsTrigger value="1h">1h</TabsTrigger>
                             <TabsTrigger value="1d">1d</TabsTrigger>
                         </TabsList>
@@ -263,7 +282,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                             <p className="z-10">{ 'Loading chart data...' }</p>
                         </div>
                     ) : (
-                        (chartType === 'area' || isTickChart)
+                        (chartType === 'area' || isTickChart) && ticks.length > 0
                         ? <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} />
                         : <LiveCandlestickChart data={chartDataForCandle} yAxisDomain={yAxisDomain} markers={markers} />
                     )}
@@ -272,5 +291,3 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
         </Card>
     );
 }
-
-    

@@ -6,9 +6,10 @@ import BottomNav from '../trade/BottomNav';
 import { TradeChart } from '../trade/TradeChart';
 import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 import { Sidebar } from '../trade/Sidebar';
+import { sampleCandleData } from '@/lib/data';
 
 export default function ChartPage() {
-  const [chartInterval, setChartInterval] = useState('1m');
+  const [chartInterval, setChartInterval] = useState('1h');
   const [chartType, setChartType] = useState('candle');
   const asset = "frxXAUUSD"; // Deriv symbol for Gold/USD
   const assetLabel = "Gold/USD";
@@ -83,6 +84,7 @@ export default function ChartPage() {
                 setChartInterval={setChartInterval}
                 chartType={chartType}
                 setChartType={setChartType}
+                staticData={sampleCandleData}
              />
           </div>
         </div>
