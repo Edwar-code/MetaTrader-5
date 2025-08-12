@@ -12,22 +12,23 @@ export const ChartIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M9 4V7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M9 17V20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <rect x="7" y="7" width="4" height="10" rx="1" fill="currentColor"/>
+    <rect x="7" y="7" width="4" height="10" rx="1" stroke="currentColor" strokeWidth="2"/>
     <path d="M17 8V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M17 14V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <rect x="15" y="10" width="4" height="4" rx="1" fill="currentColor"/>
+    <rect x="15" y="10" width="4" height="4" rx="1" stroke="currentColor" strokeWidth="2"/>
   </svg>
 );
 
 export const MessagesIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M8 14H8.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M17 10H17.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M12 14H12.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M13 10H13.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M9 10H9.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M5.5 18.5L8.225 16.3C8.42857 16.1333 8.68117 16.0353 8.945 16H15C18.3137 16 21 13.3137 21 10C21 6.68629 18.3137 4 15 4H7C3.68629 4 1 6.68629 1 10C1 12.3328 2.29267 14.3333 4.055 15.355" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M18.5 19.5L16.5 17.5H15C14.0772 17.5 13.2081 17.1189 12.5534 16.4466C13.8866 14.7433 14.75 12.5186 14.75 10.125C14.75 6.5414 11.9586 3.75 8.375 3.75" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M16 14H16.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9 9.5H9.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M13 9.5H13.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M17 9.5H17.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M21 12.5C21 16.366 17.866 19.5 14 19.5H8.5L4 22V17.5C2.34315 15.8431 2.34315 13.1569 4 11.5L4.5 11" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M4.5 5C4.5 3.34315 5.84315 2 7.5 2H15.5C18.5376 2 21 4.46243 21 7.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
