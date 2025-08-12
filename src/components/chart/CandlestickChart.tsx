@@ -54,8 +54,8 @@ export default function CandlestickChart() {
   return (
     <ResponsiveContainer width="100%" height="100%">
        <BarChart
-        barGap={2}
-        barCategoryGap="20%"
+        barGap={4}
+        barCategoryGap="30%"
         data={data}
         margin={{
           top: 20,
