@@ -51,10 +51,11 @@ export default function CandlestickChart() {
   const yMax = Math.max(...data.map(d => d.high)) + 2;
   const yDomain: [number, number] = [yMin, yMax];
   
-  const interval = 1.8;
   const yTicks = [];
-  for (let i = Math.floor(yMin / interval) * interval; i <= yMax; i += interval) {
-      yTicks.push(i);
+  const numberOfHorizontalGrids = 7;
+  const yInterval = (yMax - yMin) / (numberOfHorizontalGrids - 1);
+  for (let i = 0; i < numberOfHorizontalGrids; i++) {
+    yTicks.push(yMin + i * yInterval);
   }
 
   return (
@@ -76,7 +77,8 @@ export default function CandlestickChart() {
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
           axisLine={{ stroke: 'hsl(var(--border))' }}
           tickLine={{ stroke: 'hsl(var(--border))' }}
-          tickCount={4}
+          tickCount={7}
+          interval="preserveStart"
         />
         <YAxis
           domain={yDomain}
