@@ -51,7 +51,7 @@ export default function CandlestickChart() {
   const yMax = Math.max(...data.map(d => d.high)) + 2;
   const yDomain: [number, number] = [yMin, yMax];
   
-  const interval = 0.9;
+  const interval = 1.8;
   const yTicks = [];
   for (let i = Math.floor(yMin / interval) * interval; i <= yMax; i += interval) {
       yTicks.push(i);
