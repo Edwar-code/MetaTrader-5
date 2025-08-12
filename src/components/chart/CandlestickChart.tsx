@@ -76,7 +76,7 @@ export default function CandlestickChart() {
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
           axisLine={{ stroke: 'hsl(var(--border))' }}
           tickLine={{ stroke: 'hsl(var(--border))' }}
-          interval={3}
+          tickCount={4}
         />
         <YAxis
           domain={yDomain}
