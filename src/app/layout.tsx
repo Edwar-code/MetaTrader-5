@@ -1,13 +1,15 @@
-// src/app/layout.tsx - UPDATED
+// src/app/layout.tsx - CORRECTED PATHS
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+
+// CORRECTED PATH: Assumes theme-provider is in 'src/components'
+import { ThemeProvider } from "@/components/theme-provider"; 
 import { Toaster } from "@/components/ui/toaster";
 
-// 1. IMPORT YOUR DERIV PROVIDER
-import { DerivProvider } from "@/context/DerivContext";
+// CORRECTED PATH: Assumes DerivContext is in 'src/context'
+import { DerivProvider } from "@/context/DerivContext"; 
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +32,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* 2. WRAP EVERYTHING INSIDE DERIVPROVIDER */}
           <DerivProvider>
             {children}
             <Toaster />

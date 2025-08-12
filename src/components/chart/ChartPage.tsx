@@ -1,18 +1,21 @@
-// src/components/chart/ChartPage.tsx - UPDATED
+// src/components/chart/ChartPage.tsx - CORRECTED PATHS
 
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useDerivState, CompletedTrade, ActiveSymbol } from '@/context/DerivContext';
-import { TradeChart, ChartMarker } from './TradeChart'; // Your chart component
+// CORRECTED PATH: We need to go up two directories to find the 'context' folder
+import { useDerivState, CompletedTrade, ActiveSymbol } from '@/context/DerivContext'; 
+// CORRECTED PATH: Your TradeChart file seems to be in a different folder or has a different name
+import { TradeChart } from '@/components/trade-chart'; // Assuming it is in src/components/trade-chart/index.tsx
 import { formatAssetDisplayName } from '@/lib/utils';
 import BottomNav from '../trade/BottomNav';
 import { Sidebar } from '../trade/Sidebar';
-import { TradePanel } from './TradePanel'; // Our new component for trading
+import { TradePanel } from './TradePanel';
 
+// ... the rest of your ChartPage component remains exactly the same
 export default function ChartPage() {
   const { profitTable, activeSymbols, runningTrades } = useDerivState();
-  const [asset, setAsset] = useState("R_100"); // Default asset
+  const [asset, setAsset] = useState("R_100");
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
 
@@ -21,8 +24,7 @@ export default function ChartPage() {
     return formatAssetDisplayName(displayName);
   }, [asset, activeSymbols]);
 
-  // This logic creates the markers on the chart for your trades
-  const chartMarkers = useMemo((): ChartMarker[] => {
+  const chartMarkers = useMemo(() => {
     const allTrades = [
         ...runningTrades.map(t => ({...t, isRunning: true})),
         ...profitTable.map(t => ({...t, isRunning: false}))
@@ -31,7 +33,7 @@ export default function ChartPage() {
     return allTrades
         .filter(trade => trade.asset === asset && trade.start_time && trade.buy_price)
         .flatMap(trade => {
-            const markers: ChartMarker[] = [{
+            const markers = [{
                 epoch: trade.start_time, price: trade.buy_price, type: 'entry'
             }];
             if (!trade.isRunning && (trade as CompletedTrade).end_time && typeof (trade as CompletedTrade).sell_price === 'number') {
@@ -47,10 +49,7 @@ export default function ChartPage() {
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
-      {/* This main div now uses a grid to lay out the chart and trade panel */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-2 p-2">
-        
-        {/* Main Chart Area */}
         <div className="lg:col-span-3 xl:col-span-4 h-full min-h-0">
             <TradeChart 
                 asset={asset} 
@@ -62,8 +61,6 @@ export default function ChartPage() {
                 setChartType={setChartType}
             />
         </div>
-
-        {/* Trade Execution Panel */}
         <div className="lg:col-span-1 xl:col-span-1 h-full">
             <TradePanel 
               activeSymbols={activeSymbols}

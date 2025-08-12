@@ -1,9 +1,10 @@
-// src/components/chart/TradePanel.tsx - NEW FILE
+// src/components/chart/TradePanel.tsx - CORRECTED PATH
 
 'use client';
 
 import React, { useState } from 'react';
-import { useDerivState, ActiveSymbol } from '@/context/DerivContext';
+// CORRECTED PATH: Go up two directories to find the 'context' folder
+import { useDerivState, ActiveSymbol } from '@/context/DerivContext'; 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 
+// ... the rest of your TradePanel component remains exactly the same
 interface TradePanelProps {
     activeSymbols: ActiveSymbol[];
     asset: string;
@@ -22,7 +24,7 @@ export function TradePanel({ activeSymbols, asset, setAsset }: TradePanelProps) 
     const { buyContract, balance } = useDerivState();
     const [stake, setStake] = useState('10');
     const [duration, setDuration] = useState(5);
-    const [durationUnit, setDurationUnit] = useState('t'); // t for ticks, m for minutes
+    const [durationUnit, setDurationUnit] = useState('t');
     const { toast } = useToast();
 
     const handleBuy = async (contractType: 'CALL' | 'PUT') => {
@@ -39,7 +41,6 @@ export function TradePanel({ activeSymbols, asset, setAsset }: TradePanelProps) 
             });
             toast({ title: "Trade Placed Successfully!", variant: "default" });
         } catch (e: any) {
-            // The context already shows a toast on failure, so we just log here
             console.error("Trade execution failed:", e.message);
         }
     };
@@ -50,7 +51,6 @@ export function TradePanel({ activeSymbols, asset, setAsset }: TradePanelProps) 
                 <CardTitle>Trade Panel</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col gap-4">
-                {/* Asset Selector */}
                 <div>
                     <Label htmlFor="asset-select">Asset</Label>
                     <Select value={asset} onValueChange={setAsset}>
@@ -59,7 +59,7 @@ export function TradePanel({ activeSymbols, asset, setAsset }: TradePanelProps) 
                         </SelectTrigger>
                         <SelectContent>
                             {activeSymbols
-                                .filter(s => s.market === 'synthetic_index') // Filter for synthetics initially
+                                .filter(s => s.market === 'synthetic_index')
                                 .map(symbol => (
                                     <SelectItem key={symbol.symbol} value={symbol.symbol}>
                                         {symbol.display_name}
@@ -68,14 +68,10 @@ export function TradePanel({ activeSymbols, asset, setAsset }: TradePanelProps) 
                         </SelectContent>
                     </Select>
                 </div>
-
-                {/* Stake Input */}
                 <div>
                     <Label htmlFor="stake">Stake ({balance?.currency})</Label>
                     <Input id="stake" type="number" value={stake} onChange={e => setStake(e.target.value)} />
                 </div>
-                
-                {/* Duration Input */}
                 <div className="flex items-end gap-2">
                     <div className="flex-1">
                         <Label htmlFor="duration">Duration</Label>
@@ -92,8 +88,6 @@ export function TradePanel({ activeSymbols, asset, setAsset }: TradePanelProps) 
                         </SelectContent>
                     </Select>
                 </div>
-
-                {/* Buy Buttons */}
                 <div className="grid grid-cols-2 gap-2 mt-4">
                     <Button variant="success" size="lg" onClick={() => handleBuy('CALL')} className="flex flex-col h-auto">
                         <ArrowUp className="h-6 w-6" />
@@ -106,7 +100,6 @@ export function TradePanel({ activeSymbols, asset, setAsset }: TradePanelProps) 
                         <span className="text-xs opacity-70">PUT</span>
                     </Button>
                 </div>
-                
             </CardContent>
         </Card>
     );
