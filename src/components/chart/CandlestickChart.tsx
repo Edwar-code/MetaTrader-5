@@ -51,7 +51,7 @@ export default function CandlestickChart() {
   const yMax = Math.max(...data.map(d => d.high)) + 2;
   const yDomain: [number, number] = [yMin, yMax];
   
-  const interval = 0.45;
+  const interval = 0.9;
   const yTicks = [];
   for (let i = Math.floor(yMin / interval) * interval; i <= yMax; i += interval) {
       yTicks.push(i);
@@ -72,7 +72,7 @@ export default function CandlestickChart() {
           bottom: 20,
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={true} horizontal={true} />
         <XAxis 
           dataKey="time" 
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
