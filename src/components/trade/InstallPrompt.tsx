@@ -60,30 +60,8 @@ export default function InstallPrompt() {
 
   return (
     <div className="p-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Install App</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!isIOS ? (
-            <Button onClick={handleInstallClick}>Add to Home Screen</Button>
-          ) : (
-            <p className="mt-2 text-sm text-muted-foreground">
-              To install this app on your iOS device, tap the share button
-              <span role="img" aria-label="share icon">
-                {' '}
-                ⎋{' '}
-              </span>
-              and then "Add to Home Screen"
-              <span role="img" aria-label="plus icon">
-                {' '}
-                ➕{' '}
-              </span>
-              .
-            </p>
-          )}
-        </CardContent>
-      </Card>
+    
+      
     </div>
   );
 }
