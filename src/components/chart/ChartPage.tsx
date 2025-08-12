@@ -32,9 +32,9 @@ export default function ChartPage() {
           {/* SELL/BUY Section with Lots Feature - EXACT REPLICA */}
           <div className="flex z-10 relative">
             {/* SELL Section - Exact Red */}
-            <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center pl-1.5 pt-2">
-              <div className="font-normal opacity-90 text-left text-[10px] w-full leading-none">SELL</div>
-              <div className="leading-none mb-1">
+            <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
+              <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
+              <div className="leading-none text-center w-full">
                 <span className="text-[13px] font-bold">3346</span>
                 <span className="text-[22px] font-bold">.12</span>
               </div>
@@ -59,9 +59,9 @@ export default function ChartPage() {
             </div>
 
             {/* BUY Section - Exact Blue */}
-            <div className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center pl-1.5 pt-2">
-              <div className="font-normal opacity-90 text-left text-[10px] w-full leading-none">BUY</div>
-              <div className="leading-none mb-1">
+            <div className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
+              <div className="font-normal opacity-90 text-[10px] leading-none">BUY</div>
+              <div className="leading-none text-center w-full">
                 <span className="text-[13px] font-bold">3346</span>
                 <span className="text-[22px] font-bold">.32</span>
               </div>
@@ -69,7 +69,7 @@ export default function ChartPage() {
           </div>
 
           {/* Chart */}
-          <div className="absolute inset-0 top-0 bg-gray-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-gray-50 flex items-center justify-center">
             <CandlestickChart />
           </div>
         </div>
