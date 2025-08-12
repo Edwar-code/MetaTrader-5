@@ -1,62 +1,112 @@
+// src/components/chart/CandlestickChart.tsx - FINAL VERSION
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Cell } from 'recharts';
 
-const data = [
-    { time: '12 Aug 13:40', open: 3350.50, high: 3351.80, low: 3350.20, close: 3351.50 }, // Bullish
-    { time: '12 Aug 13:46', open: 3351.50, high: 3352.00, low: 3349.50, close: 3349.80 }, // Bearish
-    { time: '12 Aug 13:52', open: 3349.80, high: 3350.10, low: 3348.00, close: 3348.20 }, // Bearish
-    { time: '12 Aug 13:58', open: 3348.20, high: 3349.00, low: 3347.50, close: 3348.80 }, // Bullish
-    { time: '12 Aug 14:04', open: 3348.80, high: 3349.20, low: 3348.00, close: 3348.40 }, // Bearish
-    { time: '12 Aug 14:10', open: 3348.40, high: 3348.90, low: 3347.00, close: 3347.20 }, // Bearish
-    { time: '12 Aug 14:16', open: 3347.20, high: 3348.00, low: 3346.50, close: 3347.80 }, // Bullish
-    { time: '12 Aug 14:22', open: 3347.80, high: 3348.10, low: 3347.00, close: 3347.20 }, // Bearish
-    { time: '12 Aug 14:28', open: 3347.20, high: 3347.50, low: 3346.00, close: 3346.30 }, // Bearish
-    { time: '12 Aug 14:34', open: 3346.30, high: 3346.80, low: 3345.50, close: 3345.80 }, // Bearish
-    { time: '12 Aug 14:40', open: 3345.80, high: 3346.00, low: 3344.00, close: 3344.20 }, // Bearish
-    { time: '12 Aug 14:46', open: 3344.20, high: 3345.50, low: 3342.50, close: 3345.00 }, // Bullish
-    { time: '12 Aug 14:52', open: 3345.00, high: 3345.50, low: 3343.00, close: 3343.50 }, // Bearish
-    { time: '12 Aug 14:58', open: 3343.50, high: 3344.00, low: 3342.00, close: 3343.80 }, // Bullish
-    { time: '12 Aug 15:04', open: 3343.80, high: 3344.50, low: 3343.00, close: 3344.20 }, // Bullish
-];
+// ====================================================================================
+// API Key is now set to the example you provided.
+// ====================================================================================
+const TWELVE_DATA_API_KEY = '0c28aa5d1ffe48eba7228111b65adb00';
+// ====================================================================================
 
+// Define a type for our candle data for better code quality
+type CandleData = {
+  time: number; // We'll use UNIX timestamps for time
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+};
+
+// Your custom Candlestick component remains mostly the same,
+// but we adjust it to handle the dynamic data range.
 const Candlestick = (props: any) => {
-  const { x, y, width, height, open, close, high, low } = props;
+  const { x, y, width, height, open, close, high, low, yDomain } = props;
   const isBullish = close >= open;
   const color = isBullish ? '#00b179' : '#ff4040';
 
-  // Calculate y-coordinates and heights based on price range
-  const priceRange = Math.max(...data.map(d => d.high)) - Math.min(...data.map(d => d.low));
-  const yRatio = height / (high - low);
+  if (!yDomain || yDomain[1] - yDomain[0] === 0) {
+    return null; // Don't render if the domain is not ready
+  }
   
-  const bodyY = isBullish
-    ? y + (high - close) * yRatio
-    : y + (high - open) * yRatio;
-  const bodyHeight = Math.max(1, Math.abs(open - close) * yRatio);
+  const priceRange = yDomain[1] - yDomain[0];
+  const scale = height / priceRange;
+
+  const bodyHeight = Math.max(1, Math.abs(open - close) * scale);
+  const bodyY = isBullish ? y + (high - close) * scale : y + (high - open) * scale;
   
   return (
     <g stroke={color} fill={color} strokeWidth="1">
       {/* Wick */}
       <line x1={x + width / 2} y1={y} x2={x + width / 2} y2={y + height} />
-      
       {/* Body */}
       <rect x={x} y={bodyY} width={width} height={bodyHeight} />
     </g>
   );
 };
 
+
+// This is your main chart component, now powered by real-time data
 export default function CandlestickChart() {
-  const yMin = Math.min(...data.map(d => d.low)) - 2;
-  const yMax = Math.max(...data.map(d => d.high)) + 2;
+  const [data, setData] = useState<CandleData[]>([]);
+  const [connectionStatus, setConnectionStatus] = useState('Connecting...');
+
+  useEffect(() => {
+    const ws = new WebSocket(`wss://ws.twelvedata.com/v1/quotes/price?apikey=${TWELVE_DATA_API_KEY}`);
+
+    ws.onopen = () => {
+      setConnectionStatus('Connected');
+      ws.send(JSON.stringify({
+        action: 'subscribe',
+        params: { symbols: 'XAU/USD' },
+      }));
+    };
+
+    ws.onmessage = (event) => {
+      const messageData = JSON.parse(event.data);
+
+      if (messageData.event === 'price') {
+        const price = messageData.price;
+        const time = Math.floor(messageData.timestamp / 1000);
+        
+        setData(currentData => {
+            const lastCandle = currentData.length > 0 ? currentData[currentData.length - 1] : null;
+            
+            if (lastCandle && time < lastCandle.time + 60) {
+                lastCandle.high = Math.max(lastCandle.high, price);
+                lastCandle.low = Math.min(lastCandle.low, price);
+                lastCandle.close = price;
+                return [...currentData.slice(0, -1), { ...lastCandle }];
+            } else {
+                const newCandle: CandleData = {
+                    time: Math.floor(time / 60) * 60,
+                    open: price,
+                    high: price,
+                    low: price,
+                    close: price,
+                };
+                const updatedData = [...currentData, newCandle];
+                return updatedData.slice(-100);
+            }
+        });
+      }
+    };
+
+    ws.onclose = () => setConnectionStatus('Disconnected');
+    ws.onerror = () => setConnectionStatus('Connection Error');
+
+    return () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
+  }, []);
+
+  const yMin = data.length > 0 ? Math.min(...data.map(d => d.low)) - 0.5 : 0;
+  const yMax = data.length > 0 ? Math.max(...data.map(d => d.high)) + 0.5 : 1;
   const yDomain: [number, number] = [yMin, yMax];
-  
-  const yTicks = [];
-  const numberOfHorizontalGrids = 7;
-  const yInterval = (yMax - yMin) / (numberOfHorizontalGrids - 1);
-  for (let i = 0; i < numberOfHorizontalGrids; i++) {
-    yTicks.push(yMin + i * yInterval);
-  }
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -64,16 +114,12 @@ export default function CandlestickChart() {
         barGap={4}
         barCategoryGap="20%"
         data={data}
-        margin={{
-          top: 5,
-          right: 0,
-          left: -10,
-          bottom: 20,
-        }}
+        margin={{ top: 5, right: 0, left: -10, bottom: 20 }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={true} horizontal={true} />
         <XAxis 
           dataKey="time" 
+          tickFormatter={(unixTime) => new Date(unixTime * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
           axisLine={{ stroke: 'hsl(var(--border))' }}
           tickLine={{ stroke: 'hsl(var(--border))' }}
@@ -88,9 +134,8 @@ export default function CandlestickChart() {
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }}
           tickFormatter={(value) => (typeof value === 'number' ? value.toFixed(2) : value)}
           yAxisId="left"
-          ticks={yTicks}
         />
-        <Bar dataKey="close" shape={(props) => <Candlestick {...props} />} yAxisId="left">
+        <Bar dataKey="close" shape={(props) => <Candlestick {...props} yDomain={yDomain} />} yAxisId="left">
             {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.close >= entry.open ? '#00b179' : '#ff4040'} />
             ))}
