@@ -1,75 +1,75 @@
-// src/components/chart/ChartPage.tsx - FINAL VERSION
+// src/components/chart/ChartPage.tsx - UPDATED
 
 'use client';
 
-// 1. We now import our new, high-performance chart
-import { RealtimeTradingViewChart } from './RealtimeTradingViewChart';
-
+import { useState, useMemo } from 'react';
+import { useDerivState, CompletedTrade, ActiveSymbol } from '@/context/DerivContext';
+import { TradeChart, ChartMarker } from './TradeChart'; // Your chart component
+import { formatAssetDisplayName } from '@/lib/utils';
 import BottomNav from '../trade/BottomNav';
-import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 import { Sidebar } from '../trade/Sidebar';
+import { TradePanel } from './TradePanel'; // Our new component for trading
 
 export default function ChartPage() {
+  const { profitTable, activeSymbols, runningTrades } = useDerivState();
+  const [asset, setAsset] = useState("R_100"); // Default asset
+  const [chartInterval, setChartInterval] = useState('1m');
+  const [chartType, setChartType] = useState('candle');
+
+  const selectedAssetLabel = useMemo(() => {
+    const displayName = activeSymbols.find(a => a.symbol === asset)?.display_name || asset;
+    return formatAssetDisplayName(displayName);
+  }, [asset, activeSymbols]);
+
+  // This logic creates the markers on the chart for your trades
+  const chartMarkers = useMemo((): ChartMarker[] => {
+    const allTrades = [
+        ...runningTrades.map(t => ({...t, isRunning: true})),
+        ...profitTable.map(t => ({...t, isRunning: false}))
+    ].sort((a, b) => (a.start_time || 0) - (b.start_time || 0));
+    
+    return allTrades
+        .filter(trade => trade.asset === asset && trade.start_time && trade.buy_price)
+        .flatMap(trade => {
+            const markers: ChartMarker[] = [{
+                epoch: trade.start_time, price: trade.buy_price, type: 'entry'
+            }];
+            if (!trade.isRunning && (trade as CompletedTrade).end_time && typeof (trade as CompletedTrade).sell_price === 'number') {
+                markers.push({
+                    epoch: (trade as CompletedTrade).end_time,
+                    price: (trade as CompletedTrade).sell_price,
+                    type: (trade as CompletedTrade).profit_loss >= 0 ? 'win' : 'loss'
+                });
+            }
+            return markers;
+        });
+  }, [runningTrades, profitTable, asset]);
+
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
-      <div className="h-screen bg-white flex flex-col">
-        {/* Top Navigation - Stays the same */}
-        <div className="flex items-center justify-between px-3 py-2.5 bg-white border-b border-gray-300 z-20">
-          <div className="flex items-center">
-            <Sidebar />
-          </div>
-          <div className="flex-1"></div>
-          <div className="flex items-center space-x-4">
-            <CrosshairIcon />
-            <FunctionIcon />
-            <ClockIcon />
-            <ShapesIcon />
-          </div>
+      {/* This main div now uses a grid to lay out the chart and trade panel */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-2 p-2">
+        
+        {/* Main Chart Area */}
+        <div className="lg:col-span-3 xl:col-span-4 h-full min-h-0">
+            <TradeChart 
+                asset={asset} 
+                assetLabel={selectedAssetLabel} 
+                markers={chartMarkers} 
+                chartInterval={chartInterval}
+                setChartInterval={setChartInterval}
+                chartType={chartType}
+                setChartType={setChartType}
+            />
         </div>
 
-        <div className="relative flex-1">
-          {/* SELL/BUY Section - Stays the same */}
-          <div className="flex z-10 relative">
-            <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
-              <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
-              <div className="leading-none text-center w-full">
-                <span className="text-[13px] font-bold">3346</span>
-                <span className="text-[22px] font-bold">.12</span>
-              </div>
-            </div>
-            <div className="bg-gray-100 px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4]">
-              <div className="flex items-center space-x-6">
-                <div className="cursor-pointer p-1">
-                  <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-gray-600"></div>
-                </div>
-                <span className="text-sm font-normal text-gray-800 min-w-[18px] text-center">10</span>
-                <div className="cursor-pointer p-1">
-                  <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[6px] border-b-gray-600"></div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
-              <div className="font-normal opacity-90 text-[10px] leading-none">BUY</div>
-              <div className="leading-none text-center w-full">
-                <span className="text-[13px] font-bold">3346</span>
-                <span className="text-[22px] font-bold">.32</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Chart Area */}
-          <div className="absolute inset-0 bg-white flex items-center justify-center pb-[2.35rem]">
-            <div className="absolute top-12 left-2 z-10 text-gray-600">
-              <div className="text-[13px] font-medium text-foreground">
-                <span className="text-primary">XAUUSD</span>, <span className="font-normal">M1</span>
-              </div>
-              <div className="text-[11px] text-muted-foreground">Gold Spot</div>
-            </div>
-            
-            {/* 2. We use our NEW high-performance chart component here */}
-            <RealtimeTradingViewChart />
-            
-          </div>
+        {/* Trade Execution Panel */}
+        <div className="lg:col-span-1 xl:col-span-1 h-full">
+            <TradePanel 
+              activeSymbols={activeSymbols}
+              asset={asset}
+              setAsset={setAsset}
+            />
         </div>
       </div>
       <BottomNav />
