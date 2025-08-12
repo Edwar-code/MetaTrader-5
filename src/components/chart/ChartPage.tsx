@@ -34,8 +34,8 @@ export default function ChartPage() {
           <div className="bg-red-500 text-white flex-grow-[0.3] flex flex-col cursor-pointer relative px-2">
             <div className="font-normal opacity-90 text-left text-[10px]">SELL</div>
             <div className="text-center">
-              <span className="text-base font-bold">3346</span>
-              <span className="text-lg font-bold">.12</span>
+              <span className="text-[18px] font-bold">3346</span>
+              <span className="text-[24px] font-bold">.12</span>
             </div>
           </div>
 
@@ -61,8 +61,8 @@ export default function ChartPage() {
           <div className="bg-blue-600 text-white flex-grow-[0.3] flex flex-col cursor-pointer relative px-2">
             <div className="font-normal opacity-90 text-left text-[10px]">BUY</div>
             <div className="text-center">
-              <span className="text-base font-bold">3346</span>
-              <span className="text-lg font-bold">.32</span>
+              <span className="text-[18px] font-bold">3346</span>
+              <span className="text-[24px] font-bold">.32</span>
             </div>
           </div>
         </div>
