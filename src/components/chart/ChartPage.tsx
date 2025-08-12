@@ -31,7 +31,7 @@ export default function ChartPage() {
         {/* SELL/BUY Section with Lots Feature - EXACT REPLICA */}
         <div className="flex">
           {/* SELL Section - Exact Red */}
-          <div className="bg-red-500 text-white flex-grow-[0.4] py-1 flex flex-col cursor-pointer relative px-2">
+          <div className="bg-red-500 text-white flex-grow-[0.3] py-1 flex flex-col cursor-pointer relative px-2">
             <div className="font-normal opacity-90 text-left text-[11px]">SELL</div>
             <div className="text-center">
               <span className="text-xl font-bold">3346</span>
@@ -40,8 +40,8 @@ export default function ChartPage() {
           </div>
 
           {/* Lots Feature - Gray Middle Section */}
-          <div className="bg-gray-100 px-2 flex items-center justify-center min-w-[120px] flex-grow-[0.2]">
-            <div className="flex items-center space-x-1">
+          <div className="bg-gray-100 px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4]">
+            <div className="flex items-center space-x-2">
               {/* Down Arrow - Exact CSS Triangle */}
               <div className="cursor-pointer p-1">
                 <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-gray-600"></div>
@@ -58,7 +58,7 @@ export default function ChartPage() {
           </div>
 
           {/* BUY Section - Exact Blue */}
-          <div className="bg-blue-600 text-white flex-grow-[0.4] py-1 flex flex-col cursor-pointer relative px-2">
+          <div className="bg-blue-600 text-white flex-grow-[0.3] py-1 flex flex-col cursor-pointer relative px-2">
             <div className="font-normal opacity-90 text-left text-[11px]">BUY</div>
             <div className="text-center">
               <span className="text-xl font-bold">3346</span>
