@@ -69,7 +69,7 @@ export default function ChartPage() {
           </div>
 
           {/* Chart */}
-          <div className="absolute inset-0 bg-gray-50 flex items-center justify-center pb-9">
+          <div className="absolute inset-0 bg-gray-50 flex items-center justify-center pb-[2.35rem]">
             <div className="absolute top-12 left-2 z-10 text-gray-600">
               <div className="text-[13px] font-medium text-foreground">
                 <span className="text-primary">XAUUSD</span>, <span className="font-normal">M1</span>
