@@ -32,7 +32,7 @@ export default function ChartPage() {
         <div className="flex">
           {/* SELL Section - Exact Red */}
           <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer relative px-2 py-1">
-            <div className="flex flex-col items-center justify-center gap-px">
+            <div className="flex flex-col items-center gap-px">
               <div className="font-normal opacity-90 text-left text-[10px] w-full">SELL</div>
               <div className="text-center">
                 <span className="text-[13px] font-bold">3346</span>
@@ -61,7 +61,7 @@ export default function ChartPage() {
 
           {/* BUY Section - Exact Blue */}
           <div className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer relative px-2 py-1">
-            <div className="flex flex-col items-center justify-center gap-px">
+            <div className="flex flex-col items-center gap-px">
               <div className="font-normal opacity-90 text-left text-[10px] w-full">BUY</div>
               <div className="text-center">
                 <span className="text-[13px] font-bold">3346</span>
