@@ -39,10 +39,15 @@ const Candlestick = (props: any) => {
 };
 
 export default function CandlestickChart() {
-  const yDomain: [number, number] = [
-    Math.min(...data.map(d => d.low)) - 2,
-    Math.max(...data.map(d => d.high)) + 2
-  ];
+  const yMin = Math.min(...data.map(d => d.low)) - 2;
+  const yMax = Math.max(...data.map(d => d.high)) + 2;
+  const yDomain: [number, number] = [yMin, yMax];
+  
+  const interval = 0.45;
+  const yTicks = [];
+  for (let i = Math.floor(yMin / interval) * interval; i <= yMax; i += interval) {
+      yTicks.push(i);
+  }
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -67,6 +72,7 @@ export default function CandlestickChart() {
           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }}
           tickFormatter={(value) => (typeof value === 'number' ? value.toFixed(2) : value)}
           yAxisId="left"
+          ticks={yTicks}
         />
         <Tooltip
           cursor={{ fill: 'hsla(var(--muted-foreground), 0.1)' }}
