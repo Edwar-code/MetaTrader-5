@@ -1,11 +1,11 @@
-// src/components/chart/ChartPage.tsx - THE ONLY FILE WE NEED TO UPDATE
+// src/components/chart/ChartPage.tsx - CORRECTED VERSION
 
 'use client';
 
 // =========================================================================================
-// 1. IMPORT the new RealTimeChart instead of the old one
+// 1. IMPORT the correct, upgraded CandlestickChart component
 // =========================================================================================
-import { RealTimeChart } from '@/components/RealTimeChart';
+import CandlestickChart from './CandlestickChart';
 // =========================================================================================
 
 import BottomNav from '../trade/BottomNav';
@@ -70,9 +70,9 @@ export default function ChartPage() {
             </div>
             
             {/* =================================================================== */}
-            {/* 2. REPLACE the old chart component with the new one */}
+            {/* 2. Use the correct CandlestickChart component */}
             {/* =================================================================== */}
-            <RealTimeChart />
+            <CandlestickChart />
             {/* =================================================================== */}
             
           </div>
