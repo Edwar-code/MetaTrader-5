@@ -67,19 +67,27 @@ const CandleStick = (props: any) => {
     const isUp = close >= open;
     const color = isUp ? 'hsl(var(--chart-2))' : 'hsl(var(--destructive))';
 
-    const yRatio = (val: number) => y + height - ((val - low) / (high - low)) * height;
+    // This calculates the y-coordinate based on the price value within the candle's high-low range.
+    const yRatio = (val: number) => {
+      const priceRange = high - low;
+      if (priceRange === 0) return y;
+      return y + height - ((val - low) / priceRange) * height;
+    };
 
     const bodyY = yRatio(Math.max(open, close));
-    const bodyHeight = Math.abs(yRatio(open) - yRatio(close));
+    const bodyHeight = Math.max(1, Math.abs(yRatio(open) - yRatio(close)));
 
     return (
       <g stroke={color} fill={isUp ? color : 'none'} strokeWidth="1">
+        {/* Wick */}
         <path d={`M${x + width / 2},${yRatio(high)} L${x + width / 2},${yRatio(low)}`} />
-        <rect x={x} y={bodyY} width={width} height={Math.max(1, bodyHeight)} fill={color} />
+        {/* Body */}
+        <rect x={x} y={bodyY} width={width} height={bodyHeight} fill={color} />
       </g>
     );
 };
 CandleStick.displayName = 'CandleStick';
+
 
 const MarkerDot = ({ type }: any) => {
     const color = {
@@ -153,10 +161,8 @@ export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartP
 
     useEffect(() => {
         if (chartMode.startsWith('candle')) {
-            setCandles(staticData); 
-            setTicks([]);
+            // Data is already initialized, no need to set it again here
         } else { // area-tick
-            setCandles([]);
             const lastStaticCandle = staticData[staticData.length - 1];
             if (lastStaticCandle) {
                  const initialTicks = Array.from({ length: 100 }).map((_, i) => ({
@@ -176,7 +182,7 @@ export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartP
                 if (prevCandles.length === 0) return [];
                 
                 const newCandles = [...prevCandles];
-                const lastCandle = {...newCandles[newCandles.length - 1]};
+                let lastCandle = {...newCandles[newCandles.length - 1]};
                 
                 const now_epoch = Math.floor(Date.now() / 1000);
 
@@ -188,7 +194,7 @@ export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartP
                         low: lastCandle.close,
                         close: lastCandle.close,
                     };
-                    return [...prevCandles, newCandle];
+                    return [...prevCandles.slice(1), newCandle]; // Keep the array size constant
                 } else {
                     const movement = (Math.random() - 0.5) * (lastCandle.open * 0.0001);
                     lastCandle.close += movement;
