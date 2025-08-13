@@ -2,8 +2,8 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, Label } from 'recharts';
-import { Candle } from '@/context/DerivContext';
+import { Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot } from 'recharts';
+import type { Candle } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -41,7 +41,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       <div className="p-2 bg-background/80 backdrop-blur-sm border rounded-md shadow-lg text-xs">
         <p>{time}</p>
         {data.quote !== undefined ? (
-          <p>Price: <span className="font-bold">{data.quote.toFixed(5)}</span></p>
+          <p>Price: <span className="font-bold">{data.quote.toFixed(2)}</span></p>
         ) : (
           <>
             <p>O: <span className="font-bold">{data.open.toFixed(2)}</span></p>
@@ -166,10 +166,11 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
 
 
     useEffect(() => {
-      if (staticData.length === 0) {
-        setChartError('Deriv API connection is offline.');
-      } else {
+      if (staticData.length > 0) {
+        setCandles(staticData);
         setChartError(null);
+      } else {
+        setChartError('Deriv API connection is offline.');
       }
     }, [staticData]);
 
