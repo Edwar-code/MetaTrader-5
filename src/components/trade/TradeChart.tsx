@@ -271,7 +271,30 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         }
         setChartType(val);
         setTimeout(() => setIsLoading(false), 500);
-    }, [chartInterval, setChartInterval, setChartType])
+    }, [chartInterval, setChartInterval, setChartType]);
+
+    const renderChart = () => {
+        if (isLoading) {
+            return (
+                <div className="flex items-center justify-center h-full text-muted-foreground flex-col">
+                    <Skeleton className="h-full w-full absolute" />
+                    <p className="z-10">Loading chart data...</p>
+                </div>
+            );
+        }
+
+        if (chartType === 'area') {
+             if (ticks.length === 0) return <div className="flex items-center justify-center h-full text-muted-foreground">No tick data available.</div>;
+             return <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} />;
+        }
+
+        if (chartType === 'candle') {
+            if (chartDataForCandle.length === 0) return <div className="flex items-center justify-center h-full text-muted-foreground">No candle data available.</div>;
+            return <LiveCandlestickChart data={chartDataForCandle} yAxisDomain={yAxisDomain} markers={markers} />;
+        }
+
+        return null;
+    }
 
     return (
         <Card className="h-full flex flex-col bg-transparent border-0 shadow-none">
@@ -306,18 +329,11 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
             </CardHeader>
             <CardContent className="flex-1 min-h-0 w-full relative p-0 pt-28 sm:pt-24">
                 <div className="h-full w-full">
-                    {isLoading ? (
-                        <div className="flex items-center justify-center h-full text-muted-foreground flex-col">
-                            <Skeleton className="h-full w-full absolute" />
-                            <p className="z-10">Loading chart data...</p>
-                        </div>
-                    ) : (chartType === 'area' ? (
-                        <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} />
-                    ) : (
-                        <LiveCandlestickChart data={chartDataForCandle} yAxisDomain={yAxisDomain} markers={markers} />
-                    ))}
+                   {renderChart()}
                 </div>
             </CardContent>
         </Card>
     );
 }
+
+    
