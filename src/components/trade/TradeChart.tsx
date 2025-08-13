@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, ReferenceLabel } from 'recharts';
+import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -127,16 +127,17 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
             <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
             {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
             {lastTick && (
-                <ReferenceLabel
-                    x={lastTick.epoch}
+                <YAxis
                     y={lastTick.quote}
-                    value={lastDigit}
-                    position="right"
-                    fontSize="14"
-                    fontWeight="bold"
-                    fill="hsl(var(--foreground))"
-                    stroke="hsl(var(--background))"
-                    strokeWidth={2}
+                    label={{
+                        value: lastDigit,
+                        position: "right",
+                        fontSize: "14",
+                        fontWeight: "bold",
+                        fill: "hsl(var(--foreground))",
+                        stroke: "hsl(var(--background))",
+                        strokeWidth: 2,
+                    }}
                 />
             )}
             </AreaChart>
