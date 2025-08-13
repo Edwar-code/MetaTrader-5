@@ -137,6 +137,7 @@ LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 export function TradeChart({ assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, staticData }: TradeChartProps) {
     const [candles, setCandles] = useState<Candle[]>(staticData);
     const [ticks, setTicks] = useState<Tick[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const intervalSeconds = useMemo(() => {
         const match = chartInterval.match(/(\d+)(\w)/);
@@ -151,10 +152,12 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
 
     useEffect(() => {
         setCandles(staticData);
+        setIsLoading(false);
     }, [staticData]);
     
     // Candle Simulation
     useEffect(() => {
+        if (chartType !== 'candle') return;
         const simulateCandleMove = () => {
             setCandles(prevCandles => {
                 if (prevCandles.length === 0) return [];
@@ -185,7 +188,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
 
         const candleIntervalId = setInterval(simulateCandleMove, 1000);
         return () => clearInterval(candleIntervalId);
-    }, [intervalSeconds]);
+    }, [chartType, intervalSeconds]);
 
     // Tick Simulation
      useEffect(() => {
@@ -203,6 +206,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
             quote: lastCandle.close + (Math.random() - 0.5) * (lastCandle.close * 0.001)
         }));
         setTicks(initialTicks);
+        setIsLoading(false);
 
         const simulateTickMove = () => {
             setTicks(prevTicks => {
@@ -252,11 +256,18 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
     ), [candles]);
 
     const handleIntervalChange = useCallback((val: string) => {
+        setIsLoading(true);
         setChartInterval(val);
         setCandles(staticData); // Reset on interval change
     }, [setChartInterval, staticData]);
-
-    const showLoader = (chartType === 'candle' && candles.length === 0) || (chartType === 'area' && ticks.length === 0);
+    
+    const handleChartTypeChange = useCallback((val: string) => {
+        setIsLoading(true);
+        if (val === 'candle' && chartInterval === 'tick') {
+            setChartInterval('1m');
+        }
+        setChartType(val);
+    }, [chartInterval, setChartInterval, setChartType])
 
     return (
         <Card className="h-full flex flex-col bg-transparent border-0 shadow-none">
@@ -264,19 +275,14 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                 <div className="flex-1">
                     <CardTitle className="font-headline text-sm sm:text-lg">{assetLabel}</CardTitle>
                 </div>
-                {!showLoader && (
+                {!isLoading && (
                     <div className="text-right">
                         <p className={`text-lg sm:text-2xl font-bold ${isUp ? 'text-green-500' : 'text-red-500'}`}>{lastPrice.toFixed(5)}</p>
                         <p className={`text-xs sm:text-sm font-mono ${isUp ? 'text-green-500' : 'text-red-500'}`}>{isUp ? '+' : ''}{priceChange.toFixed(5)}</p>
                     </div>
                 )}
                 <div className="hidden sm:flex flex-wrap gap-2">
-                    <Tabs value={chartType} onValueChange={(val) => {
-                        if (val === 'candle' && chartInterval === 'tick') {
-                            setChartInterval('1m');
-                        }
-                        setChartType(val);
-                    }} className="w-auto">
+                    <Tabs value={chartType} onValueChange={handleChartTypeChange} className="w-auto">
                         <TabsList>
                             <TabsTrigger value="area">Area</TabsTrigger>
                             <TabsTrigger value="candle">Candle</TabsTrigger>
@@ -296,16 +302,16 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
             </CardHeader>
             <CardContent className="flex-1 min-h-0 w-full relative p-0 pt-28 sm:pt-24">
                 <div className="h-full w-full">
-                    {showLoader ? (
+                    {isLoading ? (
                         <div className="flex items-center justify-center h-full text-muted-foreground flex-col">
                             <Skeleton className="h-full w-full absolute" />
                             <p className="z-10">Loading chart data...</p>
                         </div>
-                    ) : chartType === 'area' ? (
+                    ) : (chartType === 'area' ? (
                         <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} />
                     ) : (
                         <LiveCandlestickChart data={chartDataForCandle} yAxisDomain={yAxisDomain} markers={markers} />
-                    )}
+                    ))}
                 </div>
             </CardContent>
         </Card>
