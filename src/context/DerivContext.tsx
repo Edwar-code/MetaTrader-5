@@ -253,7 +253,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
             return;
         }
 
-        const api = new DerivAPI({ app_id: 82243 });
+        const api = new DerivAPI({ app_id: 96239 });
         apiRef.current = api;
         
         const connect = async () => {

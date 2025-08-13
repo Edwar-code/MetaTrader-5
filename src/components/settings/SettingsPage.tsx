@@ -100,7 +100,7 @@ export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const APP_ID = 82243;
+    const APP_ID = 96239;
 
     if (typeof window !== 'undefined') {
       const redirectUri = new URL('/auth/callback', window.location.origin).href;
