@@ -34,7 +34,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <DerivProvider>
-          {children}
+          <main>{children}</main>
           <Toaster />
         </DerivProvider>
       </body>

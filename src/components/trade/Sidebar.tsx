@@ -60,7 +60,7 @@ export function Sidebar() {
           </div>
           <Separator className="my-2" />
           <nav className="flex-1 flex flex-col">
-            <NavItem href="/chart" icon={<LineChart size={24} />} label="Trade" active={pathname.startsWith('/chart')}/>
+            <NavItem href="/" icon={<LineChart size={24} />} label="Trade" active={pathname === '/' || pathname.startsWith('/chart')} />
             <NavItem href="#" icon={<Newspaper size={24} />} label="News" />
             <NavItem href="#" icon={<Mail size={24} />} label="Mailbox" badge={8} />
             <NavItem href="#" icon={<BookText size={24} />} label="Journal" />
