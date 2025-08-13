@@ -300,5 +300,3 @@ export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartP
         </Card>
     );
 }
-
-    
