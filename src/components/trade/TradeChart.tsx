@@ -156,61 +156,62 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
     useEffect(() => {
         setIsLoading(true);
         setCandles(staticData);
-        setTicks([]); // Clear ticks when data source changes
+        setTicks([]); 
         const timer = setTimeout(() => setIsLoading(false), 500); 
         return () => clearTimeout(timer);
     }, [staticData, chartInterval]);
     
-    // Candle Simulation
     useEffect(() => {
-        if (isLoading || chartType !== 'candle') return;
-        
+        if (chartType !== 'candle' || isLoading) {
+            return;
+        }
+
         const candleIntervalId = setInterval(() => {
             setCandles(prevCandles => {
-                if (prevCandles.length === 0) return [];
-                
-                const newCandles = [...prevCandles];
-                const lastCandle = { ...newCandles[newCandles.length - 1] };
+                if (prevCandles.length === 0) {
+                    return [];
+                }
+
                 const now_epoch = Math.floor(Date.now() / 1000);
-                
-                if (now_epoch - lastCandle.epoch >= intervalSeconds) {
-                    const newPrice = lastCandle.close;
+                const lastCandle = prevCandles[prevCandles.length - 1];
+
+                if (now_epoch >= lastCandle.epoch + intervalSeconds) {
+                    // Time for a new candle
                     const newCandle: Candle = {
                         epoch: now_epoch - (now_epoch % intervalSeconds),
-                        open: newPrice,
-                        high: newPrice,
-                        low: newPrice,
-                        close: newPrice,
+                        open: lastCandle.close,
+                        high: lastCandle.close,
+                        low: lastCandle.close,
+                        close: lastCandle.close,
                     };
-                    return [...newCandles.slice(1), newCandle];
+                    return [...prevCandles.slice(1), newCandle];
                 } else {
-                    const movement = (Math.random() - 0.5) * (lastCandle.open * 0.0001);
-                    lastCandle.close += movement;
-                    lastCandle.high = Math.max(lastCandle.high, lastCandle.close);
-                    lastCandle.low = Math.min(lastCandle.low, lastCandle.close);
-                    
-                    // Create a new array with the updated last candle
-                    const updatedCandles = prevCandles.slice(0, -1);
-                    updatedCandles.push(lastCandle);
-                    return updatedCandles;
+                    // Update the current last candle
+                    const newCandles = [...prevCandles];
+                    const updatedLastCandle = { ...lastCandle };
+
+                    const movement = (Math.random() - 0.5) * (updatedLastCandle.open * 0.0001);
+                    updatedLastCandle.close += movement;
+                    updatedLastCandle.high = Math.max(updatedLastCandle.high, updatedLastCandle.close);
+                    updatedLastCandle.low = Math.min(updatedLastCandle.low, updatedLastCandle.close);
+
+                    newCandles[newCandles.length - 1] = updatedLastCandle;
+                    return newCandles;
                 }
             });
         }, 1000);
 
         return () => clearInterval(candleIntervalId);
-    }, [chartType, intervalSeconds, isLoading]);
+    }, [chartType, isLoading, intervalSeconds]);
 
-    // Tick Simulation
      useEffect(() => {
-        if (isLoading || chartType !== 'area') {
+        if (chartType !== 'area' || isLoading) {
             if (chartType !== 'area') setTicks([]);
             return;
         };
 
-        const lastCandle = candles[candles.length - 1];
-        if (!lastCandle) return;
-
-        if (ticks.length === 0) {
+        if (ticks.length === 0 && candles.length > 0) {
+            const lastCandle = candles[candles.length - 1];
             const initialTicks = Array.from({ length: 50 }).map((_, i) => ({
                 epoch: Math.floor(Date.now() / 1000) - 50 + i,
                 quote: lastCandle.close + (Math.random() - 0.5) * (lastCandle.close * 0.001)
@@ -222,10 +223,9 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
             setTicks(prevTicks => {
                  if (prevTicks.length === 0) return [];
                  const lastTick = prevTicks[prevTicks.length - 1];
-                 const newPrice = lastTick.quote + (Math.random() - 0.5) * (lastTick.quote * 0.0001);
                  const newTick = {
                      epoch: Math.floor(Date.now() / 1000),
-                     quote: newPrice
+                     quote: lastTick.quote + (Math.random() - 0.5) * (lastTick.quote * 0.0001)
                  }
                  return [...prevTicks.slice(1), newTick];
             });
@@ -233,7 +233,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
 
         return () => clearInterval(tickIntervalId);
 
-    }, [chartType, candles, isLoading, ticks.length]);
+    }, [chartType, isLoading, candles]);
 
 
     const { lastPrice, priceChange, isUp } = useMemo(() => {
@@ -286,18 +286,16 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         if (isLoading) {
             return <Skeleton className="h-full w-full" />;
         }
-
         if (chartType === 'area') {
              if (ticks.length === 0) return <div className="flex items-center justify-center h-full text-muted-foreground">Generating tick data...</div>;
              return <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} />;
         }
 
         if (chartType === 'candle') {
-            if (chartDataForCandle.length === 0) return <div className="flex items-center justify-center h-full text-muted-foreground">Generating candle data...</div>;
+            if (chartDataForCandle.length === 0) return <div className="flex items-center justify-center h-full text-muted-foreground">No candle data available.</div>;
             return <LiveCandlestickChart data={chartDataForCandle} yAxisDomain={yAxisDomain} markers={markers} />;
         }
-
-        return null;
+        return <div className="flex items-center justify-center h-full text-muted-foreground">Select a chart type.</div>;
     }
 
     return (
@@ -337,7 +335,5 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         </Card>
     );
 }
-
-    
 
     
