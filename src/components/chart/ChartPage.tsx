@@ -9,7 +9,7 @@ import { Sidebar } from '../trade/Sidebar';
 import { sampleCandleData } from '@/lib/data';
 
 export default function ChartPage() {
-  const [chartInterval, setChartInterval] = useState('1h');
+  const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
   const asset = "frxXAUUSD"; // Deriv symbol for Gold/USD
   const assetLabel = "Gold/USD";
