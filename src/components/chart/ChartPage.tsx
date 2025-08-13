@@ -9,8 +9,6 @@ import { Sidebar } from '../trade/Sidebar';
 import { sampleCandleData } from '@/lib/data';
 
 export default function ChartPage() {
-  const [chartInterval, setChartInterval] = useState('1m');
-  const [chartType, setChartType] = useState('candle');
   const assetLabel = "Gold/USD";
 
   return (
@@ -62,10 +60,6 @@ export default function ChartPage() {
       <div className="flex-1 bg-gray-50 relative min-h-0">
         <TradeChart
           assetLabel={assetLabel}
-          chartInterval={chartInterval}
-          setChartInterval={setChartInterval}
-          chartType={chartType}
-          setChartType={setChartType}
           staticData={sampleCandleData}
         />
       </div>

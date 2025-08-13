@@ -30,10 +30,6 @@ export interface ChartMarker {
 interface TradeChartProps {
     assetLabel: string;
     markers?: ChartMarker[];
-    chartInterval: string;
-    setChartInterval: (interval: string) => void;
-    chartType: string;
-    setChartType: (type: string) => void;
     staticData: Candle[];
 }
 
@@ -128,7 +124,7 @@ const LiveCandlestickChart = ({ data, yAxisDomain, markers }: { data: (Candle & 
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} />
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="body" shape={<CandleStick />} isAnimationActive={false} />
+                <Bar dataKey="body" shape={<CandleStick />} isAnimationActive={false} barSize={6} />
                 {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
             </ComposedChart>
         </ResponsiveContainer>
@@ -137,20 +133,20 @@ const LiveCandlestickChart = ({ data, yAxisDomain, markers }: { data: (Candle & 
 LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 
-export function TradeChart({ assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, staticData }: TradeChartProps) {
+export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartProps) {
+    const [chartMode, setChartMode] = useState('candle-1m');
     const [candles, setCandles] = useState<Candle[]>([]);
     const [ticks, setTicks] = useState<Tick[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const { chartType, chartInterval } = useMemo(() => {
+        const [type, interval] = chartMode.split('-');
+        return { chartType: type, chartInterval: interval };
+    }, [chartMode]);
+
     const intervalSeconds = useMemo(() => {
-        const match = chartInterval.match(/(\d+)(\w)/);
-        if (!match) return 60;
-        const value = parseInt(match[1]);
-        const unit = match[2];
-        if (unit === 'm') return value * 60;
-        if (unit === 'h') return value * 3600;
-        if (unit === 'd') return value * 86400;
-        return 60;
+        if (chartInterval === '1m') return 60;
+        return 0; // For ticks, interval is managed differently
     }, [chartInterval]);
 
     useEffect(() => {
@@ -159,10 +155,10 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         setTicks([]); 
         const timer = setTimeout(() => setIsLoading(false), 500); 
         return () => clearTimeout(timer);
-    }, [staticData, chartInterval]);
+    }, [staticData, chartMode]);
     
     useEffect(() => {
-        if (chartType !== 'candle' || isLoading) {
+        if (chartType !== 'candle' || isLoading || intervalSeconds === 0) {
             return;
         }
 
@@ -258,7 +254,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
 
         const min = Math.min(...prices);
         const max = Math.max(...prices);
-        const padding = (max - min) * 0.1 || 0.0001; 
+        const padding = (max - min) * 0.01 || 0.0001; 
         return [min - padding, max + padding];
     }, [candles, ticks, chartType]);
 
@@ -266,21 +262,12 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         candles.map(c => ({...c, body: [c.low, c.high]}))
     ), [candles]);
 
-    const handleIntervalChange = useCallback((val: string) => {
+    const handleModeChange = useCallback((val: string) => {
         setIsLoading(true);
-        setChartInterval(val);
+        setChartMode(val);
         setCandles(staticData); 
         setTimeout(() => setIsLoading(false), 500);
-    }, [setChartInterval, staticData]);
-    
-    const handleChartTypeChange = useCallback((val: string) => {
-        setIsLoading(true);
-        if (val === 'candle' && chartInterval === 'tick') {
-            handleIntervalChange('1m'); 
-        }
-        setChartType(val);
-        setTimeout(() => setIsLoading(false), 500);
-    }, [chartInterval, handleIntervalChange, setChartType]);
+    }, [setChartMode, staticData]);
 
     const renderChart = () => {
         if (isLoading) {
@@ -311,20 +298,10 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                     </div>
                 )}
                 <div className="flex flex-wrap gap-2">
-                    <Tabs value={chartType} onValueChange={handleChartTypeChange} className="w-auto">
+                    <Tabs value={chartMode} onValueChange={handleModeChange} className="w-auto">
                         <TabsList>
-                            <TabsTrigger value="area">Area</TabsTrigger>
-                            <TabsTrigger value="candle">Candle</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
-                    <Tabs value={chartInterval} onValueChange={handleIntervalChange} className="w-auto">
-                        <TabsList>
-                             {chartType === 'area' && <TabsTrigger value="tick">Tick</TabsTrigger>}
-                             <TabsTrigger value="1m">1m</TabsTrigger>
-                             <TabsTrigger value="5m">5m</TabsTrigger>
-                             <TabsTrigger value="15m">15m</TabsTrigger>
-                             <TabsTrigger value="1h">1h</TabsTrigger>
-                             <TabsTrigger value="1d">1d</TabsTrigger>
+                             <TabsTrigger value="candle-1m">Candle 1m</TabsTrigger>
+                             <TabsTrigger value="area-tick">Area Tick</TabsTrigger>
                         </TabsList>
                     </Tabs>
                 </div>
@@ -335,5 +312,3 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         </Card>
     );
 }
-
-    
