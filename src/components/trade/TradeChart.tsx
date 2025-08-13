@@ -2,8 +2,8 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, Label } from 'recharts';
-import { Candle, Tick } from '@/context/DerivContext';
+import { Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, Label } from 'recharts';
+import { Candle } from '@/context/DerivContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -44,10 +44,10 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <p>Price: <span className="font-bold">{data.quote.toFixed(5)}</span></p>
         ) : (
           <>
-            <p>O: <span className="font-bold">{data.open.toFixed(5)}</span></p>
-            <p>H: <span className="font-bold">{data.high.toFixed(5)}</span></p>
-            <p>L: <span className="font-bold">{data.low.toFixed(5)}</span></p>
-            <p>C: <span className="font-bold">{data.close.toFixed(5)}</span></p>
+            <p>O: <span className="font-bold">{data.open.toFixed(2)}</span></p>
+            <p>H: <span className="font-bold">{data.high.toFixed(2)}</span></p>
+            <p>L: <span className="font-bold">{data.low.toFixed(2)}</span></p>
+            <p>C: <span className="font-bold">{data.close.toFixed(2)}</span></p>
           </>
         )}
       </div>
@@ -58,12 +58,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 CustomTooltip.displayName = 'CustomTooltip';
 
 const CandleStick = (props: any) => {
-    const { x, y, width, height, open, close, high, low } = props;
+    const { x, y, width, height, open, close, high, low, isUp } = props;
     if (high === undefined || low === undefined || open === undefined || close === undefined || !isFinite(high) || !isFinite(low)) return null;
 
     const domain = high - low;
-    const isUp = close >= open;
-    const color = isUp ? '#22c55e' : '#ef4444';
+    const color = isUp ? 'hsl(var(--chart-2))' : 'hsl(var(--destructive))';
     
     if (domain === 0) {
         return <path d={`M${x},${y + height/2} L${x + width},${y + height/2}`} stroke={color} strokeWidth="1.5" />;
@@ -87,15 +86,15 @@ CandleStick.displayName = 'CandleStick';
 const MarkerDot = ({ cx, cy, payload, type }: any) => {
     const color = {
         entry: 'hsl(var(--accent-foreground))',
-        win: '#22c55e',
-        loss: '#ef4444',
+        win: 'hsl(var(--chart-2))',
+        loss: 'hsl(var(--destructive))',
     }[type];
     return <circle cx={cx} cy={cy} r={6} fill={color} stroke="hsl(var(--background))" strokeWidth={2} />;
 };
 MarkerDot.displayName = 'MarkerDot';
 
 
-const LiveCandlestickChart = ({ data, yAxisDomain, markers }: { data: (Candle & {body: [number, number]})[], yAxisDomain: (string|number)[], markers?: ChartMarker[] }) => {
+const LiveCandlestickChart = ({ data, yAxisDomain, markers }: { data: (Candle & {body: [number, number], isUp: boolean})[], yAxisDomain: (string|number)[], markers?: ChartMarker[] }) => {
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 5, right: 30, left: -10, bottom: 5 }} animationDuration={0}>
@@ -130,10 +129,10 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
           setCandles(prevCandles => {
             if (prevCandles.length === 0) return [];
             
-            const lastCandle = prevCandles[prevCandles.length - 1];
+            const lastCandle = { ...prevCandles[prevCandles.length - 1] };
             const now = Math.floor(Date.now() / 1000);
-            const timeSinceLastCandle = now - lastCandle.epoch;
             const candleDuration = intervalMap[chartInterval] || 60;
+            const timeSinceLastCandle = now - lastCandle.epoch;
             
             // If it's time for a new candle
             if (timeSinceLastCandle >= candleDuration) {
@@ -144,14 +143,15 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                     high: lastCandle.close,
                     low: lastCandle.close,
                 };
+                // Keep the array size manageable
                 return [...prevCandles, newCandle].slice(-100);
             } else { // Otherwise, update the current candle
                 const updatedCandles = [...prevCandles];
-                const currentCandle = updatedCandles[updatedCandles.length - 1];
-                const change = (Math.random() - 0.49) * 0.3; // Bias slightly upwards, smaller change
-                currentCandle.close += change;
-                currentCandle.high = Math.max(currentCandle.high, currentCandle.close);
-                currentCandle.low = Math.min(currentCandle.low, currentCandle.close);
+                const change = (Math.random() - 0.495) * (lastCandle.open * 0.0001);
+                lastCandle.close += change;
+                lastCandle.high = Math.max(lastCandle.high, lastCandle.close);
+                lastCandle.low = Math.min(lastCandle.low, lastCandle.close);
+                updatedCandles[updatedCandles.length - 1] = lastCandle;
                 return updatedCandles;
             }
           });
@@ -177,7 +177,8 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
     const { lastPrice, priceChange, isUp } = React.useMemo(() => {
         if (candles.length === 0) return { lastPrice: 0, priceChange: 0, isUp: true };
         const lastCandle = candles[candles.length - 1];
-        return { lastPrice: lastCandle.close, priceChange: lastCandle.close - lastCandle.open, isUp: lastCandle.close >= lastCandle.open };
+        const isUp = lastCandle.close >= lastCandle.open;
+        return { lastPrice: lastCandle.close, priceChange: lastCandle.close - lastCandle.open, isUp };
     }, [candles]);
 
     const yAxisDomain = React.useMemo((): [number, number] => {
@@ -197,25 +198,25 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
     }, [candles]);
 
     const chartDataForCandle = React.useMemo(() => (
-        candles.map(c => ({...c, body: [c.low, c.high]}))
+        candles.map(c => ({...c, body: [c.low, c.high], isUp: c.close >= c.open}))
     ), [candles]);
 
 
     const showLoader = (candles.length === 0 && !chartError);
 
     return (
-        <Card className="h-full flex flex-col">
-            <CardHeader className="flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <Card className="h-full flex flex-col bg-transparent border-0 shadow-none">
+            <CardHeader className="flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between absolute top-14 left-0 right-0 z-10 p-2 sm:p-4">
                 <div className="flex-1">
-                    <CardTitle className="font-headline">{assetLabel}</CardTitle>
+                    <CardTitle className="font-headline text-sm sm:text-lg">{assetLabel}</CardTitle>
                 </div>
                 {(candles.length > 0) && !chartError && (
                     <div className="text-right">
-                        <p className={`text-2xl font-bold ${isUp ? 'text-green-500' : 'text-red-500'}`}>{lastPrice.toFixed(5)}</p>
-                        <p className={`text-sm font-mono ${isUp ? 'text-green-500' : 'text-red-500'}`}>{isUp ? '+' : ''}{priceChange.toFixed(5)}</p>
+                        <p className={`text-lg sm:text-2xl font-bold ${isUp ? 'text-green-500' : 'text-red-500'}`}>{lastPrice.toFixed(2)}</p>
+                        <p className={`text-xs sm:text-sm font-mono ${isUp ? 'text-green-500' : 'text-red-500'}`}>{isUp ? '+' : ''}{priceChange.toFixed(2)}</p>
                     </div>
                 )}
-                <div className="flex flex-wrap gap-2">
+                <div className="hidden sm:flex flex-wrap gap-2">
                     <Tabs value={chartType} onValueChange={setChartType} className="w-auto">
                         <TabsList>
                             <TabsTrigger value="candle">Candle</TabsTrigger>
@@ -234,9 +235,9 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                     </Tabs>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 min-h-0 w-full relative">
+            <CardContent className="flex-1 min-h-0 w-full relative p-0 pt-28 sm:pt-24">
                 <div className="h-full w-full">
-                    {chartError ? (
+                    {chartError && staticData.length === 0 ? (
                         <div className="flex items-center justify-center h-full text-destructive flex-col gap-2 p-4 text-center">
                             <AlertTriangle className="h-8 w-8" />
                             <p className="font-semibold">Chart Unavailable</p>
