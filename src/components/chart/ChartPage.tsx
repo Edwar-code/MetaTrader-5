@@ -70,7 +70,6 @@ export default function ChartPage() {
           {/* Chart */}
           <div className="absolute inset-0 flex items-center justify-center pb-[2.35rem]">
              <TradeChart 
-                asset={asset}
                 assetLabel={assetLabel}
                 chartInterval={chartInterval}
                 setChartInterval={setChartInterval}
