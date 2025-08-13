@@ -20,17 +20,21 @@ import {
   Info,
 } from 'lucide-react';
 import { Separator } from '../ui/separator';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-const NavItem = ({ icon, label, badge, ad, active }: { icon: React.ReactNode, label: string, badge?: number, ad?: boolean, active?: boolean }) => (
-  <a href="#" className={`flex items-center gap-6 px-6 py-3 text-sm font-medium ${active ? 'bg-primary/10 text-primary' : 'text-foreground'}`}>
+const NavItem = ({ icon, label, badge, ad, active, href }: { icon: React.ReactNode, label: string, href: string, badge?: number, ad?: boolean, active?: boolean }) => (
+  <Link href={href} className={`flex items-center gap-6 px-6 py-3 text-sm font-medium ${active ? 'bg-primary/10 text-primary' : 'text-foreground'}`}>
     {icon}
     <span className="flex-1">{label}</span>
     {badge && <span className="w-5 h-5 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">{badge}</span>}
     {ad && <span className="text-xs border border-blue-500 text-blue-500 rounded-full px-2 py-0.5">Ads</span>}
-  </a>
+  </Link>
 );
 
 export function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -56,16 +60,16 @@ export function Sidebar() {
           </div>
           <Separator className="my-2" />
           <nav className="flex-1 flex flex-col">
-            <NavItem icon={<LineChart size={24} />} label="Trade" active/>
-            <NavItem icon={<Newspaper size={24} />} label="News" />
-            <NavItem icon={<Mail size={24} />} label="Mailbox" badge={8} />
-            <NavItem icon={<BookText size={24} />} label="Journal" />
-            <NavItem icon={<Settings size={24} />} label="Settings" />
-            <NavItem icon={<Calendar size={24} />} label="Economic calendar" ad/>
-            <NavItem icon={<Users size={24} />} label="Traders Community" />
-            <NavItem icon={<Send size={24} />} label="MQL5 Algo Trading" />
-            <NavItem icon={<HelpCircle size={24} />} label="User guide" />
-            <NavItem icon={<Info size={24} />} label="About" />
+            <NavItem href="/chart" icon={<LineChart size={24} />} label="Trade" active={pathname.startsWith('/chart')}/>
+            <NavItem href="#" icon={<Newspaper size={24} />} label="News" />
+            <NavItem href="#" icon={<Mail size={24} />} label="Mailbox" badge={8} />
+            <NavItem href="#" icon={<BookText size={24} />} label="Journal" />
+            <NavItem href="/settings" icon={<Settings size={24} />} label="Settings" active={pathname === '/settings'}/>
+            <NavItem href="#" icon={<Calendar size={24} />} label="Economic calendar" ad/>
+            <NavItem href="#" icon={<Users size={24} />} label="Traders Community" />
+            <NavItem href="#" icon={<Send size={24} />} label="MQL5 Algo Trading" />
+            <NavItem href="#" icon={<HelpCircle size={24} />} label="User guide" />
+            <NavItem href="#" icon={<Info size={24} />} label="About" />
           </nav>
         </div>
       </SheetContent>
