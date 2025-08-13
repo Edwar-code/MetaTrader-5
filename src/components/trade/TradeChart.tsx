@@ -156,6 +156,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
     useEffect(() => {
         setIsLoading(true);
         setCandles(staticData);
+        setTicks([]); // Clear ticks when data source changes
         const timer = setTimeout(() => setIsLoading(false), 500); 
         return () => clearTimeout(timer);
     }, [staticData, chartInterval]);
@@ -187,8 +188,11 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                     lastCandle.close += movement;
                     lastCandle.high = Math.max(lastCandle.high, lastCandle.close);
                     lastCandle.low = Math.min(lastCandle.low, lastCandle.close);
-                    newCandles[newCandles.length - 1] = lastCandle;
-                    return newCandles;
+                    
+                    // Create a new array with the updated last candle
+                    const updatedCandles = prevCandles.slice(0, -1);
+                    updatedCandles.push(lastCandle);
+                    return updatedCandles;
                 }
             });
         }, 1000);
@@ -229,7 +233,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
 
         return () => clearInterval(tickIntervalId);
 
-    }, [chartType, candles, isLoading]);
+    }, [chartType, candles, isLoading, ticks.length]);
 
 
     const { lastPrice, priceChange, isUp } = useMemo(() => {
@@ -265,8 +269,6 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
     const handleIntervalChange = useCallback((val: string) => {
         setIsLoading(true);
         setChartInterval(val);
-        // Reset candles to static data on interval change
-        // A real app would fetch new data for the interval
         setCandles(staticData); 
         setTimeout(() => setIsLoading(false), 500);
     }, [setChartInterval, staticData]);
@@ -274,7 +276,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
     const handleChartTypeChange = useCallback((val: string) => {
         setIsLoading(true);
         if (val === 'candle' && chartInterval === 'tick') {
-            handleIntervalChange('1m'); // Switch to a valid candle interval
+            handleIntervalChange('1m'); 
         }
         setChartType(val);
         setTimeout(() => setIsLoading(false), 500);
@@ -335,5 +337,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         </Card>
     );
 }
+
+    
 
     
