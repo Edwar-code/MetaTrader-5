@@ -6,10 +6,13 @@ import BottomNav from '../trade/BottomNav';
 import { TradeChart } from '../trade/TradeChart';
 import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 import { Sidebar } from '../trade/Sidebar';
-import { sampleCandleData } from '@/lib/data';
+import { MarketSelector } from '../trade/MarketSelector';
 
 export default function ChartPage() {
-  const assetLabel = "Gold/USD";
+  const [asset, setAsset] = useState('frxXAUUSD');
+  const [assetLabel, setAssetLabel] = useState('Gold/USD');
+  const [chartInterval, setChartInterval] = useState('1m');
+  const [chartType, setChartType] = useState('candle');
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
@@ -17,6 +20,18 @@ export default function ChartPage() {
       <div className="flex items-center justify-between px-3 py-2.5 bg-white border-b border-gray-300 z-20 shrink-0">
         <div className="flex items-center">
           <Sidebar />
+          <div className="w-48">
+            <MarketSelector
+              asset={asset}
+              setAsset={(newAsset) => {
+                setAsset(newAsset);
+                // You might want to update the label as well based on the new asset
+                // This is a simplified example
+                setAssetLabel(newAsset);
+              }}
+              marketFilter="forex" // or whatever market is appropriate
+            />
+          </div>
         </div>
         <div className="flex-1"></div>
         <div className="flex items-center space-x-4">
@@ -59,8 +74,12 @@ export default function ChartPage() {
       {/* Chart Container */}
       <div className="flex-1 bg-gray-50 relative min-h-0">
         <TradeChart
+          asset={asset}
           assetLabel={assetLabel}
-          staticData={sampleCandleData}
+          chartInterval={chartInterval}
+          setChartInterval={setChartInterval}
+          chartType={chartType}
+          setChartType={setChartType}
         />
       </div>
 
@@ -68,3 +87,6 @@ export default function ChartPage() {
     </div>
   );
 }
+
+// Create this new component file
+// src/components/trade/MarketSelector.tsx
