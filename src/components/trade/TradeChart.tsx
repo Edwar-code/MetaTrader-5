@@ -119,6 +119,13 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
 
     // Effect for simulating live data
     useEffect(() => {
+      if (staticData.length === 0) {
+        setChartError('No chart data available.');
+        return;
+      }
+      // Initialize with static data
+      setCandles(staticData);
+
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
@@ -162,17 +169,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
           clearInterval(intervalRef.current);
         }
       };
-    }, [chartInterval, asset]);
-
-
-    useEffect(() => {
-      if (staticData.length > 0) {
-        setCandles(staticData);
-        setChartError(null);
-      } else {
-        setChartError('Deriv API connection is offline.');
-      }
-    }, [staticData]);
+    }, [chartInterval, staticData]);
 
 
     const { lastPrice, priceChange, isUp } = React.useMemo(() => {
@@ -224,7 +221,6 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                         </TabsList>
                     </Tabs>
                     <Tabs value={chartInterval} onValueChange={(val) => {
-                        setCandles(staticData); // reload static candles
                         setChartInterval(val);
                     }} className="w-auto">
                         <TabsList>
@@ -238,7 +234,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
             </CardHeader>
             <CardContent className="flex-1 min-h-0 w-full relative p-0 pt-28 sm:pt-24">
                 <div className="h-full w-full">
-                    {chartError && staticData.length === 0 ? (
+                    {chartError ? (
                         <div className="flex items-center justify-center h-full text-destructive flex-col gap-2 p-4 text-center">
                             <AlertTriangle className="h-8 w-8" />
                             <p className="font-semibold">Chart Unavailable</p>
@@ -257,3 +253,5 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
         </Card>
     );
 }
+
+    
