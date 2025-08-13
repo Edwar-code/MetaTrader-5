@@ -7,10 +7,19 @@ import { TradeChart } from '../trade/TradeChart';
 import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 import { Sidebar } from '../trade/Sidebar';
 import { MarketSelector } from '../trade/MarketSelector';
+import { useDerivState } from '@/context/DerivContext';
 
 export default function ChartPage() {
+  const { activeSymbols } = useDerivState();
   const [asset, setAsset] = useState('frxXAUUSD');
-  const [assetLabel, setAssetLabel] = useState('Gold/USD');
+  
+  const forexSymbols = activeSymbols.filter(s => s.market === 'forex');
+  const initialAsset = forexSymbols.length > 0 ? forexSymbols[0].symbol : 'frxXAUUSD';
+
+  const [selectedAsset, setSelectedAsset] = useState(initialAsset);
+  const selectedSymbol = activeSymbols.find(s => s.symbol === selectedAsset);
+  const assetLabel = selectedSymbol ? selectedSymbol.display_name : 'Gold/USD';
+
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
 
@@ -22,14 +31,9 @@ export default function ChartPage() {
           <Sidebar />
           <div className="w-48">
             <MarketSelector
-              asset={asset}
-              setAsset={(newAsset) => {
-                setAsset(newAsset);
-                // You might want to update the label as well based on the new asset
-                // This is a simplified example
-                setAssetLabel(newAsset);
-              }}
-              marketFilter="forex" // or whatever market is appropriate
+              asset={selectedAsset}
+              setAsset={setSelectedAsset}
+              marketFilter="forex"
             />
           </div>
         </div>
@@ -74,7 +78,7 @@ export default function ChartPage() {
       {/* Chart Container */}
       <div className="flex-1 bg-gray-50 relative min-h-0">
         <TradeChart
-          asset={asset}
+          asset={selectedAsset}
           assetLabel={assetLabel}
           chartInterval={chartInterval}
           setChartInterval={setChartInterval}
@@ -87,6 +91,3 @@ export default function ChartPage() {
     </div>
   );
 }
-
-// Create this new component file
-// src/components/trade/MarketSelector.tsx

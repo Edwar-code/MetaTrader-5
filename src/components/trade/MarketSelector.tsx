@@ -36,11 +36,6 @@ export function MarketSelector({ asset, setAsset, marketFilter }: MarketSelector
   const filteredAndGroupedSymbols = useMemo(() => {
     let marketSymbols = activeSymbols.filter(s => s.market === marketFilter);
 
-    // If the market is "Derived", only show "Continuous Indices"
-    if (marketFilter === 'synthetic_index') {
-      marketSymbols = marketSymbols.filter(s => s.submarket_display_name === 'Continuous Indices');
-    }
-
     const searchFiltered = marketSymbols.filter(
       (s) =>
         s.display_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -60,10 +55,14 @@ export function MarketSelector({ asset, setAsset, marketFilter }: MarketSelector
     }, {});
   }, [activeSymbols, search, marketFilter]);
 
+  const selectedSymbol = activeSymbols.find(s => s.symbol === asset);
+
   return (
     <Select value={asset} onValueChange={setAsset}>
       <SelectTrigger id="asset">
-        <SelectValue placeholder="Select market" />
+        <SelectValue placeholder="Select market">
+            {selectedSymbol ? formatAssetDisplayName(selectedSymbol.display_name) : 'Select market'}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         <div className="p-2">
