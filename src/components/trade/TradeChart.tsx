@@ -135,7 +135,7 @@ LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 
 export function TradeChart({ assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, staticData }: TradeChartProps) {
-    const [candles, setCandles] = useState<Candle[]>(staticData);
+    const [candles, setCandles] = useState<Candle[]>([]);
     const [ticks, setTicks] = useState<Tick[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -151,13 +151,16 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
     }, [chartInterval]);
 
     useEffect(() => {
+        setIsLoading(true);
         setCandles(staticData);
-        setIsLoading(false);
+        // Simulate loading time
+        const timer = setTimeout(() => setIsLoading(false), 500); 
+        return () => clearTimeout(timer);
     }, [staticData]);
     
     // Candle Simulation
     useEffect(() => {
-        if (chartType !== 'candle') return;
+        if (isLoading || chartType !== 'candle') return;
         const simulateCandleMove = () => {
             setCandles(prevCandles => {
                 if (prevCandles.length === 0) return [];
@@ -188,12 +191,12 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
 
         const candleIntervalId = setInterval(simulateCandleMove, 1000);
         return () => clearInterval(candleIntervalId);
-    }, [chartType, intervalSeconds]);
+    }, [chartType, intervalSeconds, isLoading]);
 
     // Tick Simulation
      useEffect(() => {
-        if (chartType !== 'area') {
-            setTicks([]);
+        if (isLoading || chartType !== 'area') {
+            if (chartType !== 'area') setTicks([]);
             return;
         };
 
@@ -206,7 +209,6 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
             quote: lastCandle.close + (Math.random() - 0.5) * (lastCandle.close * 0.001)
         }));
         setTicks(initialTicks);
-        setIsLoading(false);
 
         const simulateTickMove = () => {
             setTicks(prevTicks => {
@@ -224,7 +226,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         const tickIntervalId = setInterval(simulateTickMove, 1000);
         return () => clearInterval(tickIntervalId);
 
-    }, [chartType, candles]);
+    }, [chartType, candles, isLoading]);
 
 
     const { lastPrice, priceChange, isUp } = useMemo(() => {
@@ -259,6 +261,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         setIsLoading(true);
         setChartInterval(val);
         setCandles(staticData); // Reset on interval change
+        setTimeout(() => setIsLoading(false), 500);
     }, [setChartInterval, staticData]);
     
     const handleChartTypeChange = useCallback((val: string) => {
@@ -267,6 +270,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
             setChartInterval('1m');
         }
         setChartType(val);
+        setTimeout(() => setIsLoading(false), 500);
     }, [chartInterval, setChartInterval, setChartType])
 
     return (
