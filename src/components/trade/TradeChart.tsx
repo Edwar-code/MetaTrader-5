@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format, fromUnixTime } from 'date-fns';
-import { sampleCandleData } from '@/lib/data';
 
 export interface Candle {
     epoch: number;
@@ -76,13 +75,14 @@ const CandleStick = (props: any) => {
     const bodyHeightRatio = Math.abs(open - close) / (high - low);
     const bodyHeight = isFinite(bodyHeightRatio) ? Math.max(1, bodyHeightRatio * height) : 1;
     
-    // The y prop from recharts is the top of the entire candle's allotted space (the high)
-    const bodyY = y + (isUp ? height - ((close - low) / (high - low)) * height : height - ((open - low) / (high - low)) * height) - (isUp ? bodyHeight : 0);
+    const bodyY = isUp 
+        ? y + height - ((close - low) / (high - low)) * height
+        : y + height - ((open - low) / (high - low)) * height;
 
     return (
       <g stroke={color} fill={isUp ? color : 'none'} strokeWidth="1">
         <path d={`M${x + width / 2},${y} L${x + width / 2},${y + height}`} />
-        <rect x={x} y={bodyY} width={width} height={bodyHeight} fill={color} />
+        <rect x={x} y={bodyY - bodyHeight} width={width} height={bodyHeight} fill={color} />
       </g>
     );
 };
@@ -156,10 +156,9 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
     useEffect(() => {
         setIsLoading(true);
         setCandles(staticData);
-        // Simulate loading time
         const timer = setTimeout(() => setIsLoading(false), 500); 
         return () => clearTimeout(timer);
-    }, [staticData]);
+    }, [staticData, chartInterval]);
     
     // Candle Simulation
     useEffect(() => {
@@ -174,7 +173,6 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                 const now_epoch = Math.floor(Date.now() / 1000);
                 
                 if (now_epoch - lastCandle.epoch >= intervalSeconds) {
-                    // Time for a new candle
                     const newPrice = lastCandle.close;
                     const newCandle: Candle = {
                         epoch: now_epoch - (now_epoch % intervalSeconds),
@@ -185,7 +183,6 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                     };
                     return [...newCandles.slice(1), newCandle];
                 } else {
-                    // Update current candle
                     const movement = (Math.random() - 0.5) * (lastCandle.open * 0.0001);
                     lastCandle.close += movement;
                     lastCandle.high = Math.max(lastCandle.high, lastCandle.close);
@@ -209,7 +206,6 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         const lastCandle = candles[candles.length - 1];
         if (!lastCandle) return;
 
-        // Initialize ticks
         if (ticks.length === 0) {
             const initialTicks = Array.from({ length: 50 }).map((_, i) => ({
                 epoch: Math.floor(Date.now() / 1000) - 50 + i,
@@ -233,7 +229,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
 
         return () => clearInterval(tickIntervalId);
 
-    }, [chartType, candles, isLoading, ticks.length]);
+    }, [chartType, candles, isLoading]);
 
 
     const { lastPrice, priceChange, isUp } = useMemo(() => {
@@ -253,7 +249,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         const dataSet = chartType === 'area' ? ticks : candles;
         if (!dataSet || dataSet.length === 0) return ['auto', 'auto'];
         
-        const prices = dataSet.flatMap((d: any) => d.quote !== undefined ? [d.quote] : [d.low, d.high]).filter(p => isFinite(p));
+        const prices = dataSet.flatMap((d: any) => d.quote !== undefined ? [d.quote] : [d.low, d.high]).filter(p => p && isFinite(p));
         if (prices.length === 0) return ['auto', 'auto'];
 
         const min = Math.min(...prices);
@@ -269,18 +265,20 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
     const handleIntervalChange = useCallback((val: string) => {
         setIsLoading(true);
         setChartInterval(val);
-        setCandles(staticData); // Reset on interval change
+        // Reset candles to static data on interval change
+        // A real app would fetch new data for the interval
+        setCandles(staticData); 
         setTimeout(() => setIsLoading(false), 500);
     }, [setChartInterval, staticData]);
     
     const handleChartTypeChange = useCallback((val: string) => {
         setIsLoading(true);
         if (val === 'candle' && chartInterval === 'tick') {
-            setChartInterval('1m');
+            handleIntervalChange('1m'); // Switch to a valid candle interval
         }
         setChartType(val);
         setTimeout(() => setIsLoading(false), 500);
-    }, [chartInterval, setChartInterval, setChartType]);
+    }, [chartInterval, handleIntervalChange, setChartType]);
 
     const renderChart = () => {
         if (isLoading) {
@@ -337,3 +335,5 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         </Card>
     );
 }
+
+    
