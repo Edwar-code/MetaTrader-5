@@ -275,12 +275,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
 
     const renderChart = () => {
         if (isLoading) {
-            return (
-                <div className="flex items-center justify-center h-full text-muted-foreground flex-col">
-                    <Skeleton className="h-full w-full absolute" />
-                    <p className="z-10">Loading chart data...</p>
-                </div>
-            );
+            return <Skeleton className="h-full w-full" />;
         }
 
         if (chartType === 'area') {
@@ -297,9 +292,9 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
     }
 
     return (
-        <Card className="h-full flex flex-col bg-transparent border-0 shadow-none">
-            <CardHeader className="flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between absolute top-14 left-0 right-0 z-10 p-2 sm:p-4">
-                <div className="flex-1">
+        <Card className="h-full w-full flex flex-col bg-transparent border-0 shadow-none">
+            <CardHeader className="flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between p-2 sm:p-4 z-10 shrink-0">
+                <div>
                     <CardTitle className="font-headline text-sm sm:text-lg">{assetLabel}</CardTitle>
                 </div>
                 {!isLoading && (
@@ -327,13 +322,9 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                     </Tabs>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 min-h-0 w-full relative p-0 pt-28 sm:pt-24">
-                <div className="h-full w-full">
-                   {renderChart()}
-                </div>
+            <CardContent className="flex-1 min-h-0 w-full p-0">
+               {renderChart()}
             </CardContent>
         </Card>
     );
 }
-
-    
