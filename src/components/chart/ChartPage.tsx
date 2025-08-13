@@ -11,7 +11,6 @@ import { sampleCandleData } from '@/lib/data';
 export default function ChartPage() {
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
-  const asset = "frxXAUUSD"; // Deriv symbol for Gold/USD
   const assetLabel = "Gold/USD";
 
   return (
@@ -69,7 +68,7 @@ export default function ChartPage() {
 
           {/* Chart */}
           <div className="absolute inset-0 flex items-center justify-center pb-[2.35rem]">
-             <TradeChart 
+             <TradeChart
                 assetLabel={assetLabel}
                 chartInterval={chartInterval}
                 setChartInterval={setChartInterval}
