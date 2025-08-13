@@ -135,9 +135,9 @@ LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartProps) {
     const [chartMode, setChartMode] = useState('candle-1m');
-    const [candles, setCandles] = useState<Candle[]>([]);
+    const [candles, setCandles] = useState<Candle[]>(staticData);
     const [ticks, setTicks] = useState<Tick[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const { chartType, chartInterval } = useMemo(() => {
         const [type, interval] = chartMode.split('-');
@@ -150,15 +150,24 @@ export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartP
     }, [chartInterval]);
 
     useEffect(() => {
-        setIsLoading(true);
-        setCandles(staticData);
-        setTicks([]); 
-        const timer = setTimeout(() => setIsLoading(false), 500); 
-        return () => clearTimeout(timer);
-    }, [staticData, chartMode]);
+        if (chartMode === 'candle-1m') {
+            setCandles(staticData);
+            setTicks([]);
+        } else { // area-tick
+            setCandles([]);
+            const lastStaticCandle = staticData[staticData.length - 1];
+            if (lastStaticCandle) {
+                 const initialTicks = Array.from({ length: 50 }).map((_, i) => ({
+                    epoch: Math.floor(Date.now() / 1000) - 50 + i,
+                    quote: lastStaticCandle.close + (Math.random() - 0.5) * (lastStaticCandle.close * 0.001)
+                }));
+                setTicks(initialTicks);
+            }
+        }
+    }, [chartMode, staticData]);
     
     useEffect(() => {
-        if (chartType !== 'candle' || isLoading || intervalSeconds === 0) {
+        if (chartType !== 'candle' || intervalSeconds === 0) {
             return;
         }
 
@@ -198,22 +207,12 @@ export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartP
         }, 1000);
 
         return () => clearInterval(candleIntervalId);
-    }, [chartType, isLoading, intervalSeconds]);
+    }, [chartType, intervalSeconds]);
 
      useEffect(() => {
-        if (chartType !== 'area' || isLoading) {
-            if (chartType !== 'area') setTicks([]);
+        if (chartType !== 'area') {
             return;
         };
-
-        if (ticks.length === 0 && candles.length > 0) {
-            const lastCandle = candles[candles.length - 1];
-            const initialTicks = Array.from({ length: 50 }).map((_, i) => ({
-                epoch: Math.floor(Date.now() / 1000) - 50 + i,
-                quote: lastCandle.close + (Math.random() - 0.5) * (lastCandle.close * 0.001)
-            }));
-            setTicks(initialTicks);
-        }
 
         const tickIntervalId = setInterval(() => {
             setTicks(prevTicks => {
@@ -229,7 +228,7 @@ export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartP
 
         return () => clearInterval(tickIntervalId);
 
-    }, [chartType, isLoading, candles]);
+    }, [chartType]);
 
 
     const { lastPrice, priceChange, isUp } = useMemo(() => {
@@ -254,7 +253,7 @@ export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartP
 
         const min = Math.min(...prices);
         const max = Math.max(...prices);
-        const padding = (max - min) * 0.01 || 0.0001; 
+        const padding = (max - min) * 0.1 || 0.0001; 
         return [min - padding, max + padding];
     }, [candles, ticks, chartType]);
 
@@ -265,9 +264,9 @@ export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartP
     const handleModeChange = useCallback((val: string) => {
         setIsLoading(true);
         setChartMode(val);
-        setCandles(staticData); 
-        setTimeout(() => setIsLoading(false), 500);
-    }, [setChartMode, staticData]);
+        // The useEffect for chartMode will handle data switching
+        setTimeout(() => setIsLoading(false), 200); // Short delay to allow state to update
+    }, [setChartMode]);
 
     const renderChart = () => {
         if (isLoading) {
@@ -312,3 +311,5 @@ export function TradeChart({ assetLabel, markers = [], staticData }: TradeChartP
         </Card>
     );
 }
+
+    
