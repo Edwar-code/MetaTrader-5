@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot } from 'recharts';
+import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,6 +14,11 @@ export interface Candle {
     high: number;
     low: number;
     close: number;
+}
+
+export interface Tick {
+    epoch: number;
+    quote: number;
 }
 
 export interface ChartMarker {
@@ -39,10 +44,16 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div className="p-2 bg-background/80 backdrop-blur-sm border rounded-md shadow-lg text-xs">
         <p>{time}</p>
-        <p>O: <span className="font-bold">{data.open.toFixed(5)}</span></p>
-        <p>H: <span className="font-bold">{data.high.toFixed(5)}</span></p>
-        <p>L: <span className="font-bold">{data.low.toFixed(5)}</span></p>
-        <p>C: <span className="font-bold">{data.close.toFixed(5)}</span></p>
+        {data.quote !== undefined ? (
+            <p>Price: <span className="font-bold">{data.quote.toFixed(5)}</span></p>
+        ) : (
+            <>
+                <p>O: <span className="font-bold">{data.open.toFixed(5)}</span></p>
+                <p>H: <span className="font-bold">{data.high.toFixed(5)}</span></p>
+                <p>L: <span className="font-bold">{data.low.toFixed(5)}</span></p>
+                <p>C: <span className="font-bold">{data.close.toFixed(5)}</span></p>
+            </>
+        )}
       </div>
     );
   }
@@ -84,8 +95,49 @@ const MarkerDot = ({ type }: any) => {
 };
 MarkerDot.displayName = 'MarkerDot';
 
+const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
+    return (
+        <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data} margin={{ top: 5, right: 30, left: -10, bottom: 5 }} animationDuration={0}>
+            <defs>
+                <linearGradient id="chartGradientArea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={isUp ? "hsl(var(--chart-2))" : "hsl(var(--destructive))"} stopOpacity={0.4}/>
+                <stop offset="95%" stopColor={isUp ? "hsl(var(--chart-2))" : "hsl(var(--destructive))"} stopOpacity={0}/>
+                </linearGradient>
+            </defs>
+            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'HH:mm:ss')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+            <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+            <Tooltip content={<CustomTooltip />} />
+            <Area type="monotone" dataKey="quote" stroke={isUp ? "hsl(var(--chart-2))" : "hsl(var(--destructive))"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
+            {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
+            </AreaChart>
+        </ResponsiveContainer>
+    );
+};
+LiveAreaChart.displayName = 'LiveAreaChart';
+
+const LiveCandlestickChart = ({ data, yAxisDomain, markers }: { data: (Candle & {body: [number, number]})[], yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
+    return (
+        <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }} animationDuration={0}>
+                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="body" shape={<CandleStick />} isAnimationActive={false} />
+                {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
+            </ComposedChart>
+        </ResponsiveContainer>
+    );
+};
+LiveCandlestickChart.displayName = 'LiveCandlestickChart';
+
+
 export function TradeChart({ assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, staticData }: TradeChartProps) {
     const [candles, setCandles] = useState<Candle[]>(staticData);
+    const [ticks, setTicks] = useState<Tick[]>([]);
+
     const intervalSeconds = useMemo(() => {
         const match = chartInterval.match(/(\d+)(\w)/);
         if (!match) return 60;
@@ -101,8 +153,9 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         setCandles(staticData);
     }, [staticData]);
     
+    // Candle Simulation
     useEffect(() => {
-        const simulatePriceMove = () => {
+        const simulateCandleMove = () => {
             setCandles(prevCandles => {
                 if (prevCandles.length === 0) return [];
                 const newCandles = [...prevCandles];
@@ -130,24 +183,69 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
             });
         };
 
-        const intervalId = setInterval(simulatePriceMove, 1000);
-        return () => clearInterval(intervalId);
+        const candleIntervalId = setInterval(simulateCandleMove, 1000);
+        return () => clearInterval(candleIntervalId);
     }, [intervalSeconds]);
 
+    // Tick Simulation
+     useEffect(() => {
+        if (chartType !== 'area') {
+            setTicks([]);
+            return;
+        };
+
+        const lastCandle = candles[candles.length - 1];
+        if (!lastCandle) return;
+
+        // Initialize ticks
+        const initialTicks = Array.from({ length: 50 }).map((_, i) => ({
+            epoch: Math.floor(Date.now() / 1000) - 50 + i,
+            quote: lastCandle.close + (Math.random() - 0.5) * (lastCandle.close * 0.001)
+        }));
+        setTicks(initialTicks);
+
+        const simulateTickMove = () => {
+            setTicks(prevTicks => {
+                 if (prevTicks.length === 0) return [];
+                 const lastTick = prevTicks[prevTicks.length - 1];
+                 const newPrice = lastTick.quote + (Math.random() - 0.5) * (lastTick.quote * 0.0001);
+                 const newTick = {
+                     epoch: Math.floor(Date.now() / 1000),
+                     quote: newPrice
+                 }
+                 return [...prevTicks.slice(1), newTick];
+            });
+        };
+
+        const tickIntervalId = setInterval(simulateTickMove, 1000);
+        return () => clearInterval(tickIntervalId);
+
+    }, [chartType, candles]);
+
+
     const { lastPrice, priceChange, isUp } = useMemo(() => {
+        if (chartType === 'area') {
+            if (ticks.length < 2) return { lastPrice: 0, priceChange: 0, isUp: true };
+            const last = ticks[ticks.length - 1].quote;
+            const secondLast = ticks[ticks.length - 2].quote;
+            return { lastPrice: last, priceChange: last - secondLast, isUp: last >= secondLast };
+        }
+        
         if (candles.length === 0) return { lastPrice: 0, priceChange: 0, isUp: true };
         const lastCandle = candles[candles.length - 1];
         return { lastPrice: lastCandle.close, priceChange: lastCandle.close - lastCandle.open, isUp: lastCandle.close >= lastCandle.open };
-    }, [candles]);
+    }, [candles, ticks, chartType]);
 
     const yAxisDomain = useMemo(() => {
-        if (!candles || candles.length === 0) return ['auto', 'auto'];
-        const prices = candles.flatMap(c => [c.low, c.high]);
+        const dataSet = chartType === 'area' ? ticks : candles;
+        if (!dataSet || dataSet.length === 0) return ['auto', 'auto'];
+        
+        const prices = dataSet.flatMap((d: any) => d.quote !== undefined ? [d.quote] : [d.low, d.high]);
         const min = Math.min(...prices);
         const max = Math.max(...prices);
         const padding = (max - min) * 0.1 || 0.0001; 
         return [min - padding, max + padding];
-    }, [candles]);
+    }, [candles, ticks, chartType]);
 
     const chartDataForCandle = useMemo(() => (
         candles.map(c => ({...c, body: [c.low, c.high]}))
@@ -158,7 +256,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         setCandles(staticData); // Reset on interval change
     }, [setChartInterval, staticData]);
 
-    const showLoader = candles.length === 0;
+    const showLoader = (chartType === 'candle' && candles.length === 0) || (chartType === 'area' && ticks.length === 0);
 
     return (
         <Card className="h-full flex flex-col bg-transparent border-0 shadow-none">
@@ -173,18 +271,25 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                     </div>
                 )}
                 <div className="hidden sm:flex flex-wrap gap-2">
-                    <Tabs value={chartType} onValueChange={setChartType} className="w-auto">
+                    <Tabs value={chartType} onValueChange={(val) => {
+                        if (val === 'candle' && chartInterval === 'tick') {
+                            setChartInterval('1m');
+                        }
+                        setChartType(val);
+                    }} className="w-auto">
                         <TabsList>
+                            <TabsTrigger value="area">Area</TabsTrigger>
                             <TabsTrigger value="candle">Candle</TabsTrigger>
                         </TabsList>
                     </Tabs>
                     <Tabs value={chartInterval} onValueChange={handleIntervalChange} className="w-auto">
                         <TabsList>
-                            <TabsTrigger value="1m">1m</TabsTrigger>
-                            <TabsTrigger value="5m">5m</TabsTrigger>
-                            <TabsTrigger value="15m">15m</TabsTrigger>
-                            <TabsTrigger value="1h">1h</TabsTrigger>
-                            <TabsTrigger value="1d">1d</TabsTrigger>
+                             {chartType === 'area' && <TabsTrigger value="tick">Tick</TabsTrigger>}
+                             <TabsTrigger value="1m">1m</TabsTrigger>
+                             <TabsTrigger value="5m">5m</TabsTrigger>
+                             <TabsTrigger value="15m">15m</TabsTrigger>
+                             <TabsTrigger value="1h">1h</TabsTrigger>
+                             <TabsTrigger value="1d">1d</TabsTrigger>
                         </TabsList>
                     </Tabs>
                 </div>
@@ -197,16 +302,9 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                             <p className="z-10">Loading chart data...</p>
                         </div>
                     ) : (
-                        <ResponsiveContainer width="100%" height="100%">
-                            <ComposedChart data={chartDataForCandle} margin={{ top: 5, right: 20, left: -10, bottom: 5 }} animationDuration={0}>
-                                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
-                                <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} />
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                                <Tooltip content={<CustomTooltip />} />
-                                <Bar dataKey="body" shape={<CandleStick />} isAnimationActive={false} />
-                                {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
-                            </ComposedChart>
-                        </ResponsiveContainer>
+                        chartType === 'area'
+                        ? <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} />
+                        : <LiveCandlestickChart data={chartDataForCandle} yAxisDomain={yAxisDomain} markers={markers} />
                     )}
                 </div>
             </CardContent>
