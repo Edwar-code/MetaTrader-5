@@ -301,10 +301,10 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                             <Skeleton className="h-full w-full absolute" />
                             <p className="z-10">Loading chart data...</p>
                         </div>
+                    ) : chartType === 'area' ? (
+                        <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} />
                     ) : (
-                        chartType === 'area'
-                        ? <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} />
-                        : <LiveCandlestickChart data={chartDataForCandle} yAxisDomain={yAxisDomain} markers={markers} />
+                        <LiveCandlestickChart data={chartDataForCandle} yAxisDomain={yAxisDomain} markers={markers} />
                     )}
                 </div>
             </CardContent>
