@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format, fromUnixTime } from 'date-fns';
+import { sampleCandleData } from '@/lib/data';
 
 export interface Candle {
     epoch: number;
@@ -74,7 +75,9 @@ const CandleStick = (props: any) => {
     const color = isUp ? 'hsl(var(--chart-2))' : 'hsl(var(--destructive))';
     const bodyHeightRatio = Math.abs(open - close) / (high - low);
     const bodyHeight = isFinite(bodyHeightRatio) ? Math.max(1, bodyHeightRatio * height) : 1;
-    const bodyY = y + (isUp ? height - ((close - low) / (high - low)) * height : height - ((open - low) / (high - low)) * height) - bodyHeight;
+    
+    // The y prop from recharts is the top of the entire candle's allotted space (the high)
+    const bodyY = y + (isUp ? height - ((close - low) / (high - low)) * height : height - ((open - low) / (high - low)) * height) - (isUp ? bodyHeight : 0);
 
     return (
       <g stroke={color} fill={isUp ? color : 'none'} strokeWidth="1">
@@ -161,14 +164,17 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
     // Candle Simulation
     useEffect(() => {
         if (isLoading || chartType !== 'candle') return;
-        const simulateCandleMove = () => {
+        
+        const candleIntervalId = setInterval(() => {
             setCandles(prevCandles => {
                 if (prevCandles.length === 0) return [];
+                
                 const newCandles = [...prevCandles];
                 const lastCandle = { ...newCandles[newCandles.length - 1] };
                 const now_epoch = Math.floor(Date.now() / 1000);
                 
                 if (now_epoch - lastCandle.epoch >= intervalSeconds) {
+                    // Time for a new candle
                     const newPrice = lastCandle.close;
                     const newCandle: Candle = {
                         epoch: now_epoch - (now_epoch % intervalSeconds),
@@ -179,7 +185,8 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                     };
                     return [...newCandles.slice(1), newCandle];
                 } else {
-                    const movement = (Math.random() - 0.5) * (lastCandle.open * 0.0002);
+                    // Update current candle
+                    const movement = (Math.random() - 0.5) * (lastCandle.open * 0.0001);
                     lastCandle.close += movement;
                     lastCandle.high = Math.max(lastCandle.high, lastCandle.close);
                     lastCandle.low = Math.min(lastCandle.low, lastCandle.close);
@@ -187,9 +194,8 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                     return newCandles;
                 }
             });
-        };
+        }, 1000);
 
-        const candleIntervalId = setInterval(simulateCandleMove, 1000);
         return () => clearInterval(candleIntervalId);
     }, [chartType, intervalSeconds, isLoading]);
 
@@ -204,13 +210,15 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         if (!lastCandle) return;
 
         // Initialize ticks
-        const initialTicks = Array.from({ length: 50 }).map((_, i) => ({
-            epoch: Math.floor(Date.now() / 1000) - 50 + i,
-            quote: lastCandle.close + (Math.random() - 0.5) * (lastCandle.close * 0.001)
-        }));
-        setTicks(initialTicks);
+        if (ticks.length === 0) {
+            const initialTicks = Array.from({ length: 50 }).map((_, i) => ({
+                epoch: Math.floor(Date.now() / 1000) - 50 + i,
+                quote: lastCandle.close + (Math.random() - 0.5) * (lastCandle.close * 0.001)
+            }));
+            setTicks(initialTicks);
+        }
 
-        const simulateTickMove = () => {
+        const tickIntervalId = setInterval(() => {
             setTicks(prevTicks => {
                  if (prevTicks.length === 0) return [];
                  const lastTick = prevTicks[prevTicks.length - 1];
@@ -221,12 +229,11 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                  }
                  return [...prevTicks.slice(1), newTick];
             });
-        };
+        }, 1000);
 
-        const tickIntervalId = setInterval(simulateTickMove, 1000);
         return () => clearInterval(tickIntervalId);
 
-    }, [chartType, candles, isLoading]);
+    }, [chartType, candles, isLoading, ticks.length]);
 
 
     const { lastPrice, priceChange, isUp } = useMemo(() => {
@@ -246,7 +253,9 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         const dataSet = chartType === 'area' ? ticks : candles;
         if (!dataSet || dataSet.length === 0) return ['auto', 'auto'];
         
-        const prices = dataSet.flatMap((d: any) => d.quote !== undefined ? [d.quote] : [d.low, d.high]);
+        const prices = dataSet.flatMap((d: any) => d.quote !== undefined ? [d.quote] : [d.low, d.high]).filter(p => isFinite(p));
+        if (prices.length === 0) return ['auto', 'auto'];
+
         const min = Math.min(...prices);
         const max = Math.max(...prices);
         const padding = (max - min) * 0.1 || 0.0001; 
@@ -279,12 +288,12 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
         }
 
         if (chartType === 'area') {
-             if (ticks.length === 0) return <div className="flex items-center justify-center h-full text-muted-foreground">No tick data available.</div>;
+             if (ticks.length === 0) return <div className="flex items-center justify-center h-full text-muted-foreground">Generating tick data...</div>;
              return <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} />;
         }
 
         if (chartType === 'candle') {
-            if (chartDataForCandle.length === 0) return <div className="flex items-center justify-center h-full text-muted-foreground">No candle data available.</div>;
+            if (chartDataForCandle.length === 0) return <div className="flex items-center justify-center h-full text-muted-foreground">Generating candle data...</div>;
             return <LiveCandlestickChart data={chartDataForCandle} yAxisDomain={yAxisDomain} markers={markers} />;
         }
 
@@ -303,7 +312,7 @@ export function TradeChart({ assetLabel, markers = [], chartInterval, setChartIn
                         <p className={`text-xs sm:text-sm font-mono ${isUp ? 'text-green-500' : 'text-red-500'}`}>{isUp ? '+' : ''}{priceChange.toFixed(5)}</p>
                     </div>
                 )}
-                <div className="hidden sm:flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2">
                     <Tabs value={chartType} onValueChange={handleChartTypeChange} className="w-auto">
                         <TabsList>
                             <TabsTrigger value="area">Area</TabsTrigger>
