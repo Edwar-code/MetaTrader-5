@@ -34,7 +34,7 @@ const wheelItems = [
     { icon: <WheelTrendlineIcon />, value: 'trendline', type: 'tool' },
 ];
 
-const RADIUS = 110; // Main circle radius in px
+const RADIUS = 120; // Main circle radius in px
 const ITEM_RADIUS = 20; // Radius of each item circle
 
 export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInterval }: TimeframeWheelProps) {
@@ -50,25 +50,23 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
     };
 
     return (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-transparent" onClick={onClose}>
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
-                {/* Main blue circle */}
+        <div className="absolute inset-0 z-30 flex items-center justify-center" onClick={onClose}>
+            <div className="relative" style={{ width: `${(RADIUS + ITEM_RADIUS) * 2}px`, height: `${(RADIUS + ITEM_RADIUS) * 2}px` }} onClick={(e) => e.stopPropagation()}>
+                {/* Main transparent circle with border */}
                 <div
-                    className="absolute rounded-full"
+                    className="absolute rounded-full border-2 border-primary/50"
                     style={{
                         width: `${RADIUS * 2}px`,
                         height: `${RADIUS * 2}px`,
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        backgroundColor: 'hsl(var(--primary))',
-                        opacity: 0.9,
                     }}
                 ></div>
 
                 {/* Inner transparent circle with border */}
                 <div
-                    className="absolute rounded-full border-2 border-white/50"
+                    className="absolute rounded-full border-2 border-primary/50"
                     style={{
                         width: `${(RADIUS - 35) * 2}px`,
                         height: `${(RADIUS - 35) * 2}px`,
@@ -83,14 +81,14 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
                 <div
                     className="relative rounded-full"
                     style={{
-                        width: `${RADIUS * 2}px`,
-                        height: `${RADIUS * 2}px`,
+                        width: '100%',
+                        height: '100%',
                     }}
                 >
                     {wheelItems.map((item, index) => {
                         const angle = (index / wheelItems.length) * 2 * Math.PI - Math.PI / 2; // Subtract PI/2 to start from top
-                        const x = RADIUS + RADIUS * Math.cos(angle) - ITEM_RADIUS;
-                        const y = RADIUS + RADIUS * Math.sin(angle) - ITEM_RADIUS;
+                        const x = RADIUS + ITEM_RADIUS + RADIUS * Math.cos(angle);
+                        const y = RADIUS + ITEM_RADIUS + RADIUS * Math.sin(angle);
 
                         const isSelected = item.type === 'time' && item.value === selectedInterval;
 
@@ -103,11 +101,12 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
                                     top: `${y}px`,
                                     width: `${ITEM_RADIUS * 2}px`,
                                     height: `${ITEM_RADIUS * 2}px`,
+                                    transform: 'translate(-50%, -50%)',
                                 }}
                                 onClick={() => handleSelect(item.value, item.type)}
                             >
                                 <div
-                                    className={`flex items-center justify-center w-full h-full rounded-full ${isSelected ? 'bg-white' : 'bg-transparent'}`}
+                                    className={`flex items-center justify-center w-full h-full rounded-full ${isSelected ? 'bg-white' : 'bg-primary'}`}
                                 >
                                     <span className={`text-sm font-medium ${isSelected ? 'text-primary' : 'text-white'}`}>
                                         {item.label || item.icon}
