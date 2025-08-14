@@ -4,12 +4,10 @@
 import React, { useEffect } from 'react';
 import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, ReferenceLine } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format, fromUnixTime } from 'date-fns';
 import { AlertTriangle } from 'lucide-react';
-import { formatAssetDisplayName } from "@/lib/utils";
 import { useIsMobile } from '@/hooks/use-mobile';
 
 
@@ -34,19 +32,6 @@ const intervalMap: { [key: string]: number | string } = {
   '30m': 1800, '1h': 3600, '4h': 14400,
   '1d': 86400, '1W': '1W', '1M': '1M'
 };
-
-const intervalDisplayMap: { [key: string]: string } = {
-    'tick': 'Tick',
-    '1m': 'M1',
-    '5m': 'M5',
-    '15m': 'M15',
-    '30m': 'M30',
-    '1h': 'H1',
-    '4h': 'H4',
-    '1d': 'D1',
-    '1W': 'W1',
-    '1M': 'MN',
-  };
 
 // Heikin-Ashi calculation logic
 const calculateHeikinAshi = (candles: Candle[]): Candle[] => {
@@ -211,7 +196,7 @@ LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 
 export function TradeChart({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType }: TradeChartProps) {
-    const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, isAuthenticated, ticks, chartError, activeSymbols } = useDerivState();
+    const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, isAuthenticated, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
     const isMobile = useIsMobile();
 
@@ -233,14 +218,8 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
     }, [asset, chartInterval, connectionState, isAuthenticated, subscribeToTicks, subscribeToCandles, unsubscribeFromChart, isMobile]);
     
     const heikinAshiCandles = React.useMemo(() => calculateHeikinAshi(candles), [candles]);
-    const { activeSymbol, symbolDisplayName } = React.useMemo(() => {
-        const activeSymbol = activeSymbols.find(s => s.symbol === asset);
-        const symbolDisplayName = activeSymbol?.display_name.split(': ').pop()?.replace(' Index', '') || assetLabel;
-        return { activeSymbol, symbolDisplayName };
-    }, [activeSymbols, asset, assetLabel]);
 
-
-    const { lastPrice, priceChange, isUp } = React.useMemo(() => {
+    const { lastPrice, isUp } = React.useMemo(() => {
         const data = chartInterval === 'tick' ? ticks : heikinAshiCandles;
         if (data.length === 0) return { lastPrice: 0, priceChange: 0, isUp: true };
 
@@ -281,43 +260,8 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
 
     return (
         <Card className="h-full flex flex-col border-0 shadow-none rounded-none">
-            <CardHeader>
-                <div className="flex justify-between items-center">
-                    <div>
-                        <CardTitle className="text-base font-semibold text-primary">{assetLabel}</CardTitle>
-                        <p className="text-sm text-muted-foreground">Gold Spot</p>
-                    </div>
-                    <div className="flex gap-2">
-                        <Tabs value={chartType} onValueChange={setChartType} className="w-[200px]">
-                            <TabsList className="grid w-full grid-cols-2 h-8">
-                                <TabsTrigger value="area" className="h-6 text-xs">Area</TabsTrigger>
-                                <TabsTrigger value="candle" className="h-6 text-xs">Candle</TabsTrigger>
-                            </TabsList>
-                        </Tabs>
-                        <Tabs value={chartInterval} onValueChange={setChartInterval} className="w-[300px]">
-                            <TabsList className="grid w-full grid-cols-5 h-8">
-                                <TabsTrigger value="tick" className="h-6 text-xs">Tick</TabsTrigger>
-                                <TabsTrigger value="1m" className="h-6 text-xs">1m</TabsTrigger>
-                                <TabsTrigger value="5m" className="h-6 text-xs">5m</TabsTrigger>
-                                <TabsTrigger value="1h" className="h-6 text-xs">1h</TabsTrigger>
-                                <TabsTrigger value="1d" className="h-6 text-xs">1d</TabsTrigger>
-                            </TabsList>
-                        </Tabs>
-                    </div>
-                </div>
-            </CardHeader>
             <CardContent className="flex-1 min-h-0 w-full relative p-0">
                 <div className="h-full w-full">
-                <div className="absolute top-2 left-4 z-10 pointer-events-none">
-                    <div className="flex items-baseline space-x-2">
-                      <span className="text-sm font-semibold text-primary">{formatAssetDisplayName(assetLabel)}</span>
-                      <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block">
-                        <path d="M5 6L0 1L1 0L5 4L9 0L10 1L5 6Z" fill="hsl(var(--primary))"/>
-                      </svg>
-                      <span className="text-sm font-normal text-muted-foreground">{intervalDisplayMap[chartInterval]}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{activeSymbol?.submarket_display_name}</p>
-                </div>
                     {chartError ? (
                         <div className="flex items-center justify-center h-full text-destructive flex-col gap-2 p-4 text-center">
                             <AlertTriangle className="h-8 w-8" />
