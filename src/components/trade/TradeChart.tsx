@@ -126,7 +126,7 @@ const YAxisLabel = ({ viewBox, value }: any) => {
         <foreignObject x={width} y={y - 10} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
-            className="w-full h-full text-xs flex items-center justify-center rounded-sm text-black bg-transparent"
+            className="w-full h-full text-xs flex items-center justify-center rounded-sm text-green-600 bg-transparent"
           >
             {value.toFixed(2)}
           </div>
@@ -157,9 +157,8 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
             {lastTick && (
                 <ReferenceLine 
                     y={lastTick.quote} 
-                    stroke="black" 
+                    stroke="#22c55e" 
                     strokeWidth={1} 
-                    strokeDasharray="3 3"
                     label={<YAxisLabel value={lastTick.quote} />}
                 />
             )}
@@ -182,9 +181,8 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: {
                 {lastPrice > 0 && (
                      <ReferenceLine 
                         y={lastPrice} 
-                        stroke="black" 
+                        stroke="#22c55e" 
                         strokeWidth={1}
-                        strokeDasharray="3 3"
                         label={<YAxisLabel value={lastPrice}/>}
                     />
                 )}
