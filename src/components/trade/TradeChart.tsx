@@ -98,7 +98,7 @@ const HeikinAshiCandleStick = (props: any) => {
     const color = isUp ? '#22c55e' : '#ef4444';
     
     // Y position of the body
-    const yBody = isUp ? y + (high - close) / (high-low) * height : y + (high - open) / (high - low) * height;
+    const yBody = isUp ? y + (high - close) / (high - low) * height : y + (high - open) / (high - low) * height;
     // Height of the body
     const bodyHeight = Math.max(1, Math.abs(open - close) / (high - low) * height);
 
@@ -155,7 +155,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
                 <stop offset="95%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0}/>
                 </linearGradient>
             </defs>
-            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'HH:mm:ss')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
             <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} tickCount={8}/>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
             <Tooltip content={<CustomTooltip />} />
@@ -301,7 +301,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                       </svg>
                       <span className="text-sm font-normal text-muted-foreground">{intervalDisplayMap[chartInterval]}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">{assetLabel}</p>
+                    <p className="text-sm text-muted-foreground">Gold Spot</p>
                 </div>
                     {chartError ? (
                         <div className="flex items-center justify-center h-full text-destructive flex-col gap-2 p-4 text-center">
