@@ -131,12 +131,18 @@ function DerivProviderContent({ children }: { children: ReactNode }) {
     
     const { toast } = useToast();
 
+    // This useEffect sets up a 1-second interval to continuously update positions.
     useEffect(() => {
-        const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
-        if (lastTick) {
-            updatePositions(lastTick.quote, lastTick.symbol);
-        }
-    }, [ticks, updatePositions]);
+        const intervalId = setInterval(() => {
+            if (connectionState === 'connected' && ticks.length > 0) {
+                const lastTick = ticks[ticks.length - 1];
+                updatePositions(lastTick.quote, lastTick.symbol);
+            }
+        }, 1000); // Update every second
+
+        return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    }, [ticks, connectionState, updatePositions]);
+
 
     const clearProfitTable = useCallback(() => {
         localStorage.setItem('deriv_trade_logs_cleared', 'true');
