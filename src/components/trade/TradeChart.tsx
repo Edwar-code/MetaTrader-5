@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect } from 'react';
@@ -56,40 +57,17 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 CustomTooltip.displayName = 'CustomTooltip';
 
 const CandleStick = (props: any) => {
-    const { x, y, width, height, open, close, high, low } = props;
-    if (high === undefined || low === undefined || open === undefined || close === undefined || !isFinite(high) || !isFinite(low)) return null;
-
-    // FIX: Handle division by zero when price doesn't move.
-    if (high - low === 0) {
-        // This is a doji candle or a flat line. Draw a simple horizontal line for the body.
-        const color = close >= open ? '#22c55e' : '#ef4444';
-        return (
-             <path d={`M${x},${y + height/2} L${x + width},${y + height/2}`} stroke={color} strokeWidth="1.5" />
-        );
-    }
-    
+    const { x, y, width, height, low, high, open, close } = props;
     const isUp = close >= open;
     const color = isUp ? '#22c55e' : '#ef4444';
 
-    // The ratio of the body height to the total candle height (wick to wick)
-    const bodyHeightRatio = Math.abs(open - close) / (high - low);
-    // The actual pixel height of the candle body, with a minimum of 1px to be visible
-    const bodyHeight = isFinite(bodyHeightRatio) ? Math.max(1, bodyHeightRatio * height) : 1;
-    
-    // Calculate the Y position of the top of the candle body
-    // 'y' from props is the top of the whole candle area (top of the high wick)
-    // We calculate the position based on whether the candle is up or down
-    const bodyY = y + (isUp 
-        ? height - ((close - low) / (high - low)) * height // Position for up candle
-        : height - ((open - low) / (high - low)) * height) // Position for down candle
-        - bodyHeight;
+    const bodyHeight = Math.abs(y - props.y) || 1;
+    const bodyY = isUp ? y + height - bodyHeight : y;
 
     return (
       <g stroke={color} fill={isUp ? color : 'none'} strokeWidth="1">
-        {/* This path draws the wicks */}
-        <path d={`M${x + width / 2},${y} L${x + width / 2},${y + height}`} />
-        {/* This rect draws the body */}
-        <rect x={x} y={bodyY} width={width} height={bodyHeight} fill={color} />
+        <path d={`M${x + width / 2},${props.y} L${x + width / 2},${y + height}`} />
+        <rect x={x} y={bodyY} width={width} height={bodyHeight} />
       </g>
     );
 };
@@ -109,7 +87,6 @@ MarkerDot.displayName = 'MarkerDot';
 
 const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
-    const lastDigit = lastTick ? String(lastTick.quote).slice(-1) : '';
 
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -128,16 +105,20 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
             {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
             {lastTick && (
                 <YAxis
-                    y={lastTick.quote}
-                    label={{
-                        value: lastDigit,
-                        position: "right",
-                        fontSize: "14",
-                        fontWeight: "bold",
-                        fill: "hsl(var(--foreground))",
-                        stroke: "hsl(var(--background))",
-                        strokeWidth: 2,
-                    }}
+                    yAxisId="lastPriceAxis"
+                    orientation="right"
+                    domain={[lastTick.quote, lastTick.quote]}
+                    ticks={[lastTick.quote]}
+                    tick={
+                        <YAxisLabel
+                            price={lastTick.quote}
+                            isUp={isUp}
+                        />
+                    }
+                    axisLine={false}
+                    tickLine={false}
+                    width={55}
+                    allowDataOverflow={true}
                 />
             )}
             </AreaChart>
@@ -145,6 +126,22 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
     );
 };
 LiveAreaChart.displayName = 'LiveAreaChart';
+
+const YAxisLabel = ({ x, y, payload, price, isUp }: any) => {
+    if (!price) return null;
+    const color = isUp ? 'text-green-500' : 'text-red-500';
+    const bgColor = isUp ? 'bg-green-500/10' : 'bg-red-500/10';
+    return (
+        <g transform={`translate(${x}, ${y})`}>
+            <foreignObject x={0} y={-10} width="55" height="20">
+                 <div xmlns="http://www.w3.org/1999/xhtml" className={`w-full h-full text-xs font-bold flex items-center justify-center rounded-sm ${color} ${bgColor}`}>
+                    {price.toFixed(5)}
+                </div>
+            </foreignObject>
+        </g>
+    );
+};
+
 
 const LiveCandlestickChart = ({ data, yAxisDomain, markers }: { data: (Candle & {body: [number, number]})[], yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
     return (
@@ -154,7 +151,7 @@ const LiveCandlestickChart = ({ data, yAxisDomain, markers }: { data: (Candle & 
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} />
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="body" shape={<CandleStick />} isAnimationActive={false} />
+                <Bar dataKey="body" shape={<CandleStick />} isAnimationActive={false} barSize={6} />
                 {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
             </ComposedChart>
         </ResponsiveContainer>
