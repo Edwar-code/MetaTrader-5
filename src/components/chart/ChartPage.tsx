@@ -52,7 +52,7 @@ export default function ChartPage() {
       
       {/* Chart Container - Now takes full space and is behind other elements */}
       <div className="flex-1 bg-gray-50 relative min-h-0">
-         <div className="absolute top-[65px] left-3 z-10">
+         <div className="absolute top-[150px] left-3 z-10">
           <div className="flex items-center gap-1">
             <span className="font-semibold text-primary">{displayAsset}</span>
             <ChevronDown className="w-4 h-4 text-primary" />
