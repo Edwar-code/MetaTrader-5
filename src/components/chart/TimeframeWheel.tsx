@@ -36,6 +36,7 @@ const wheelItems = [
 
 const RADIUS = 120; // Main circle radius in px
 const ITEM_RADIUS = 20; // Radius of each item circle
+const ICON_RING_RADIUS = RADIUS - 18; // Radius for positioning icons on the blue ring
 
 export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInterval }: TimeframeWheelProps) {
     if (!isOpen) return null;
@@ -58,6 +59,18 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
                     style={{
                         width: `${RADIUS * 2}px`,
                         height: `${RADIUS * 2}px`,
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                    }}
+                ></div>
+                
+                {/* Blue Ring for icons */}
+                <div
+                    className="absolute rounded-full bg-primary"
+                     style={{
+                        width: `${(RADIUS - 5) * 2}px`,
+                        height: `${(RADIUS - 5) * 2}px`,
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
@@ -87,8 +100,8 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
                 >
                     {wheelItems.map((item, index) => {
                         const angle = (index / wheelItems.length) * 2 * Math.PI - Math.PI / 2; // Subtract PI/2 to start from top
-                        const x = RADIUS + ITEM_RADIUS + RADIUS * Math.cos(angle);
-                        const y = RADIUS + ITEM_RADIUS + RADIUS * Math.sin(angle);
+                        const x = RADIUS + ITEM_RADIUS + ICON_RING_RADIUS * Math.cos(angle);
+                        const y = RADIUS + ITEM_RADIUS + ICON_RING_RADIUS * Math.sin(angle);
 
                         const isSelected = item.type === 'time' && item.value === selectedInterval;
 
@@ -106,7 +119,7 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
                                 onClick={() => handleSelect(item.value, item.type)}
                             >
                                 <div
-                                    className={`flex items-center justify-center w-full h-full rounded-full ${isSelected ? 'bg-white' : 'bg-primary'}`}
+                                    className={`flex items-center justify-center w-full h-full rounded-full ${isSelected ? 'bg-white' : 'bg-transparent'}`}
                                 >
                                     <span className={`text-sm font-medium ${isSelected ? 'text-primary' : 'text-white'}`}>
                                         {item.label || item.icon}
