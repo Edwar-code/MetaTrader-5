@@ -34,7 +34,7 @@ const wheelItems = [
     { icon: <WheelTrendlineIcon />, value: 'trendline', type: 'tool' },
 ];
 
-const RADIUS = 120; // Main circle radius in px
+const RADIUS = 100; // Main circle radius in px
 const ITEM_RADIUS = 20; // Radius of each item circle
 const ICON_RING_RADIUS = RADIUS - 22; // Radius for positioning icons on the blue ring
 
