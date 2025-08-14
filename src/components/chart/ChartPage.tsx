@@ -110,7 +110,7 @@ export default function ChartPage() {
         </div>
         <div className="bg-white px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4]">
           <div className="flex items-center space-x-2">
-            <button className="cursor-pointer p-1" onClick={() => adjustLotSize(0.01)}>
+            <button className="cursor-pointer p-1" onClick={() => adjustLotSize(-0.01)}>
                 <ChevronUp className="h-5 w-5 text-gray-700" />
             </button>
              <input
@@ -119,7 +119,7 @@ export default function ChartPage() {
               onChange={handleLotChange}
               className="text-base text-gray-800 min-w-[40px] w-14 text-center bg-transparent border-none focus:ring-0 focus-visible:outline-none"
             />
-            <button className="cursor-pointer p-1" onClick={() => adjustLotSize(-0.01)}>
+            <button className="cursor-pointer p-1" onClick={() => adjustLotSize(0.01)}>
                 <ChevronDown className="h-5 w-5 text-gray-700" />
             </button>
           </div>
