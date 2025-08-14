@@ -299,7 +299,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                       <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block">
                         <path d="M5 6L0 1L1 0L5 4L9 0L10 1L5 6Z" fill="hsl(var(--primary))"/>
                       </svg>
-                      <span className="text-sm font-semibold text-muted-foreground">{intervalDisplayMap[chartInterval]}</span>
+                      <span className="text-sm font-normal text-muted-foreground">{intervalDisplayMap[chartInterval]}</span>
                     </div>
                     <p className="text-sm text-muted-foreground">{assetLabel}</p>
                 </div>
