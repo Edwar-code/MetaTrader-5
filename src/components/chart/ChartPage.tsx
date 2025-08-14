@@ -26,6 +26,8 @@ export default function ChartPage() {
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
+  const [lotSize, setLotSize] = useState('0.01');
+
 
   const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
   const sellPrice = lastTick?.quote;
@@ -40,6 +42,23 @@ export default function ChartPage() {
   
   const displayAsset = 'XAUUSD';
   const displayDescription = 'Gold Spot';
+
+  const handleLotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow only numbers and a single dot
+    if (/^\d*\.?\d*$/.test(value)) {
+      setLotSize(value);
+    }
+  };
+
+  const adjustLotSize = (amount: number) => {
+    setLotSize(prev => {
+      const current = parseFloat(prev) || 0;
+      const newSize = Math.max(0, current + amount);
+      // Format to 2 decimal places to handle floating point inaccuracies
+      return newSize.toFixed(2);
+    });
+  };
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
@@ -91,11 +110,16 @@ export default function ChartPage() {
         </div>
         <div className="bg-white px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4]">
           <div className="flex items-center space-x-4">
-            <button className="cursor-pointer p-1">
+            <button className="cursor-pointer p-1" onClick={() => adjustLotSize(0.01)}>
                 <ChevronUp className="h-5 w-5 text-gray-700" />
             </button>
-            <span className="text-base text-gray-800 min-w-[24px] text-center">1.00</span>
-            <button className="cursor-pointer p-1">
+             <input
+              type="text"
+              value={lotSize}
+              onChange={handleLotChange}
+              className="text-base text-gray-800 min-w-[40px] w-14 text-center bg-transparent border-none focus:ring-0"
+            />
+            <button className="cursor-pointer p-1" onClick={() => adjustLotSize(-0.01)}>
                 <ChevronDown className="h-5 w-5 text-gray-700" />
             </button>
           </div>
