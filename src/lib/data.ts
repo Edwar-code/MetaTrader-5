@@ -5,6 +5,11 @@ export interface Position {
   openPrice: string;
   currentPrice: string;
   profit: string;
+  date: string;
+  id: string;
+  sl: string;
+  tp: string;
+  swap: string;
 }
 
 // NOTE: This data is now static and primarily for layout purposes.
@@ -17,6 +22,11 @@ export const positions: Position[] = [
     openPrice: '2330.50',
     currentPrice: '2331.80',
     profit: '1.30',
+    date: '2025.08.14 15:18:35',
+    id: '1026135966',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'EURUSD',
@@ -25,6 +35,11 @@ export const positions: Position[] = [
     openPrice: '1.07150',
     currentPrice: '1.07100',
     profit: '5.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135967',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'GBPUSD',
@@ -33,6 +48,11 @@ export const positions: Position[] = [
     openPrice: '1.26500',
     currentPrice: '1.26400',
     profit: '-5.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135968',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'USDJPY',
@@ -41,6 +61,11 @@ export const positions: Position[] = [
     openPrice: '157.200',
     currentPrice: '157.350',
     profit: '3.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135969',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'AUDUSD',
@@ -49,6 +74,11 @@ export const positions: Position[] = [
     openPrice: '0.66500',
     currentPrice: '0.66450',
     profit: '4.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135970',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'USDCAD',
@@ -57,6 +87,11 @@ export const positions: Position[] = [
     openPrice: '1.37200',
     currentPrice: '1.37100',
     profit: '-15.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135971',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'USDCHF',
@@ -65,6 +100,11 @@ export const positions: Position[] = [
     openPrice: '0.90100',
     currentPrice: '0.90000',
     profit: '3.30',
+    date: '2025.08.14 15:18:35',
+    id: '1026135972',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'NZDUSD',
@@ -73,6 +113,11 @@ export const positions: Position[] = [
     openPrice: '0.61200',
     currentPrice: '0.61250',
     profit: '3.50',
+    date: '2025.08.14 15:18:35',
+    id: '1026135973',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'EURJPY',
@@ -81,6 +126,11 @@ export const positions: Position[] = [
     openPrice: '168.500',
     currentPrice: '168.200',
     profit: '2.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135974',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'GBPJPY',
@@ -89,6 +139,11 @@ export const positions: Position[] = [
     openPrice: '199.100',
     currentPrice: '198.900',
     profit: '-8.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135975',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'EURAUD',
@@ -97,6 +152,11 @@ export const positions: Position[] = [
     openPrice: '1.61200',
     currentPrice: '1.61000',
     profit: '8.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135976',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'AUDJPY',
@@ -105,6 +165,11 @@ export const positions: Position[] = [
     openPrice: '104.500',
     currentPrice: '104.600',
     profit: '9.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135977',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'XAGUSD',
@@ -113,6 +178,11 @@ export const positions: Position[] = [
     openPrice: '29.50',
     currentPrice: '29.20',
     profit: '-60.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135978',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'BTCUSD',
@@ -121,6 +191,11 @@ export const positions: Position[] = [
     openPrice: '67500.00',
     currentPrice: '67800.00',
     profit: '30.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135979',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
   {
     symbol: 'ETHUSD',
@@ -129,6 +204,11 @@ export const positions: Position[] = [
     openPrice: '3550.00',
     currentPrice: '3540.00',
     profit: '10.00',
+    date: '2025.08.14 15:18:35',
+    id: '1026135980',
+    sl: '—',
+    tp: '—',
+    swap: '0.00',
   },
 ];
 
