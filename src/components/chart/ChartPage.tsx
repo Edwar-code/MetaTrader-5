@@ -27,7 +27,6 @@ export default function ChartPage() {
 
   const [selectedAsset, setSelectedAsset] = useState(initialAsset);
   const selectedSymbol = activeSymbols.find(s => s.symbol === selectedAsset);
-  const assetLabel = selectedSymbol ? selectedSymbol.display_name : 'XAUUSD';
 
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
@@ -46,8 +45,8 @@ export default function ChartPage() {
   
   const displayAsset = useMemo(() => {
     if (selectedAsset === 'frxXAUUSD') return 'XAUUSD';
-    return assetLabel.split(': ').pop() || assetLabel;
-  }, [assetLabel, selectedAsset]);
+    return selectedSymbol ? selectedSymbol.display_name.split(': ').pop() || selectedSymbol.display_name : 'XAUUSD';
+  }, [selectedAsset, selectedSymbol]);
 
   const displayDescription = useMemo(() => {
       if (selectedAsset === 'frxXAUUSD') return 'Gold Spot';
@@ -60,16 +59,16 @@ export default function ChartPage() {
       {/* Chart Container - Now takes full space and is behind other elements */}
       <div className="flex-1 bg-gray-50 relative min-h-0">
          <div className="absolute top-[100px] left-3 z-10">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 text-sm">
             <span className="font-normal text-primary">{displayAsset}</span>
             <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-primary"></div>
-            <span className="font-normal text-foreground">{intervalMap[chartInterval]}</span>
+            <span className="font-normal text-muted-foreground">{intervalMap[chartInterval]}</span>
           </div>
-          <p className="text-sm text-muted-foreground">{displayDescription}</p>
+          <p className="text-xs text-muted-foreground">{displayDescription}</p>
         </div>
         <TradeChart
           asset={selectedAsset}
-          assetLabel={assetLabel}
+          assetLabel={displayAsset}
           chartInterval={chartInterval}
           setChartInterval={setChartInterval}
           chartType={chartType}
