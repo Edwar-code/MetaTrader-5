@@ -26,7 +26,7 @@ export default function PositionItem({ position }: PositionItemProps) {
   const profitColor = isLoss ? '#FF3B30' : '#007AFF';
   const typeColor = position.type === 'BUY' ? '#007AFF' : '#FF3B30';
 
-  const formattedType = position.type.charAt(0) + position.type.slice(1).toLowerCase();
+  const formattedType = position.type.toLowerCase();
 
   return (
     <div className="flex flex-col py-2 px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
