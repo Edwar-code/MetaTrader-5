@@ -45,20 +45,28 @@ export default function ChartPage() {
     '1m': 'M1', '5m': 'M5', '15m': 'M15', '30m': 'M30', '1h': 'H1', '4h': 'H4', '1d': 'D1', '1W': 'W1', '1M': 'MN', 'tick': 'Tick'
   };
   
-  const displayAsset = useMemo(() => assetLabel.split(': ').pop() || assetLabel, [assetLabel]);
+  const displayAsset = useMemo(() => {
+    if (selectedAsset === 'frxXAUUSD') return 'XAUUSD';
+    return assetLabel.split(': ').pop() || assetLabel;
+  }, [assetLabel, selectedAsset]);
+
+  const displayDescription = useMemo(() => {
+      if (selectedAsset === 'frxXAUUSD') return 'Gold Spot';
+      return selectedSymbol?.submarket_display_name || '...';
+  }, [selectedAsset, selectedSymbol]);
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       
       {/* Chart Container - Now takes full space and is behind other elements */}
       <div className="flex-1 bg-gray-50 relative min-h-0">
-         <div className="absolute top-[150px] left-3 z-10">
+         <div className="absolute top-[100px] left-3 z-10">
           <div className="flex items-center gap-1">
             <span className="font-semibold text-primary">{displayAsset}</span>
             <ChevronDown className="w-4 h-4 text-primary" />
-            <span className="font-semibold text-foreground">{intervalMap[chartInterval]}</span>
+            <span className="font-normal text-foreground">{intervalMap[chartInterval]}</span>
           </div>
-          <p className="text-sm text-muted-foreground">Gold Spot</p>
+          <p className="text-sm text-muted-foreground">{displayDescription}</p>
         </div>
         <TradeChart
           asset={selectedAsset}
