@@ -83,20 +83,14 @@ CustomTooltip.displayName = 'CustomTooltip';
 
 const HeikinAshiCandleStick = (props: any) => {
     const { x, y, width, height, open, close, high, low } = props;
-    if (high === undefined || low === undefined || open === undefined || close === undefined || !isFinite(high) || !isFinite(low)) return null;
-    
+    if ([x, y, width, height, open, close, high, low].some(v => v === undefined || !isFinite(v))) return null;
+
     const isUp = close >= open;
     const color = isUp ? '#22c55e' : '#ef4444';
 
-    const range = high - low;
-    // Handle the case where the price doesn't move to avoid division by zero.
-    if (range === 0) {
-        return <path d={`M${x},${y + height / 2} L${x + width},${y + height / 2}`} stroke={color} strokeWidth="1" />;
-    }
-
-    const bodyHeight = Math.max(1, Math.abs(((open - close) / range) * height));
-    const bodyY = y + ((high - Math.max(open, close)) / range) * height;
-
+    const bodyY = isUp ? y + (high - close) / (high - low) * height : y + (high - open) / (high - low) * height;
+    const bodyHeight = Math.max(1, Math.abs(open - close) / (high - low) * height);
+    
     return (
         <g stroke={color} fill={color} strokeWidth="1">
             {/* Wick */}
@@ -122,17 +116,20 @@ MarkerDot.displayName = 'MarkerDot';
 
 const YAxisLabel = ({ viewBox, value }: any) => {
     if (!viewBox || value === undefined) return null;
-    const { y } = viewBox;
+    const { y, width } = viewBox;
     return (
-        <g>
-            <foreignObject x={viewBox.x + 4} y={y - 10} width="60" height="20" className="overflow-visible">
-                 <div xmlns="http://www.w3.org/1999/xhtml" className="w-full h-full text-xs font-bold flex items-center justify-center rounded-sm bg-black text-white">
-                    {value.toFixed(5)}
-                </div>
-            </foreignObject>
-        </g>
+      <g>
+        <foreignObject x={viewBox.x} y={y - 10} width={width} height="20" className="overflow-visible">
+          <div
+            xmlns="http://www.w3.org/1999/xhtml"
+            className="w-full h-full text-xs flex items-center justify-center rounded-sm bg-white text-black"
+          >
+            {value.toFixed(5)}
+          </div>
+        </foreignObject>
+      </g>
     );
-};
+  };
 YAxisLabel.displayName = 'YAxisLabel';
 
 const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
@@ -310,6 +307,8 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
 
 
 
+
+    
 
     
 
