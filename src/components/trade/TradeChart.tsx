@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format, fromUnixTime } from 'date-fns';
 import { AlertTriangle } from 'lucide-react';
+import { formatAssetDisplayName } from '@/lib/utils';
 
 export interface ChartMarker {
     epoch: number;
@@ -280,13 +281,13 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                 <div className="h-full w-full">
                 <div className="absolute top-2 left-4 z-10 pointer-events-none">
                     <div className="flex items-baseline space-x-2">
-                      <span className="text-sm font-semibold text-primary">{assetLabel.split(' ')[0]}</span>
+                      <span className="text-sm font-semibold text-primary">{formatAssetDisplayName(assetLabel)}</span>
                       <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block">
                         <path d="M5 6L0 1L1 0L5 4L9 0L10 1L5 6Z" fill="hsl(var(--primary))"/>
                       </svg>
                       <span className="text-sm font-normal text-muted-foreground">{intervalDisplayMap[chartInterval]}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">Gold Spot</p>
+                    <p className="text-sm text-muted-foreground">{activeSymbol?.submarket_display_name}</p>
                 </div>
                     {chartError ? (
                         <div className="flex items-center justify-center h-full text-destructive flex-col gap-2 p-4 text-center">

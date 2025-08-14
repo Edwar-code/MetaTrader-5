@@ -19,7 +19,7 @@ export default function ChartPage() {
 
   const [selectedAsset, setSelectedAsset] = useState(initialAsset);
   const selectedSymbol = activeSymbols.find(s => s.symbol === selectedAsset);
-  const assetLabel = selectedSymbol ? selectedSymbol.display_name : 'Gold/USD';
+  const assetLabel = selectedSymbol ? selectedSymbol.display_name : 'XAUUSD';
 
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
