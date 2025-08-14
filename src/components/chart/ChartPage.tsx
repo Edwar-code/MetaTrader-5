@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import BottomNav from '../trade/BottomNav';
 import { TradeChart, type ChartMarker } from '../trade/TradeChart';
 import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
@@ -23,7 +23,7 @@ const formatPrice = (price: number | undefined) => {
 
 export default function ChartPage() {
   const { ticks, isAuthenticated } = useDerivState();
-  const { addPosition } = useTrade();
+  const { addPosition, updatePositions } = useTrade();
   const { toast } = useToast();
   
   const [selectedAsset, setAsset] = useState('frxXAUUSD');
@@ -37,6 +37,13 @@ export default function ChartPage() {
   const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
   const sellPrice = lastTick?.quote;
   const buyPrice = sellPrice !== undefined ? sellPrice + 0.20 : undefined;
+
+  useEffect(() => {
+    if (lastTick) {
+      updatePositions(lastTick.quote, 'XAUUSD');
+    }
+  }, [lastTick, updatePositions]);
+
 
   const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
   const formattedBuyPrice = useMemo(() => formatPrice(buyPrice), [buyPrice]);
@@ -54,7 +61,7 @@ export default function ChartPage() {
     }
     
     addPosition({
-      symbol: 'XAUUSD', // Using display name for now
+      symbol: 'XAUUSD', 
       type: tradeType,
       volume: lotSize,
       openPrice: price.toFixed(2),
@@ -106,7 +113,7 @@ export default function ChartPage() {
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       
       {/* Chart Container - Now takes full space and is behind other elements */}
-      <div className="flex-1 bg-gray-50 relative min-h-0 pt-[60px]">
+      <div className="flex-1 bg-gray-50 relative min-h-0 pt-[48px]">
          <div className="absolute top-[110px] left-3 z-10">
           <div className="flex items-center gap-1">
             <span className="font-normal text-primary text-[12.5px]">{displayAsset}</span>

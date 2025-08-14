@@ -1,3 +1,4 @@
+
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
@@ -22,16 +23,53 @@ interface TradeContextState {
 
 const TradeContext = createContext<TradeContextState | undefined>(undefined);
 
+// A simple multiplier for profit calculation.
+// For XAUUSD, 1 lot might represent 100 units.
+// So a $1 price move on a 0.01 lot trade = 1 * 100 * 0.01 = $1 profit.
+// This is a simplification. Real-world calculations are more complex.
+const getContractSize = (symbol: string): number => {
+    if (symbol === 'XAUUSD') {
+        return 100;
+    }
+    return 100000; // Standard lot size for Forex
+}
+
 export function TradeProvider({ children }: { children: ReactNode }) {
-  const [positions, setPositions] = useState<Position[]>(staticPositions);
+  const [positions, setPositions] = useState<Position[]>([]);
   const [accountSummary, setAccountSummary] = useState<AccountSummaryData>(staticAccountSummary);
 
   const addPosition = useCallback((position: Position) => {
-    setPositions(prev => [position, ...prev]);
+    // When adding a position, filter out any static placeholders
+    setPositions(prev => {
+      const activePositions = prev.filter(p => p.id.startsWith('sim-'));
+      return [position, ...activePositions];
+    });
   }, []);
 
   const updatePositions = useCallback((currentPrice: number, symbol: string) => {
-    // This will be implemented in the next step to update P/L
+    setPositions(prevPositions => {
+        return prevPositions.map(pos => {
+            if (pos.symbol === symbol) {
+                const openPrice = parseFloat(pos.openPrice);
+                const volume = parseFloat(pos.volume);
+                const contractSize = getContractSize(pos.symbol);
+
+                let profit = 0;
+                if (pos.type === 'buy') {
+                    profit = (currentPrice - openPrice) * volume * contractSize;
+                } else { // sell
+                    profit = (openPrice - currentPrice) * volume * contractSize;
+                }
+
+                return {
+                    ...pos,
+                    currentPrice: currentPrice.toFixed(2),
+                    profit: profit.toFixed(2),
+                };
+            }
+            return pos;
+        });
+    });
   }, []);
   
   const value = {
