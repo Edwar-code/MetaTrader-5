@@ -9,6 +9,7 @@ import { Sidebar } from '../trade/Sidebar';
 import { MarketSelector } from '../trade/MarketSelector';
 import { useDerivState } from '@/context/DerivContext';
 import { TimeframeWheel } from './TimeframeWheel';
+import { ChevronDown } from 'lucide-react';
 
 const formatPrice = (price: number | undefined) => {
   if (typeof price !== 'number' || isNaN(price)) {
@@ -43,14 +44,21 @@ export default function ChartPage() {
   const intervalMap: { [key: string]: string } = {
     '1m': 'M1', '5m': 'M5', '15m': 'M15', '30m': 'M30', '1h': 'H1', '4h': 'H4', '1d': 'D1', '1W': 'W1', '1M': 'MN', 'tick': 'Tick'
   };
+  
+  const displayAsset = useMemo(() => assetLabel.split(': ').pop() || assetLabel, [assetLabel]);
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       
       {/* Chart Container - Now takes full space and is behind other elements */}
       <div className="flex-1 bg-gray-50 relative min-h-0">
-        <div className="absolute top-[65px] left-3 z-10 bg-black/50 text-white text-xs px-2 py-1 rounded">
-          {assetLabel}, {intervalMap[chartInterval]} GOLDSPOT
+         <div className="absolute top-[65px] left-3 z-10">
+          <div className="flex items-center gap-1">
+            <span className="font-semibold text-primary">{displayAsset}</span>
+            <ChevronDown className="w-4 h-4 text-primary" />
+            <span className="font-semibold text-foreground">{intervalMap[chartInterval]}</span>
+          </div>
+          <p className="text-sm text-muted-foreground">Gold Spot</p>
         </div>
         <TradeChart
           asset={selectedAsset}
