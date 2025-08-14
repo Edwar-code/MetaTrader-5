@@ -31,6 +31,15 @@ const intervalMap: { [key: string]: number } = {
   '1h': 3600, '1d': 86400,
 };
 
+const intervalDisplayMap: { [key: string]: string } = {
+    'tick': 'Tick',
+    '1m': 'M1',
+    '5m': 'M5',
+    '15m': 'M15',
+    '1h': 'H1',
+    '1d': 'D1',
+  };
+
 // Heikin-Ashi calculation logic
 const calculateHeikinAshi = (candles: Candle[]): Candle[] => {
     if (!candles || candles.length === 0) return [];
@@ -139,7 +148,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
 
     return (
         <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 5, right: 30, left: -10, bottom: 5 }} animationDuration={0}>
+            <AreaChart data={data} margin={{ top: 20, right: 30, left: -10, bottom: 5 }} animationDuration={0}>
             <defs>
                 <linearGradient id="chartGradientArea" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0.4}/>
@@ -170,7 +179,7 @@ LiveAreaChart.displayName = 'LiveAreaChart';
 const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
     return (
         <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }} animationDuration={0}>
+            <ComposedChart data={data} margin={{ top: 20, right: 20, left: -10, bottom: 5 }} animationDuration={0}>
                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} tickCount={8}/>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
@@ -194,7 +203,7 @@ LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 
 export function TradeChart({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType }: TradeChartProps) {
-    const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, isAuthenticated, ticks, chartError } = useDerivState();
+    const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, isAuthenticated, ticks, chartError, activeSymbols } = useDerivState();
     const { candles } = useDerivChart();
 
     useEffect(() => {
@@ -209,6 +218,12 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
     }, [asset, chartInterval, connectionState, isAuthenticated, subscribeToTicks, subscribeToCandles, unsubscribeFromChart]);
     
     const heikinAshiCandles = React.useMemo(() => calculateHeikinAshi(candles), [candles]);
+    const { activeSymbol, symbolDisplayName } = React.useMemo(() => {
+        const activeSymbol = activeSymbols.find(s => s.symbol === asset);
+        const symbolDisplayName = activeSymbol?.display_name.split(': ').pop()?.replace(' Index', '') || assetLabel;
+        return { activeSymbol, symbolDisplayName };
+    }, [activeSymbols, asset, assetLabel]);
+
 
     const { lastPrice, priceChange, isUp } = React.useMemo(() => {
         const data = chartInterval === 'tick' ? ticks : heikinAshiCandles;
@@ -236,7 +251,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
         
         const min = Math.min(...finitePrices);
         const max = Math.max(...finitePrices);
-        const padding = (max - min) * 0.05 || 0.0001; 
+        const padding = (max - min) * 0.1 || 0.0001; 
 
         return [min - padding, max + padding];
     }, [ticks, heikinAshiCandles, chartInterval]);
@@ -253,7 +268,6 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
         <Card className="h-full flex flex-col">
             <CardHeader className="flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex-1">
-                    <CardTitle className="font-headline">{assetLabel}</CardTitle>
                 </div>
                 <div className="flex flex-wrap gap-2">
                     <Tabs value={chartType} onValueChange={setChartType} className="w-auto">
@@ -279,6 +293,16 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
             </CardHeader>
             <CardContent className="flex-1 min-h-0 w-full relative">
                 <div className="h-full w-full">
+                <div className="absolute top-2 left-4 z-10 pointer-events-none">
+                    <div className="flex items-baseline space-x-2">
+                      <span className="text-sm font-semibold text-primary">XAUUSD</span>
+                      <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block">
+                        <path d="M5 6L0 1L1 0L5 4L9 0L10 1L5 6Z" fill="hsl(var(--primary))"/>
+                      </svg>
+                      <span className="text-sm font-semibold text-muted-foreground">{intervalDisplayMap[chartInterval]}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{assetLabel}</p>
+                </div>
                     {chartError ? (
                         <div className="flex items-center justify-center h-full text-destructive flex-col gap-2 p-4 text-center">
                             <AlertTriangle className="h-8 w-8" />
