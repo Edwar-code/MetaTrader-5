@@ -6,7 +6,6 @@ import BottomNav from '../trade/BottomNav';
 import { TradeChart } from '../trade/TradeChart';
 import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 import { Sidebar } from '../trade/Sidebar';
-import { MarketSelector } from '../trade/MarketSelector';
 import { useDerivState } from '@/context/DerivContext';
 import { TimeframeWheel } from './TimeframeWheel';
 
@@ -20,14 +19,9 @@ const formatPrice = (price: number | undefined) => {
 };
 
 export default function ChartPage() {
-  const { activeSymbols, ticks } = useDerivState();
+  const { ticks } = useDerivState();
   
-  const forexSymbols = activeSymbols.filter(s => s.market === 'forex');
-  const initialAsset = forexSymbols.length > 0 ? forexSymbols[0].symbol : 'frxXAUUSD';
-
-  const [selectedAsset, setSelectedAsset] = useState(initialAsset);
-  const selectedSymbol = activeSymbols.find(s => s.symbol === selectedAsset);
-
+  const [selectedAsset] = useState('frxXAUUSD');
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
@@ -43,15 +37,8 @@ export default function ChartPage() {
     '1m': 'M1', '5m': 'M5', '15m': 'M15', '30m': 'M30', '1h': 'H1', '4h': 'H4', '1d': 'D1', '1W': 'W1', '1M': 'MN', 'tick': 'Tick'
   };
   
-  const displayAsset = useMemo(() => {
-    if (selectedAsset === 'frxXAUUSD') return 'XAUUSD';
-    return selectedSymbol ? selectedSymbol.display_name.split(': ').pop() || selectedSymbol.display_name : 'XAUUSD';
-  }, [selectedAsset, selectedSymbol]);
-
-  const displayDescription = useMemo(() => {
-      if (selectedAsset === 'frxXAUUSD') return 'Gold Spot';
-      return selectedSymbol?.submarket_display_name || '...';
-  }, [selectedAsset, selectedSymbol]);
+  const displayAsset = 'XAUUSD';
+  const displayDescription = 'Gold Spot';
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
@@ -80,12 +67,8 @@ export default function ChartPage() {
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2.5 bg-white border-b border-gray-300 z-20">
         <div className="flex items-center">
           <Sidebar />
-          <div className="w-48">
-            <MarketSelector
-              asset={selectedAsset}
-              setAsset={setSelectedAsset}
-              marketFilter="forex"
-            />
+          <div className="pl-4">
+             <span className="font-semibold text-foreground text-sm">XAUUSD</span>
           </div>
         </div>
         <div className="flex-1"></div>
