@@ -12,7 +12,7 @@ export default function Header({ totalProfit }: HeaderProps) {
   const isZero = profitValue === 0;
 
   // Format profit string to always show two decimal places
-  const profitString = `${isLoss ? '' : '+'}${profitValue.toFixed(2)}`;
+  const profitString = profitValue.toFixed(2);
   const profitColor = isLoss ? 'text-[#FF3B30]' : 'text-[#007AFF]';
 
   return (
