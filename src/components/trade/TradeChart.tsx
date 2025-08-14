@@ -31,6 +31,31 @@ const intervalMap: { [key: string]: number } = {
   '1h': 3600, '1d': 86400,
 };
 
+// Heikin-Ashi calculation logic
+const calculateHeikinAshi = (candles: Candle[]): Candle[] => {
+    if (!candles || candles.length === 0) return [];
+
+    return candles.reduce((acc: Candle[], candle, i) => {
+        const prev = i > 0 ? acc[i - 1] : null;
+        const ohlc = candle;
+
+        const haClose = (ohlc.open + ohlc.high + ohlc.low + ohlc.close) / 4;
+        const haOpen = prev ? (prev.open + prev.close) / 2 : (ohlc.open + ohlc.close) / 2;
+        const haHigh = Math.max(ohlc.high, haOpen, haClose);
+        const haLow = Math.min(ohlc.low, haOpen, haClose);
+
+        acc.push({
+            epoch: ohlc.epoch,
+            open: haOpen,
+            high: haHigh,
+            low: haLow,
+            close: haClose,
+        });
+        return acc;
+    }, []);
+};
+
+
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -56,22 +81,25 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 CustomTooltip.displayName = 'CustomTooltip';
 
-const CandleStick = (props: any) => {
-    const { x, y, width, height, low, high, open, close } = props;
+const HeikinAshiCandleStick = (props: any) => {
+    const { x, y, width, height, open, close, high, low } = props;
     const isUp = close >= open;
     const color = isUp ? '#22c55e' : '#ef4444';
 
-    const bodyHeight = Math.abs(y - props.y) || 1;
+    // The pixel height of the candle body, with a minimum of 1px to be visible
+    const bodyHeight = Math.max(1, Math.abs(y - props.y));
     const bodyY = isUp ? y + height - bodyHeight : y;
 
     return (
       <g stroke={color} fill={color} strokeWidth="1">
+        {/* This path draws the wicks */}
         <path d={`M${x + width / 2},${props.y} L${x + width / 2},${y + height}`} />
-        <rect x={x} y={bodyY} width={width} height={bodyHeight} />
+        {/* This rect draws the body */}
+        <rect x={x} y={bodyY} width={width} height={bodyHeight} fill={color} />
       </g>
     );
 };
-CandleStick.displayName = 'CandleStick';
+HeikinAshiCandleStick.displayName = 'HeikinAshiCandleStick';
 
 
 const MarkerDot = ({ cx, cy, payload, type }: any) => {
@@ -150,7 +178,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: {
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} />
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="body" shape={<CandleStick />} isAnimationActive={false} barSize={6} />
+                <Bar dataKey="body" shape={<HeikinAshiCandleStick />} isAnimationActive={false} barSize={6} />
                 {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
                 {lastPrice > 0 && (
                     <YAxis
@@ -191,24 +219,26 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
         }
         return () => { if (isAuthenticated) unsubscribeFromChart(); };
     }, [asset, chartInterval, connectionState, isAuthenticated, subscribeToTicks, subscribeToCandles, unsubscribeFromChart]);
+    
+    const heikinAshiCandles = React.useMemo(() => calculateHeikinAshi(candles), [candles]);
 
     const { lastPrice, priceChange, isUp } = React.useMemo(() => {
-        const data = chartInterval === 'tick' ? ticks : candles;
+        const data = chartInterval === 'tick' ? ticks : heikinAshiCandles;
         if (data.length === 0) return { lastPrice: 0, priceChange: 0, isUp: true };
 
         if (chartInterval === 'tick' && ticks.length > 0) {
             const last = ticks[ticks.length - 1].quote;
             const secondLast = ticks.length > 1 ? ticks[ticks.length - 2].quote : last;
             return { lastPrice: last, priceChange: last - secondLast, isUp: last >= secondLast };
-        } else if (chartInterval !== 'tick' && candles.length > 0) {
-            const lastCandle = candles[candles.length - 1];
+        } else if (chartInterval !== 'tick' && heikinAshiCandles.length > 0) {
+            const lastCandle = heikinAshiCandles[heikinAshiCandles.length - 1];
             return { lastPrice: lastCandle.close, priceChange: lastCandle.close - lastCandle.open, isUp: lastCandle.close >= lastCandle.open };
         }
         return { lastPrice: 0, priceChange: 0, isUp: true };
-    }, [ticks, candles, chartInterval]);
+    }, [ticks, heikinAshiCandles, chartInterval]);
 
     const yAxisDomain = React.useMemo(() => {
-        const dataSet = chartInterval === 'tick' ? ticks : candles;
+        const dataSet = chartInterval === 'tick' ? ticks : heikinAshiCandles;
         if (!dataSet || dataSet.length === 0) return ['auto', 'auto'];
 
         const pricesFromData = dataSet.flatMap((d: any) => d.quote !== undefined ? [d.quote] : [d.low, d.high]);
@@ -221,11 +251,11 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
         const padding = (max - min) * 0.05 || 0.0001; 
 
         return [min - padding, max + padding];
-    }, [ticks, candles, chartInterval]);
+    }, [ticks, heikinAshiCandles, chartInterval]);
 
     const chartDataForCandle = React.useMemo(() => (
-        candles.map(c => ({...c, body: [c.low, c.high]}))
-    ), [candles]);
+        heikinAshiCandles.map(c => ({...c, body: [c.low, c.high]}))
+    ), [heikinAshiCandles]);
 
 
     const showLoader = !isAuthenticated || (connectionState === 'connected' && ticks.length === 0 && candles.length === 0 && !chartError);
@@ -288,4 +318,5 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
         </Card>
     );
 }
+
 
