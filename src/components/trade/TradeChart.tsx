@@ -218,18 +218,18 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
     const heikinAshiCandles = React.useMemo(() => calculateHeikinAshi(candles), [candles]);
 
     const { lastPrice, isUp } = React.useMemo(() => {
-        const data = chartInterval === 'tick' ? ticks : heikinAshiCandles;
-        if (data.length === 0) return { lastPrice: 0, priceChange: 0, isUp: true };
-
-        if (chartInterval === 'tick' && ticks.length > 0) {
-            const last = ticks[ticks.length - 1].quote;
-            const secondLast = ticks.length > 1 ? ticks[ticks.length - 2].quote : last;
-            return { lastPrice: last, priceChange: last - secondLast, isUp: last >= secondLast };
-        } else if (chartInterval !== 'tick' && heikinAshiCandles.length > 0) {
-            const lastCandle = heikinAshiCandles[heikinAshiCandles.length - 1];
-            return { lastPrice: lastCandle.close, priceChange: lastCandle.close - lastCandle.open, isUp: lastCandle.close >= lastCandle.open };
+        const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
+        if (lastTick) {
+             const secondLastTick = ticks.length > 1 ? ticks[ticks.length - 2].quote : lastTick.quote;
+             return { lastPrice: lastTick.quote, isUp: lastTick.quote >= secondLastTick };
         }
-        return { lastPrice: 0, priceChange: 0, isUp: true };
+
+        if (chartInterval !== 'tick' && heikinAshiCandles.length > 0) {
+            const lastCandle = heikinAshiCandles[heikinAshiCandles.length - 1];
+            return { lastPrice: lastCandle.close, isUp: lastCandle.close >= lastCandle.open };
+        }
+
+        return { lastPrice: 0, isUp: true };
     }, [ticks, heikinAshiCandles, chartInterval]);
 
     const yAxisDomain = React.useMemo(() => {

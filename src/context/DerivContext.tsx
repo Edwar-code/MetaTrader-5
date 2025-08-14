@@ -121,6 +121,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
     const [proofOfAddressStatus, setProofOfAddressStatus] = useState<VerificationStatus | null>(null);
     
     const chartSubscription = useRef<any>(null);
+    const tickSubscription = useRef<any>(null);
     const balanceSubscription = useRef<any>(null);
     const openContractsSubscription = useRef<any>(null);
     const transactionSubscription = useRef<any>(null);
@@ -217,6 +218,10 @@ export function DerivProvider({ children }: { children: ReactNode }) {
         if (chartSubscription.current) {
             chartSubscription.current.unsubscribe();
             chartSubscription.current = null;
+        }
+         if (tickSubscription.current) {
+            tickSubscription.current.unsubscribe();
+            tickSubscription.current = null;
         }
     }, []);
 
@@ -498,8 +503,8 @@ export function DerivProvider({ children }: { children: ReactNode }) {
                 setTicks(formattedTicks);
             }
             
-            chartSubscription.current = await api.basic.subscribe({ ticks: symbol });
-            chartSubscription.current.subscribe((response: any) => {
+            tickSubscription.current = await api.basic.subscribe({ ticks: symbol });
+            tickSubscription.current.subscribe((response: any) => {
                 if (response.error) {
                     setChartError(response.error.message);
                     unsubscribeFromChart();
@@ -528,15 +533,27 @@ export function DerivProvider({ children }: { children: ReactNode }) {
         setChartError(null);
 
         try {
-            const historyResponse = await api.basic.ticksHistory({
-                ticks_history: symbol, adjust_start_time: 1, count,
-                end: 'latest', style: 'candles', granularity,
-            });
+             // Fetch initial history for both candles and ticks
+            const [historyResponse, tickHistoryResponse] = await Promise.all([
+                api.basic.ticksHistory({
+                    ticks_history: symbol, adjust_start_time: 1, count,
+                    end: 'latest', style: 'candles', granularity,
+                }),
+                api.basic.ticksHistory({
+                    ticks_history: symbol, adjust_start_time: 1, count: 1,
+                    end: "latest", style: "ticks",
+                })
+            ]);
 
             if (historyResponse.error) {
                 setChartError(historyResponse.error.message);
                 return;
             }
+             if (tickHistoryResponse.error) {
+                // Don't block chart for tick error, just log it
+                console.warn("Could not fetch initial tick for candle chart", tickHistoryResponse.error.message);
+            }
+
             if (historyResponse.candles) {
                  const parsedCandles = historyResponse.candles.map((c: any) => ({
                     epoch: c.epoch,
@@ -548,7 +565,15 @@ export function DerivProvider({ children }: { children: ReactNode }) {
                 const uniqueCandles = Array.from(new Map(parsedCandles.map((c: Candle) => [c.epoch, c])).values());
                 setCandles(uniqueCandles);
             }
+             if (tickHistoryResponse.history) {
+                const { history } = tickHistoryResponse;
+                const formattedTicks = history.prices.map((price: any, index: number) => ({
+                    epoch: history.times[index], quote: parseFloat(price), symbol: symbol,
+                }));
+                setTicks(formattedTicks);
+            }
             
+            // Subscribe to candles
             chartSubscription.current = await api.basic.subscribe({ ticks_history: symbol, style: 'candles', granularity, end: 'latest' });
             chartSubscription.current.subscribe((response: any) => {
                 if (response.error) {
@@ -579,6 +604,26 @@ export function DerivProvider({ children }: { children: ReactNode }) {
                     });
                 }
             });
+
+             // Subscribe to ticks
+            tickSubscription.current = await api.basic.subscribe({ ticks: symbol });
+            tickSubscription.current.subscribe((response: any) => {
+                if (response.error) {
+                    console.warn("Tick stream error on candle chart:", response.error.message);
+                    if(tickSubscription.current) tickSubscription.current.unsubscribe();
+                    return;
+                }
+                if (response.tick) {
+                    const { tick } = response;
+                    setTicks(prevTicks => {
+                        const newTick = { epoch: tick.epoch, quote: parseFloat(tick.quote), symbol: tick.symbol };
+                        // We only need the last few ticks for live price, not a long history
+                        const updatedTicks = [...prevTicks, newTick];
+                        return updatedTicks.slice(-5);
+                    });
+                }
+            });
+
         } catch (e: any) {
             setChartError((e as Error).message || 'Failed to load chart data.');
         }
