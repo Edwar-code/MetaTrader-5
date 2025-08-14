@@ -44,7 +44,8 @@ export function TradeProvider({ children }: { children: ReactNode }) {
 
   const updatePositions = useCallback((currentPrice: number, symbol: string) => {
     setPositions(prevPositions => {
-        return prevPositions.map(pos => {
+        let hasChanged = false;
+        const newPositions = prevPositions.map(pos => {
             if (pos.symbol === symbol) {
                 const openPrice = parseFloat(pos.openPrice);
                 const volume = parseFloat(pos.volume);
@@ -57,14 +58,21 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                     profit = (openPrice - currentPrice) * volume * contractSize;
                 }
 
-                return {
-                    ...pos,
-                    currentPrice: currentPrice.toFixed(2),
-                    profit: profit.toFixed(2),
-                };
+                const newCurrentPriceStr = currentPrice.toFixed(2);
+                const newProfitStr = profit.toFixed(2);
+
+                if (pos.currentPrice !== newCurrentPriceStr || pos.profit !== newProfitStr) {
+                    hasChanged = true;
+                    return {
+                        ...pos,
+                        currentPrice: newCurrentPriceStr,
+                        profit: newProfitStr,
+                    };
+                }
             }
             return pos;
         });
+        return hasChanged ? newPositions : prevPositions;
     });
   }, []);
   

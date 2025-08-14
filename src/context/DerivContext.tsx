@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef, useMemo } from "react";
 import DerivAPI from '@deriv/deriv-api';
 import { useTrade, TradeProvider } from "./TradeContext";
+import type { Position } from '@/lib/data';
 
 // #region Types
 export interface RunningTrade {
@@ -121,7 +122,7 @@ function DerivProviderContent({ children }: { children: ReactNode }) {
     const [areLogsCleared, setAreLogsCleared] = useState(false);
     const [chartError, setChartError] = useState<string | null>(null);
     const [proofOfAddressStatus, setProofOfAddressStatus] = useState<VerificationStatus | null>(null);
-    const { updatePositions } = useTrade();
+    const { positions, updatePositions } = useTrade();
     
     const chartSubscription = useRef<any>(null);
     const tickSubscription = useRef<any>(null);
@@ -133,15 +134,27 @@ function DerivProviderContent({ children }: { children: ReactNode }) {
 
     // This useEffect sets up a 1-second interval to continuously update positions.
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            if (connectionState === 'connected' && ticks.length > 0) {
-                const lastTick = ticks[ticks.length - 1];
-                updatePositions(lastTick.quote, lastTick.symbol);
+        const intervalId = setInterval(async () => {
+            if (connectionState === 'connected' && positions.length > 0 && apiRef.current) {
+                 const symbolsToUpdate = [...new Set(positions.map(p => p.symbol))];
+                 for (const symbol of symbolsToUpdate) {
+                     // In a real scenario, you'd look up the correct API symbol
+                    const apiSymbol = 'frx' + symbol;
+                    try {
+                        const tickHistory = await getTicks(apiSymbol, 1);
+                        if (tickHistory.length > 0) {
+                            const currentPrice = tickHistory[0].quote;
+                            updatePositions(currentPrice, symbol);
+                        }
+                    } catch (error) {
+                        // console.error(`Could not fetch price for ${symbol}`, error);
+                    }
+                 }
             }
-        }, 1000); // Update every second
+        }, 1000);
 
-        return () => clearInterval(intervalId); // Cleanup interval on component unmount
-    }, [ticks, connectionState, updatePositions]);
+        return () => clearInterval(intervalId);
+    }, [connectionState, positions, updatePositions]);
 
 
     const clearProfitTable = useCallback(() => {

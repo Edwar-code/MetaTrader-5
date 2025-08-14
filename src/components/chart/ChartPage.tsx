@@ -33,7 +33,9 @@ export default function ChartPage() {
   const [lotSize, setLotSize] = useState('0.01');
 
   const chartMarkers = useMemo((): ChartMarker[] => {
-    return positions.map(pos => ({
+    return positions
+    .filter(pos => pos.symbol === 'XAUUSD') // Assuming chart is always XAUUSD for now
+    .map(pos => ({
       epoch: new Date(pos.date).getTime() / 1000,
       price: parseFloat(pos.openPrice),
       type: 'entry',
