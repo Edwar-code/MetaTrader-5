@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useToast } from "@/hooks/use-toast";
@@ -405,10 +406,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
         if (!isAuthenticated || !api) throw new Error("Not authenticated");
         
         try {
-            const result = await api.basic.buy({
-                price: parameters.amount,
-                parameters: parameters
-            });
+            const result = await api.basic.buy(parameters);
 
             if (result.error) {
                 let detailedMessage = result.error.message;
@@ -702,3 +700,5 @@ export function useDerivChart() {
     }
     return context;
 }
+
+    
