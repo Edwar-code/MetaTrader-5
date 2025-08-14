@@ -255,12 +255,6 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                 <div className="flex-1">
                     <CardTitle className="font-headline">{assetLabel}</CardTitle>
                 </div>
-                {(ticks.length > 0 || candles.length > 0) && !chartError && (
-                    <div className="text-right">
-                        <p className={`text-2xl font-bold ${isUp ? 'text-green-500' : 'text-red-500'}`}>{lastPrice.toFixed(5)}</p>
-                        <p className={`text-sm font-mono ${isUp ? 'text-green-500' : 'text-red-500'}`}>{isUp ? '+' : ''}{priceChange.toFixed(5)}</p>
-                    </div>
-                )}
                 <div className="flex flex-wrap gap-2">
                     <Tabs value={chartType} onValueChange={setChartType} className="w-auto">
                         <TabsList>
@@ -306,12 +300,3 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
         </Card>
     );
 }
-
-
-
-
-    
-
-    
-
-    
