@@ -88,7 +88,7 @@ const HeikinAshiCandleStick = (props: any) => {
     if ([x, y, width, height, open, close, high, low].some(v => v === undefined || !isFinite(v))) return null;
 
     const isUp = close >= open;
-    const color = isUp ? '#008000' : '#FF0000';
+    const color = isUp ? '#16A085' : '#E74C3C';
     
     // Y position of the body
     const yBody = isUp ? y + (high - close) / (high - low) * height : y + (high - open) / (high - low) * height;
