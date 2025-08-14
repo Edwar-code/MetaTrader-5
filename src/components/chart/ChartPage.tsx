@@ -88,7 +88,7 @@ export default function ChartPage() {
             <span className="text-[22px] font-bold">.{formattedSellPrice.fractional}</span>
           </div>
         </div>
-        <div className="bg-gray-100 px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4]">
+        <div className="bg-white px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4]">
           <div className="flex items-center space-x-6">
             <div className="cursor-pointer p-1">
               <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-gray-600"></div>
