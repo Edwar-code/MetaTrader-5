@@ -40,12 +40,18 @@ export default function ChartPage() {
   const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
   const formattedBuyPrice = useMemo(() => formatPrice(buyPrice), [buyPrice]);
 
+  const intervalMap: { [key: string]: string } = {
+    '1m': 'M1', '5m': 'M5', '15m': 'M15', '30m': 'M30', '1h': 'H1', '4h': 'H4', '1d': 'D1', '1W': 'W1', '1M': 'MN', 'tick': 'Tick'
+  };
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       
       {/* Chart Container - Now takes full space and is behind other elements */}
       <div className="flex-1 bg-gray-50 relative min-h-0">
+        <div className="absolute top-[65px] left-3 z-10 bg-black/50 text-white text-xs px-2 py-1 rounded">
+          {assetLabel}, {intervalMap[chartInterval]} GOLDSPOT
+        </div>
         <TradeChart
           asset={selectedAsset}
           assetLabel={assetLabel}
