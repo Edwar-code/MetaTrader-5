@@ -54,7 +54,7 @@ export default function ChartPage() {
   const adjustLotSize = (amount: number) => {
     setLotSize(prev => {
       const current = parseFloat(prev) || 0;
-      const newSize = Math.max(0, current + amount);
+      const newSize = Math.max(0.01, current + amount);
       // Format to 2 decimal places to handle floating point inaccuracies
       return newSize.toFixed(2);
     });
@@ -100,7 +100,7 @@ export default function ChartPage() {
       </div>
 
       {/* SELL/BUY Section - Absolutely Positioned */}
-      <div className="absolute left-0 right-0 flex z-10" style={{top: '50px'}}>
+      <div className="absolute left-0 right-0 flex z-10" style={{top: '48.6px'}}>
         <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
@@ -110,7 +110,7 @@ export default function ChartPage() {
         </div>
         <div className="bg-white px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4]">
           <div className="flex items-center space-x-2">
-            <button className="cursor-pointer p-1" onClick={() => adjustLotSize(0.01)}>
+            <button className="cursor-pointer p-1" onClick={() => adjustLotSize(-0.01)}>
                 <ChevronDown className="h-5 w-5 text-gray-700" />
             </button>
              <input
@@ -119,7 +119,7 @@ export default function ChartPage() {
               onChange={handleLotChange}
               className="text-base text-gray-800 min-w-[40px] w-14 text-center bg-transparent border-none focus:ring-0 focus-visible:outline-none"
             />
-            <button className="cursor-pointer p-1" onClick={() => adjustLotSize(-0.01)}>
+            <button className="cursor-pointer p-1" onClick={() => adjustLotSize(0.01)}>
                 <ChevronUp className="h-5 w-5 text-gray-700" />
             </button>
           </div>
