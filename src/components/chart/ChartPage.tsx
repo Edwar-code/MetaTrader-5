@@ -100,7 +100,7 @@ export default function ChartPage() {
       </div>
 
       {/* SELL/BUY Section - Absolutely Positioned */}
-      <div className="absolute left-0 right-0 flex z-10" style={{top: '60px'}}>
+      <div className="absolute left-0 right-0 flex z-10" style={{top: '45px'}}>
         <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
