@@ -1,25 +1,10 @@
-
-export interface Position {
-  symbol: string;
-  type: string;
-  volume: string;
-  openPrice: string;
-  currentPrice: string;
-  profit: string;
-  date: string;
-  id: string;
-  sl: string;
-  tp: string;
-  swap: string;
-}
-
 export const accountSummary = {
   balance: '10000.00',
-  equity: '9947.10',
-  margin: '850.00',
-  freeMargin: '9097.10',
-  marginLevel: '1170.25',
-  totalProfit: '-52.90',
+  equity: '10000.00',
+  margin: '0.00',
+  freeMargin: '10000.00',
+  marginLevel: '0.00',
+  totalProfit: '0.00',
 };
 
 export const sampleCandleData = [
@@ -39,6 +24,6 @@ export const sampleCandleData = [
   { epoch: 1718128800, open: 2327.4, high: 2330.1, low: 2326.8, close: 2329.5 },
   { epoch: 1718132400, open: 2329.5, high: 2331.2, low: 2328.7, close: 2330.9 },
   { epoch: 1718136000, open: 2330.9, high: 2333.0, low: 2330.1, close: 2332.5 },
-  { epoch: 1718139600, open: 2332.5, high: 2332.8, low: 2329.8, close: 2330.5 },
+  { epoch: 1718139600, open: 332.5, high: 2332.8, low: 2329.8, close: 2330.5 },
   { epoch: 1718143200, open: 2330.5, high: 2331.9, low: 2329.0, close: 2331.8 },
 ];

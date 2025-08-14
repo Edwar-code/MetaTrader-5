@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -7,78 +6,70 @@ import { TradeChart, type ChartMarker } from '../trade/TradeChart';
 import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 import { Sidebar } from '../trade/Sidebar';
 import { useDerivState } from '@/context/DerivContext';
+import { useTradeState } from '@/context/TradeContext';
 import { TimeframeWheel } from './TimeframeWheel';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useTrade } from '@/context/TradeContext';
+import type { Position } from '@/lib/types';
+
 
 const formatPrice = (price: number | undefined) => {
   if (typeof price !== 'number' || isNaN(price)) {
-    return { integer: '-', fractional: '--' };
+    return { integer: '-', fractional: '-----' };
   }
-  const priceString = price.toFixed(2);
-  const [integer, fractional] = priceString.split('.');
-  return { integer, fractional };
+  const priceString = price.toFixed(5);
+  const parts = priceString.split('.');
+  return { integer: parts[0], fractional: parts[1] };
 };
 
 export default function ChartPage() {
-  const { ticks, isAuthenticated } = useDerivState();
-  const { positions, addPosition } = useTrade();
+  const { ticks, connectionState } = useDerivState();
+  const { positions, handleTrade } = useTradeState();
   const { toast } = useToast();
   
   const [selectedAsset, setAsset] = useState('frxXAUUSD');
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
-  const [lotSize, setLotSize] = useState('0.01');
+  const [lotSize, setLotSize] = useState(0.01);
 
   const chartMarkers = useMemo((): ChartMarker[] => {
     return positions
-    .filter(pos => pos.symbol === 'XAUUSD') // Assuming chart is always XAUUSD for now
-    .map(pos => ({
-      epoch: new Date(pos.date).getTime() / 1000,
-      price: parseFloat(pos.openPrice),
+    .filter(pos => pos.pair === selectedAsset)
+    .map((pos: Position) => ({
+      epoch: pos.openTime,
+      price: pos.entryPrice,
       type: 'entry',
-      tradeType: pos.type === 'buy' ? 'BUY' : 'SELL',
-      lotSize: pos.volume,
+      tradeType: pos.type === 'BUY' ? 'BUY' : 'SELL',
+      lotSize: pos.size.toString(),
     }));
-  }, [positions]);
+  }, [positions, selectedAsset]);
 
 
   const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
   const sellPrice = lastTick?.quote;
-  const buyPrice = sellPrice !== undefined ? sellPrice + 0.05 : undefined; // Added a small spread
+  // A small, static spread for display purposes.
+  const spread = 0.02;
+  const buyPrice = sellPrice !== undefined ? sellPrice + spread : undefined;
 
   const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
   const formattedBuyPrice = useMemo(() => formatPrice(buyPrice), [buyPrice]);
 
-  const handleTrade = async (tradeType: 'buy' | 'sell') => {
-    if (!isAuthenticated) {
-      toast({ title: 'Authentication Error', description: 'Please connect your account to trade.', variant: 'destructive' });
+  const onTrade = (tradeType: 'BUY' | 'SELL') => {
+    if (connectionState !== 'connected') {
+      toast({ title: 'Not Connected', description: 'Please wait for connection to be established.', variant: 'destructive' });
       return;
     }
-
-    const price = tradeType === 'buy' ? buyPrice : sellPrice;
-    if (price === undefined || !lastTick) {
+     if (!lastTick) {
       toast({ title: 'Trade Error', description: 'Could not get the current price.', variant: 'destructive' });
       return;
     }
-    
-    addPosition({
-      symbol: 'XAUUSD', 
-      type: tradeType,
-      volume: lotSize,
-      openPrice: price.toFixed(2),
-      currentPrice: price.toFixed(2), // Initial current price is the open price
-      profit: '0.00',
-      date: new Date().toISOString(),
-      id: `sim-${Date.now()}`,
-      sl: '—',
-      tp: '—',
-      swap: '0.00',
-    });
 
-    toast({ title: 'Trade Placed!', description: `Successfully placed a ${tradeType.toUpperCase()} order.` });
+    handleTrade({
+      pair: selectedAsset,
+      type: tradeType,
+      size: lotSize,
+    });
   };
 
   const intervalMap: { [key: string]: string } = {
@@ -92,16 +83,16 @@ export default function ChartPage() {
     const value = e.target.value;
     // Allow only numbers and a single dot
     if (/^\d*\.?\d*$/.test(value)) {
-      setLotSize(value);
+      setLotSize(parseFloat(value) || 0);
     }
   };
 
   const adjustLotSize = (amount: number) => {
     setLotSize(prev => {
-      const current = parseFloat(prev) || 0;
+      const current = prev || 0;
       const newSize = Math.max(0.01, current + amount);
       // Format to 2 decimal places to handle floating point inaccuracies
-      return newSize.toFixed(2);
+      return parseFloat(newSize.toFixed(2));
     });
   };
 
@@ -147,7 +138,7 @@ export default function ChartPage() {
 
       {/* SELL/BUY Section - Absolutely Positioned */}
       <div className="absolute left-0 right-0 flex z-10" style={{top: '48.6px'}}>
-        <div onClick={() => handleTrade('sell')} className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
+        <div onClick={() => onTrade('SELL')} className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedSellPrice.integer}</span>
@@ -170,7 +161,7 @@ export default function ChartPage() {
             </button>
           </div>
         </div>
-        <div onClick={() => handleTrade('buy')} className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
+        <div onClick={() => onTrade('BUY')} className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
           <div className="font-normal opacity-90 text-[10px] leading-none">BUY</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedBuyPrice.integer}</span>

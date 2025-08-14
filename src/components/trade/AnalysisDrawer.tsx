@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { Position } from '@/lib/data';
+import type { Position } from '@/lib/types';
 import { getAnalysis } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,6 +32,11 @@ export function AnalysisDrawer({ children, positions }: AnalysisDrawerProps) {
     setIsLoading(true);
     setError(null);
     setAnalysis('');
+    if (positions.length === 0) {
+      setError('No open positions to analyze.');
+      setIsLoading(false);
+      return;
+    }
     try {
       const result = await getAnalysis(positions);
       if (result.success) {

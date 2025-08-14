@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect } from 'react';
@@ -69,13 +68,13 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       <div className="p-2 bg-background/80 backdrop-blur-sm border rounded-md shadow-lg text-xs">
         <p>{time}</p>
         {data.quote !== undefined ? (
-          <p>Price: <span className="font-bold">{data.quote.toFixed(2)}</span></p>
+          <p>Price: <span className="font-bold">{data.quote.toFixed(5)}</span></p>
         ) : (
           <>
-            <p>O: <span className="font-bold">{data.open.toFixed(2)}</span></p>
-            <p>H: <span className="font-bold">{data.high.toFixed(2)}</span></p>
-            <p>L: <span className="font-bold">{data.low.toFixed(2)}</span></p>
-            <p>C: <span className="font-bold">{data.close.toFixed(2)}</span></p>
+            <p>O: <span className="font-bold">{data.open.toFixed(5)}</span></p>
+            <p>H: <span className="font-bold">{data.high.toFixed(5)}</span></p>
+            <p>L: <span className="font-bold">{data.low.toFixed(5)}</span></p>
+            <p>C: <span className="font-bold">{data.close.toFixed(5)}</span></p>
           </>
         )}
       </div>
@@ -129,12 +128,12 @@ const YAxisLabel = ({ viewBox, value }: any) => {
     const { y, width } = viewBox;
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="60" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 10} width="70" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
-            className="w-full h-full text-xs flex items-center justify-center rounded-sm text-black bg-transparent"
+            className="w-full h-full text-xs flex items-center justify-center rounded-sm text-black bg-transparent font-semibold"
           >
-            {value.toFixed(2)}
+            {value.toFixed(5)}
           </div>
         </foreignObject>
       </g>
@@ -155,7 +154,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
                 </linearGradient>
             </defs>
             <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} tickCount={5} />
-            <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18}/>
+            <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} tickCount={18}/>
             <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="hsl(var(--border))" />
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
@@ -188,7 +187,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: {
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 20, left: -10, bottom: 20 }} animationDuration={0}>
                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} tickCount={5} />
-                <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18}/>
+                <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} tickCount={18}/>
                 <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="body" shape={<HeikinAshiCandleStick />} isAnimationActive={false} barSize={6} />
@@ -218,12 +217,12 @@ LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 
 export function TradeChart({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType }: TradeChartProps) {
-    const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, isAuthenticated, ticks, chartError } = useDerivState();
+    const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
     const isMobile = useIsMobile();
 
     useEffect(() => {
-        if (isAuthenticated && connectionState === 'connected' && asset) {
+        if (connectionState === 'connected' && asset) {
             const mappedInterval = intervalMap[chartInterval];
             const dataCount = isMobile ? 25 : 100;
             if (chartInterval === 'tick') {
@@ -231,13 +230,12 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
             } else if (typeof mappedInterval === 'number') {
                 subscribeToCandles(asset, mappedInterval, dataCount);
             } else {
-                // Handle string intervals like '1W', '1M' if your context supports them
                 console.warn(`String-based interval "${mappedInterval}" is not yet supported.`);
                  subscribeToCandles(asset, 86400, dataCount); // fallback to daily
             }
         }
-        return () => { if (isAuthenticated) unsubscribeFromChart(); };
-    }, [asset, chartInterval, connectionState, isAuthenticated, subscribeToTicks, subscribeToCandles, unsubscribeFromChart, isMobile]);
+        return () => { unsubscribeFromChart(); };
+    }, [asset, chartInterval, connectionState, subscribeToTicks, subscribeToCandles, unsubscribeFromChart, isMobile]);
     
     const heikinAshiCandles = React.useMemo(() => calculateHeikinAshi(candles), [candles]);
 
@@ -277,7 +275,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
     ), [heikinAshiCandles]);
 
 
-    const showLoader = !isAuthenticated || (connectionState === 'connected' && ticks.length === 0 && candles.length === 0 && !chartError);
+    const showLoader = connectionState !== 'connected' || (ticks.length === 0 && candles.length === 0 && !chartError);
     const isTickChart = chartInterval === 'tick';
 
     return (
@@ -293,7 +291,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                     ) : showLoader ? (
                         <div className="flex items-center justify-center h-full text-muted-foreground flex-col">
                             <Skeleton className="h-full w-full absolute" />
-                            <p className="z-10">{isAuthenticated ? 'Loading chart data...' : 'Connect account to see chart'}</p>
+                            <p className="z-10">{connectionState === 'connecting' ? 'Connecting to data stream...' : 'Loading chart data...'}</p>
                         </div>
                     ) : (
                         (chartType === 'area' || isTickChart)

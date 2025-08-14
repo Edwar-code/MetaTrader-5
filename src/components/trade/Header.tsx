@@ -11,7 +11,8 @@ export default function Header({ totalProfit }: HeaderProps) {
   const isLoss = profitValue < 0;
   const isZero = profitValue === 0;
 
-  const profitString = isLoss ? totalProfit : `+${totalProfit}`;
+  // Format profit string to always show two decimal places
+  const profitString = `${isLoss ? '' : '+'}${profitValue.toFixed(2)}`;
   const profitColor = isLoss ? 'text-[#FF3B30]' : 'text-[#007AFF]';
 
   return (

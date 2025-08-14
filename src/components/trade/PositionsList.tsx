@@ -1,4 +1,4 @@
-import type { Position } from '@/lib/data';
+import type { Position } from '@/lib/types';
 import { Separator } from '@/components/ui/separator';
 import { SpacedMoreHorizontalIcon } from './icons';
 import PositionItem from './PositionItem';
@@ -28,7 +28,7 @@ export default function PositionsList({ positions }: PositionsListProps) {
       </div>
       <div className="overflow-y-auto">
         {positions.map((position, index) => (
-          <div key={index}>
+          <div key={position.id}>
             <PositionItem position={position} />
             {index < positions.length - 1 && <Separator />}
           </div>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from 'react';
@@ -7,29 +6,24 @@ import BottomNav from './BottomNav';
 import Header from './Header';
 import PositionsList from './PositionsList';
 import InstallPrompt from './InstallPrompt';
-import { useTrade } from '@/context/TradeContext';
+import { useTradeState } from '@/context/TradeContext';
 
 export default function TradingPage() {
-  const { positions, accountSummary: staticSummary } = useTrade();
-
-  const totalProfit = useMemo(() => {
-    return positions.reduce((acc, pos) => acc + parseFloat(pos.profit), 0);
-  }, [positions]);
+  const { positions, equity, balance, totalPnl } = useTradeState();
 
   const accountSummary = useMemo(() => {
-    const initialBalance = parseFloat(staticSummary.balance);
-    const equity = initialBalance + totalProfit;
-    
     return {
-      ...staticSummary,
+      balance: balance.toFixed(2),
       equity: equity.toFixed(2),
-      totalProfit: totalProfit.toFixed(2),
+      margin: '0.00', // These can be implemented later
+      freeMargin: equity.toFixed(2),
+      marginLevel: '0.00',
     };
-  }, [totalProfit, staticSummary]);
+  }, [balance, equity]);
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
-      <Header totalProfit={accountSummary.totalProfit} />
+      <Header totalProfit={totalPnl.toFixed(2)} />
       <div className="flex-1 overflow-y-auto pb-16">
         <AccountSummary data={accountSummary} />
         <PositionsList positions={positions} />
