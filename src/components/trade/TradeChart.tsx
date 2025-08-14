@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot } from 'recharts';
+import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, ReferenceLine } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -120,20 +120,20 @@ const MarkerDot = ({ cx, cy, payload, type }: any) => {
 MarkerDot.displayName = 'MarkerDot';
 
 
-const YAxisLabel = ({ x, y, payload, price, isUp }: any) => {
-    if (!price) return null;
-    const color = isUp ? 'text-green-500' : 'text-red-500';
-    const bgColor = isUp ? 'bg-green-500/10' : 'bg-red-500/10';
+const YAxisLabel = ({ viewBox, value }: any) => {
+    if (!viewBox || value === undefined) return null;
+    const { y } = viewBox;
     return (
-        <g transform={`translate(${x}, ${y})`}>
-            <foreignObject x={0} y={-10} width="55" height="20">
-                 <div xmlns="http://www.w3.org/1999/xhtml" className={`w-full h-full text-xs font-bold flex items-center justify-center rounded-sm ${color} ${bgColor}`}>
-                    {price.toFixed(5)}
+        <g>
+            <foreignObject x={viewBox.x + 4} y={y - 10} width="60" height="20" className="overflow-visible">
+                 <div xmlns="http://www.w3.org/1999/xhtml" className="w-full h-full text-xs font-bold flex items-center justify-center rounded-sm bg-black text-white">
+                    {value.toFixed(5)}
                 </div>
             </foreignObject>
         </g>
     );
 };
+YAxisLabel.displayName = 'YAxisLabel';
 
 const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
@@ -154,21 +154,12 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
             <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
             {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
             {lastTick && (
-                <YAxis
-                    yAxisId="lastPriceAxis"
-                    orientation="right"
-                    domain={[lastTick.quote, lastTick.quote]}
-                    ticks={[lastTick.quote]}
-                    tick={
-                        <YAxisLabel
-                            price={lastTick.quote}
-                            isUp={isUp}
-                        />
-                    }
-                    axisLine={false}
-                    tickLine={false}
-                    width={55}
-                    allowDataOverflow={true}
+                <ReferenceLine 
+                    y={lastTick.quote} 
+                    stroke="black" 
+                    strokeWidth={1} 
+                    strokeDasharray="3 3"
+                    label={<YAxisLabel value={lastTick.quote} />}
                 />
             )}
             </AreaChart>
@@ -188,21 +179,12 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: {
                 <Bar dataKey="body" shape={<HeikinAshiCandleStick />} isAnimationActive={false} barSize={6} />
                 {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
                 {lastPrice > 0 && (
-                    <YAxis
-                        yAxisId="lastPriceAxis"
-                        orientation="right"
-                        domain={[lastPrice, lastPrice]}
-                        ticks={[lastPrice]}
-                        tick={
-                            <YAxisLabel
-                                price={lastPrice}
-                                isUp={isUp}
-                            />
-                        }
-                        axisLine={false}
-                        tickLine={false}
-                        width={55}
-                        allowDataOverflow={true}
+                     <ReferenceLine 
+                        y={lastPrice} 
+                        stroke="black" 
+                        strokeWidth={1}
+                        strokeDasharray="3 3"
+                        label={<YAxisLabel value={lastPrice}/>}
                     />
                 )}
             </ComposedChart>
