@@ -1,3 +1,4 @@
+
 import type { Position } from '@/lib/types';
 import { Separator } from '@/components/ui/separator';
 import { SpacedMoreHorizontalIcon } from './icons';
@@ -15,11 +16,12 @@ export default function PositionsList({ positions }: PositionsListProps) {
       <div className="px-4 py-[1.7px] border-t border-b bg-muted/50">
         <div className="flex items-center justify-between">
           <span className="text-[13.5px] text-muted-foreground font-semibold">Positions</span>
-          <BulkOperationsSheet>
+          <BulkOperationsSheet positions={positions}>
             <Button
               variant="ghost"
               size="icon"
               className="h-8 w-8 text-muted-foreground hover:bg-transparent hover:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+              disabled={positions.length === 0}
             >
               <SpacedMoreHorizontalIcon />
             </Button>

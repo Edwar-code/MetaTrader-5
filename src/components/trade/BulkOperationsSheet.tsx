@@ -10,20 +10,37 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Separator } from '../ui/separator';
+import type { Position } from '@/lib/types';
+import { useTradeState } from '@/context/TradeContext';
+import { useMemo } from 'react';
 
 interface BulkOperationsSheetProps {
   children: React.ReactNode;
+  positions: Position[];
 }
 
-const OperationButton = ({ label }: { label: string }) => (
+const OperationButton = ({ label, onClick }: { label: string; onClick: () => void }) => (
   <SheetClose asChild>
-    <button className="w-full text-left py-4 px-4 text-card-foreground hover:bg-muted text-[17px]">
+    <button onClick={onClick} className="w-full text-left py-4 px-4 text-card-foreground hover:bg-muted text-[17px]">
       {label}
     </button>
   </SheetClose>
 );
 
-export function BulkOperationsSheet({ children }: BulkOperationsSheetProps) {
+export function BulkOperationsSheet({ children, positions }: BulkOperationsSheetProps) {
+  const { handleBulkClosePositions } = useTradeState();
+
+  const positionStats = useMemo(() => {
+    const hasProfit = positions.some(p => p.pnl >= 0);
+    const hasLoss = positions.some(p => p.pnl < 0);
+    return { hasProfit, hasLoss };
+  }, [positions]);
+
+  if (positions.length === 0) {
+    // Return the trigger but nothing to do if no positions
+    return <>{children}</>;
+  }
+  
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
@@ -33,8 +50,13 @@ export function BulkOperationsSheet({ children }: BulkOperationsSheetProps) {
         </SheetHeader>
         <Separator />
         <div className="flex flex-col">
-          <OperationButton label="Close All Positions" />
-          <OperationButton label="Close Losing Positions" />
+          <OperationButton label="Close All Positions" onClick={() => handleBulkClosePositions('all')} />
+          {positionStats.hasLoss && (
+            <OperationButton label="Close Losing Positions" onClick={() => handleBulkClosePositions('losing')} />
+          )}
+           {positionStats.hasProfit && (
+            <OperationButton label="Close Profitable Positions" onClick={() => handleBulkClosePositions('profitable')} />
+          )}
         </div>
       </SheetContent>
     </Sheet>
