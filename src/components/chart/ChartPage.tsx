@@ -3,12 +3,13 @@
 
 import { useState, useMemo } from 'react';
 import BottomNav from '../trade/BottomNav';
-import { TradeChart } from '../trade/TradeChart';
+import { TradeChart, type ChartMarker } from '../trade/TradeChart';
 import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 import { Sidebar } from '../trade/Sidebar';
 import { useDerivState } from '@/context/DerivContext';
 import { TimeframeWheel } from './TimeframeWheel';
 import { ChevronUp, ChevronDown } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const formatPrice = (price: number | undefined) => {
   if (typeof price !== 'number' || isNaN(price)) {
@@ -20,13 +21,15 @@ const formatPrice = (price: number | undefined) => {
 };
 
 export default function ChartPage() {
-  const { ticks } = useDerivState();
+  const { ticks, buyContract, isAuthenticated } = useDerivState();
+  const { toast } = useToast();
   
   const [selectedAsset, setAsset] = useState('frxXAUUSD');
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
   const [lotSize, setLotSize] = useState('0.01');
+  const [chartMarkers, setChartMarkers] = useState<ChartMarker[]>([]);
 
 
   const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
@@ -35,6 +38,41 @@ export default function ChartPage() {
 
   const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
   const formattedBuyPrice = useMemo(() => formatPrice(buyPrice), [buyPrice]);
+
+  const handleTrade = async (tradeType: 'CALL' | 'PUT') => {
+    if (!isAuthenticated) {
+      toast({ title: 'Authentication Error', description: 'Please connect your account to trade.', variant: 'destructive' });
+      return;
+    }
+    const price = tradeType === 'CALL' ? buyPrice : sellPrice;
+    if (price === undefined) {
+      toast({ title: 'Trade Error', description: 'Could not get the current price.', variant: 'destructive' });
+      return;
+    }
+
+    const tradeParams = {
+      contract_type: tradeType,
+      symbol: selectedAsset,
+      amount: parseFloat(lotSize),
+      duration: 5,
+      duration_unit: 't',
+      basis: 'stake',
+    };
+
+    const result = await buyContract(tradeParams);
+
+    if (result && !result.error) {
+      const newMarker: ChartMarker = {
+        epoch: result.buy.start_time,
+        price: price,
+        type: 'entry',
+        tradeType: tradeType === 'CALL' ? 'BUY' : 'SELL',
+        lotSize: lotSize,
+      };
+      setChartMarkers(prev => [...prev, newMarker]);
+      toast({ title: 'Trade Placed!', description: `Successfully placed a ${tradeType === 'CALL' ? 'BUY' : 'SELL'} order.` });
+    }
+  };
 
   const intervalMap: { [key: string]: string } = {
     '1m': 'M1', '5m': 'M5', '15m': 'M15', '30m': 'M30', '1h': 'H1', '4h': 'H4', '1d': 'D1', '1W': 'W1', '1M': 'MN', 'tick': 'Tick'
@@ -76,6 +114,7 @@ export default function ChartPage() {
         <TradeChart
           asset={selectedAsset}
           assetLabel={displayAsset}
+          markers={chartMarkers}
           chartInterval={chartInterval}
           setChartInterval={setChartInterval}
           chartType={chartType}
@@ -101,7 +140,7 @@ export default function ChartPage() {
 
       {/* SELL/BUY Section - Absolutely Positioned */}
       <div className="absolute left-0 right-0 flex z-10" style={{top: '48.6px'}}>
-        <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
+        <div onClick={() => handleTrade('PUT')} className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedSellPrice.integer}</span>
@@ -124,7 +163,7 @@ export default function ChartPage() {
             </button>
           </div>
         </div>
-        <div className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
+        <div onClick={() => handleTrade('CALL')} className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
           <div className="font-normal opacity-90 text-[10px] leading-none">BUY</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedBuyPrice.integer}</span>

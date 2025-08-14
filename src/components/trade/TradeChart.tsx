@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, ReferenceLine } from 'recharts';
+import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,6 +15,8 @@ export interface ChartMarker {
     epoch: number;
     price: number;
     type: 'entry' | 'win' | 'loss';
+    tradeType: 'BUY' | 'SELL';
+    lotSize: string;
 }
 
 interface TradeChartProps {
@@ -107,15 +109,19 @@ const HeikinAshiCandleStick = (props: any) => {
 HeikinAshiCandleStick.displayName = 'HeikinAshiCandleStick';
 
 
-const MarkerDot = ({ cx, cy, payload, type }: any) => {
-    const color = {
-        entry: 'hsl(var(--accent-foreground))',
-        win: '#22c55e',
-        loss: '#ef4444',
-    }[type];
-    return <circle cx={cx} cy={cy} r={6} fill={color} stroke="hsl(var(--background))" strokeWidth={2} />;
+const MarkerLabel = ({ viewBox, value, tradeType, lotSize }: any) => {
+    const { x, y } = viewBox;
+    const text = `${tradeType} ${lotSize}`;
+    const color = tradeType === 'BUY' ? '#007AFF' : '#FF3B30';
+    return (
+        <g>
+            <text x={x + 10} y={y} dy={-4} fill={color} fontSize="12" fontWeight="bold">
+                {text}
+            </text>
+        </g>
+    );
 };
-MarkerDot.displayName = 'MarkerDot';
+MarkerLabel.displayName = 'MarkerLabel';
 
 
 const YAxisLabel = ({ viewBox, value }: any) => {
@@ -153,7 +159,16 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
             <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="hsl(var(--border))" />
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
-            {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
+            {markers.map((m, i) => m.type === 'entry' && (
+                <ReferenceLine 
+                    key={`marker-${i}`}
+                    y={m.price}
+                    stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'}
+                    strokeDasharray="3 3"
+                    strokeWidth={2}
+                    label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />}
+                />
+            ))}
             {lastTick && (
                 <ReferenceLine 
                     y={lastTick.quote} 
@@ -177,7 +192,16 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: {
                 <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="body" shape={<HeikinAshiCandleStick />} isAnimationActive={false} barSize={6} />
-                {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
+                {markers.map((m, i) => m.type === 'entry' && (
+                     <ReferenceLine 
+                        key={`marker-${i}`}
+                        y={m.price}
+                        stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'}
+                        strokeDasharray="3 3"
+                        strokeWidth={2}
+                        label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />}
+                    />
+                ))}
                 {lastPrice > 0 && (
                      <ReferenceLine 
                         y={lastPrice} 
