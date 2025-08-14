@@ -10,6 +10,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format, fromUnixTime } from 'date-fns';
 import { AlertTriangle } from 'lucide-react';
 import { formatAssetDisplayName } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
+
 
 export interface ChartMarker {
     epoch: number;
@@ -211,22 +213,24 @@ LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 export function TradeChart({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType }: TradeChartProps) {
     const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, isAuthenticated, ticks, chartError, activeSymbols } = useDerivState();
     const { candles } = useDerivChart();
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         if (isAuthenticated && connectionState === 'connected' && asset) {
             const mappedInterval = intervalMap[chartInterval];
+            const dataCount = isMobile ? 50 : 100;
             if (chartInterval === 'tick') {
-                subscribeToTicks(asset);
+                subscribeToTicks(asset, dataCount);
             } else if (typeof mappedInterval === 'number') {
-                subscribeToCandles(asset, mappedInterval);
+                subscribeToCandles(asset, mappedInterval, dataCount);
             } else {
                 // Handle string intervals like '1W', '1M' if your context supports them
                 console.warn(`String-based interval "${mappedInterval}" is not yet supported.`);
-                 subscribeToCandles(asset, 86400); // fallback to daily
+                 subscribeToCandles(asset, 86400, dataCount); // fallback to daily
             }
         }
         return () => { if (isAuthenticated) unsubscribeFromChart(); };
-    }, [asset, chartInterval, connectionState, isAuthenticated, subscribeToTicks, subscribeToCandles, unsubscribeFromChart]);
+    }, [asset, chartInterval, connectionState, isAuthenticated, subscribeToTicks, subscribeToCandles, unsubscribeFromChart, isMobile]);
     
     const heikinAshiCandles = React.useMemo(() => calculateHeikinAshi(candles), [candles]);
     const { activeSymbol, symbolDisplayName } = React.useMemo(() => {
@@ -277,6 +281,31 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
 
     return (
         <Card className="h-full flex flex-col border-0 shadow-none rounded-none">
+            <CardHeader>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <CardTitle className="text-base font-semibold text-primary">{assetLabel}</CardTitle>
+                        <p className="text-sm text-muted-foreground">Gold Spot</p>
+                    </div>
+                    <div className="flex gap-2">
+                        <Tabs value={chartType} onValueChange={setChartType} className="w-[200px]">
+                            <TabsList className="grid w-full grid-cols-2 h-8">
+                                <TabsTrigger value="area" className="h-6 text-xs">Area</TabsTrigger>
+                                <TabsTrigger value="candle" className="h-6 text-xs">Candle</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                        <Tabs value={chartInterval} onValueChange={setChartInterval} className="w-[300px]">
+                            <TabsList className="grid w-full grid-cols-5 h-8">
+                                <TabsTrigger value="tick" className="h-6 text-xs">Tick</TabsTrigger>
+                                <TabsTrigger value="1m" className="h-6 text-xs">1m</TabsTrigger>
+                                <TabsTrigger value="5m" className="h-6 text-xs">5m</TabsTrigger>
+                                <TabsTrigger value="1h" className="h-6 text-xs">1h</TabsTrigger>
+                                <TabsTrigger value="1d" className="h-6 text-xs">1d</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                    </div>
+                </div>
+            </CardHeader>
             <CardContent className="flex-1 min-h-0 w-full relative p-0">
                 <div className="h-full w-full">
                 <div className="absolute top-2 left-4 z-10 pointer-events-none">

@@ -72,8 +72,8 @@ interface DerivState {
     buyContract: (params: any) => Promise<any>;
     refetchBalance: () => void;
     isAuthenticated: boolean;
-    subscribeToTicks: (symbol: string) => void;
-    subscribeToCandles: (symbol: string, granularity: number) => void;
+    subscribeToTicks: (symbol: string, count?: number) => void;
+    subscribeToCandles: (symbol: string, granularity: number, count?: number) => void;
     unsubscribeFromChart: () => void;
     fullname: string | null;
     email: string | null;
@@ -472,7 +472,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
         }
     }, [isAuthenticated, toast]);
 
-    const subscribeToTicks = useCallback(async (symbol: string) => {
+    const subscribeToTicks = useCallback(async (symbol: string, count: number = 100) => {
         const api = apiRef.current;
         if (!api) return;
         unsubscribeFromChart();
@@ -482,7 +482,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
 
         try {
             const historyResponse = await api.basic.ticksHistory({
-                ticks_history: symbol, adjust_start_time: 1, count: 100,
+                ticks_history: symbol, adjust_start_time: 1, count,
                 end: "latest", style: "ticks",
             });
 
@@ -510,7 +510,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
                     setTicks(prevTicks => {
                         const newTick = { epoch: tick.epoch, quote: parseFloat(tick.quote), symbol: tick.symbol };
                         const updatedTicks = [...prevTicks, newTick];
-                        return updatedTicks.slice(Math.max(updatedTicks.length - 200, 0));
+                        return updatedTicks.slice(Math.max(updatedTicks.length - (count * 2), 0));
                     });
                 }
             });
@@ -519,7 +519,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
         }
     }, [unsubscribeFromChart]);
 
-    const subscribeToCandles = useCallback(async (symbol: string, granularity: number) => {
+    const subscribeToCandles = useCallback(async (symbol: string, granularity: number, count: number = 100) => {
         const api = apiRef.current;
         if (!api) return;
         unsubscribeFromChart();
@@ -529,7 +529,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
 
         try {
             const historyResponse = await api.basic.ticksHistory({
-                ticks_history: symbol, adjust_start_time: 1, count: 100,
+                ticks_history: symbol, adjust_start_time: 1, count,
                 end: 'latest', style: 'candles', granularity,
             });
 
@@ -574,7 +574,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
                             return updatedCandles;
                         } else {
                             const updatedCandles = [...prevCandles, newCandle];
-                            return updatedCandles.slice(Math.max(updatedCandles.length - 200, 0));
+                            return updatedCandles.slice(Math.max(updatedCandles.length - (count * 2), 0));
                         }
                     });
                 }
