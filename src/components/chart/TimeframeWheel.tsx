@@ -69,8 +69,8 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
                 <div
                     className="absolute rounded-full bg-primary"
                      style={{
-                        width: `${(RADIUS - 5) * 2}px`,
-                        height: `${(RADIUS - 5) * 2}px`,
+                        width: `${RADIUS * 2}px`,
+                        height: `${RADIUS * 2}px`,
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
@@ -79,10 +79,10 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
 
                 {/* Inner transparent circle with border */}
                 <div
-                    className="absolute rounded-full border-2 border-primary/50"
+                    className="absolute rounded-full border-2 border-primary/50 bg-card"
                     style={{
-                        width: `${(RADIUS - 35) * 2}px`,
-                        height: `${(RADIUS - 35) * 2}px`,
+                        width: `${(RADIUS - 40) * 2}px`,
+                        height: `${(RADIUS - 40) * 2}px`,
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
