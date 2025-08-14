@@ -275,33 +275,8 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
     const isTickChart = chartInterval === 'tick';
 
     return (
-        <Card className="h-full flex flex-col">
-            <CardHeader className="flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex-1">
-                </div>
-                <div className="flex flex-wrap gap-2">
-                    <Tabs value={chartType} onValueChange={setChartType} className="w-auto">
-                        <TabsList>
-                            <TabsTrigger value="area">Area</TabsTrigger>
-                            <TabsTrigger value="candle" disabled={isTickChart}>Candle</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
-                    <Tabs value={chartInterval} onValueChange={(val) => {
-                        if (val === 'tick') setChartType('area');
-                        setChartInterval(val);
-                    }} className="w-auto">
-                        <TabsList>
-                            <TabsTrigger value="tick">Tick</TabsTrigger>
-                            <TabsTrigger value="1m">1m</TabsTrigger>
-                            <TabsTrigger value="5m">5m</TabsTrigger>
-                            <TabsTrigger value="15m">15m</TabsTrigger>
-                            <TabsTrigger value="1h">1h</TabsTrigger>
-                            <TabsTrigger value="1d">1d</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
-                </div>
-            </CardHeader>
-            <CardContent className="flex-1 min-h-0 w-full relative">
+        <Card className="h-full flex flex-col border-0 shadow-none rounded-none">
+            <CardContent className="flex-1 min-h-0 w-full relative p-0">
                 <div className="h-full w-full">
                 <div className="absolute top-2 left-4 z-10 pointer-events-none">
                     <div className="flex items-baseline space-x-2">
