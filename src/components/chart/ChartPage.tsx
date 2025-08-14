@@ -12,7 +12,6 @@ import { TimeframeWheel } from './TimeframeWheel';
 
 export default function ChartPage() {
   const { activeSymbols } = useDerivState();
-  const [asset, setAsset] = useState('frxXAUUSD');
   
   const forexSymbols = activeSymbols.filter(s => s.market === 'forex');
   const initialAsset = forexSymbols.length > 0 ? forexSymbols[0].symbol : 'frxXAUUSD';
@@ -28,8 +27,21 @@ export default function ChartPage() {
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
-      {/* Top Navigation */}
-      <div className="flex items-center justify-between px-3 py-2.5 bg-white border-b border-gray-300 z-20 shrink-0">
+      
+      {/* Chart Container - Now takes full space and is behind other elements */}
+      <div className="flex-1 bg-gray-50 relative min-h-0">
+        <TradeChart
+          asset={selectedAsset}
+          assetLabel={assetLabel}
+          chartInterval={chartInterval}
+          setChartInterval={setChartInterval}
+          chartType={chartType}
+          setChartType={setChartType}
+        />
+      </div>
+
+      {/* Top Navigation - Absolutely Positioned */}
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2.5 bg-white border-b border-gray-300 z-20">
         <div className="flex items-center">
           <Sidebar />
           <div className="w-48">
@@ -51,8 +63,8 @@ export default function ChartPage() {
         </div>
       </div>
 
-      {/* SELL/BUY Section */}
-      <div className="flex z-10 relative shrink-0">
+      {/* SELL/BUY Section - Absolutely Positioned */}
+      <div className="absolute left-0 right-0 flex z-10" style={{top: '60px'}}>
         <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
@@ -80,9 +92,8 @@ export default function ChartPage() {
         </div>
       </div>
       
-      {/* Chart Container */}
-      <div className="flex-1 bg-gray-50 relative min-h-0">
-        <TimeframeWheel
+      {/* Timeframe wheel stays as an overlay */}
+      <TimeframeWheel
             isOpen={isTimeframeWheelOpen}
             onClose={() => setIsTimeframeWheelOpen(false)}
             selectedInterval={chartInterval}
@@ -91,15 +102,6 @@ export default function ChartPage() {
               setIsTimeframeWheelOpen(false);
             }}
           />
-        <TradeChart
-          asset={selectedAsset}
-          assetLabel={assetLabel}
-          chartInterval={chartInterval}
-          setChartInterval={setChartInterval}
-          chartType={chartType}
-          setChartType={setChartType}
-        />
-      </div>
 
       <BottomNav />
     </div>
