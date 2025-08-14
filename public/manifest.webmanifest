@@ -1,12 +1,12 @@
 {
-  "name": "TradeView",
-  "short_name": "TradeView",
-  "description": "AI-Powered Trading Terminal",
+  "name": "MetaTrader 5",
+  "short_name": "MetaTrader 5",
+  "description": "A clean and user-friendly interface displaying key trading information.",
   "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563EB",
   "scope": "/",
+  "display": "standalone",
+  "background_color": "#E3F2FD",
+  "theme_color": "#90CAF9",
   "icons": [
     {
       "src": "/mt5.svg",
