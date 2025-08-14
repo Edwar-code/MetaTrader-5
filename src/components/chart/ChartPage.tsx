@@ -46,10 +46,10 @@ export default function ChartPage() {
       {/* Chart Container - Now takes full space and is behind other elements */}
       <div className="flex-1 bg-gray-50 relative min-h-0">
          <div className="absolute top-[100px] left-3 z-10">
-          <div className="flex items-center gap-1 text-sm">
-            <span className="font-normal text-primary">{displayAsset}</span>
+          <div className="flex items-center gap-1">
+            <span className="font-normal text-primary text-sm">{displayAsset}</span>
             <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-primary"></div>
-            <span className="font-normal text-muted-foreground">{intervalMap[chartInterval]}</span>
+            <span className="font-normal text-muted-foreground text-sm">{intervalMap[chartInterval]}</span>
           </div>
           <p className="text-xs text-muted-foreground">{displayDescription}</p>
         </div>
@@ -67,9 +67,6 @@ export default function ChartPage() {
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2.5 bg-white border-b border-gray-300 z-20">
         <div className="flex items-center">
           <Sidebar />
-          <div className="pl-4">
-             <span className="font-semibold text-foreground text-sm">XAUUSD</span>
-          </div>
         </div>
         <div className="flex-1"></div>
         <div className="flex items-center space-x-4">
