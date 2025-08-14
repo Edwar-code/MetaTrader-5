@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { format, fromUnixTime } from 'date-fns';
 import { AlertTriangle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSearchParams } from 'next/navigation';
 
 
 export interface ChartMarker {
@@ -217,15 +218,17 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: {
 LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 
-export function TradeChart({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType }: TradeChartProps) {
+function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType }: TradeChartProps) {
     const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
     const isMobile = useIsMobile();
+    const searchParams = useSearchParams();
+    const isMobileFromParam = searchParams.get('mobile') === 'true';
 
     useEffect(() => {
         if (connectionState === 'connected' && asset) {
             const mappedInterval = intervalMap[chartInterval];
-            const dataCount = isMobile ? 25 : 100;
+            const dataCount = isMobile || isMobileFromParam ? 25 : 100;
             if (chartInterval === 'tick') {
                 subscribeToTicks(asset, dataCount);
             } else if (typeof mappedInterval === 'number') {
@@ -236,7 +239,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
             }
         }
         return () => { unsubscribeFromChart(); };
-    }, [asset, chartInterval, connectionState, subscribeToTicks, subscribeToCandles, unsubscribeFromChart, isMobile]);
+    }, [asset, chartInterval, connectionState, subscribeToTicks, subscribeToCandles, unsubscribeFromChart, isMobile, isMobileFromParam]);
     
     const heikinAshiCandles = React.useMemo(() => calculateHeikinAshi(candles), [candles]);
 
@@ -303,4 +306,13 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
             </CardContent>
         </Card>
     );
+}
+
+// Suspense boundary to allow use of useSearchParams
+export function TradeChart(props: TradeChartProps) {
+    return (
+        <React.Suspense fallback={<Skeleton className="h-full w-full" />}>
+            <ChartComponent {...props} />
+        </React.Suspense>
+    )
 }
