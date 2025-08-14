@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -23,7 +24,7 @@ const formatPrice = (price: number | undefined) => {
 };
 
 export default function ChartPage() {
-  const { ticks, connectionState } = useDerivState();
+  const { ticks, connectionState, latestPrice } = useDerivState();
   const { positions, handleTrade } = useTradeState();
   const { toast } = useToast();
   
@@ -47,7 +48,8 @@ export default function ChartPage() {
 
 
   const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
-  const sellPrice = lastTick?.quote;
+  // Use latestPrice for the most up-to-date quote, fallback to tick stream
+  const sellPrice = latestPrice[selectedAsset] || lastTick?.quote;
   // A small, static spread for display purposes.
   const spread = 0.02;
   const buyPrice = sellPrice !== undefined ? sellPrice + spread : undefined;
@@ -60,7 +62,7 @@ export default function ChartPage() {
       toast({ title: 'Not Connected', description: 'Please wait for connection to be established.', variant: 'destructive' });
       return;
     }
-     if (!lastTick) {
+     if (!sellPrice) {
       toast({ title: 'Trade Error', description: 'Could not get the current price.', variant: 'destructive' });
       return;
     }
