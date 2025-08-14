@@ -34,7 +34,7 @@ const wheelItems = [
     { icon: <WheelTrendlineIcon />, value: 'trendline', type: 'tool' },
 ];
 
-const RADIUS = 100; // Main circle radius in px
+const RADIUS = 110; // Main circle radius in px
 const ITEM_RADIUS = 20; // Radius of each item circle
 const ICON_RING_RADIUS = RADIUS - 22; // Radius for positioning icons on the blue ring
 
@@ -108,7 +108,7 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
                                 <div
                                     className={`flex items-center justify-center w-full h-full rounded-full bg-transparent`}
                                 >
-                                    <span className={`text-xs font-medium text-white`}>
+                                    <span className={`text-sm font-medium text-white`}>
                                         {item.label || item.icon}
                                     </span>
                                 </div>
