@@ -4,7 +4,7 @@
 import { useToast } from "@/hooks/use-toast";
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef, useMemo } from "react";
 import DerivAPI from '@deriv/deriv-api';
-import { useTrade } from "./TradeContext";
+import { useTrade, TradeProvider } from "./TradeContext";
 
 // #region Types
 export interface RunningTrade {
@@ -421,7 +421,7 @@ function DerivProviderContent({ children }: { children: ReactNode }) {
         if (!isAuthenticated || !api) throw new Error("Not authenticated");
         
         try {
-             const result = await api.basic.buy(parameters);
+             const result = await api.basic.buy({buy: parameters.proposal_id, price: parameters.amount});
 
             if (result.error) {
                 let detailedMessage = result.error.message;
@@ -702,9 +702,13 @@ function DerivProviderContent({ children }: { children: ReactNode }) {
 
 export function DerivProvider({ children }: { children: ReactNode }) {
     return (
-        <DerivProviderContent>
-            {children}
-        </DerivProviderContent>
+        // By wrapping with TradeProvider here, DerivProviderContent and its children
+        // can access the trade context.
+        <TradeProvider>
+            <DerivProviderContent>
+                {children}
+            </DerivProviderContent>
+        </TradeProvider>
     );
 }
 

@@ -45,7 +45,7 @@ export default function ChartPage() {
 
   const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
   const sellPrice = lastTick?.quote;
-  const buyPrice = sellPrice !== undefined ? sellPrice + 0.20 : undefined;
+  const buyPrice = sellPrice !== undefined ? sellPrice + 0.05 : undefined; // Added a small spread
 
   const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
   const formattedBuyPrice = useMemo(() => formatPrice(buyPrice), [buyPrice]);
@@ -67,7 +67,7 @@ export default function ChartPage() {
       type: tradeType,
       volume: lotSize,
       openPrice: price.toFixed(2),
-      currentPrice: price.toFixed(2),
+      currentPrice: price.toFixed(2), // Initial current price is the open price
       profit: '0.00',
       date: new Date().toISOString(),
       id: `sim-${Date.now()}`,
