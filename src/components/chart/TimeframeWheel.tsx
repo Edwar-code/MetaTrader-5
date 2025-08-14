@@ -34,9 +34,9 @@ const wheelItems = [
     { icon: <WheelTrendlineIcon />, value: 'trendline', type: 'tool' },
 ];
 
-const RADIUS = 120; // Main circle radius in px
+const RADIUS = 140; // Main circle radius in px
 const ITEM_RADIUS = 20; // Radius of each item circle
-const ICON_RING_RADIUS = RADIUS - 18; // Radius for positioning icons on the blue ring
+const ICON_RING_RADIUS = RADIUS - 22; // Radius for positioning icons on the blue ring
 
 export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInterval }: TimeframeWheelProps) {
     if (!isOpen) return null;
@@ -46,24 +46,13 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
             onSelectInterval(value);
         } else {
             console.log('Tool selected:', value);
-            onClose();
+            onClose(); // Close for tools as well
         }
     };
 
     return (
         <div className="absolute inset-0 z-30 flex items-center justify-center" onClick={onClose}>
             <div className="relative" style={{ width: `${(RADIUS + ITEM_RADIUS) * 2}px`, height: `${(RADIUS + ITEM_RADIUS) * 2}px` }} onClick={(e) => e.stopPropagation()}>
-                {/* Main transparent circle with border */}
-                <div
-                    className="absolute rounded-full border-2 border-primary/50"
-                    style={{
-                        width: `${RADIUS * 2}px`,
-                        height: `${RADIUS * 2}px`,
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                    }}
-                ></div>
                 
                 {/* Blue Ring for icons */}
                 <div
@@ -81,8 +70,8 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
                 <div
                     className="absolute rounded-full border-2 border-primary/50 bg-card"
                     style={{
-                        width: `${(RADIUS - 40) * 2}px`,
-                        height: `${(RADIUS - 40) * 2}px`,
+                        width: `${(RADIUS - 50) * 2}px`,
+                        height: `${(RADIUS - 50) * 2}px`,
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
@@ -103,8 +92,6 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
                         const x = RADIUS + ITEM_RADIUS + ICON_RING_RADIUS * Math.cos(angle);
                         const y = RADIUS + ITEM_RADIUS + ICON_RING_RADIUS * Math.sin(angle);
 
-                        const isSelected = item.type === 'time' && item.value === selectedInterval;
-
                         return (
                             <div
                                 key={item.value}
@@ -119,9 +106,9 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
                                 onClick={() => handleSelect(item.value, item.type)}
                             >
                                 <div
-                                    className={`flex items-center justify-center w-full h-full rounded-full ${isSelected ? 'bg-white' : 'bg-transparent'}`}
+                                    className={`flex items-center justify-center w-full h-full rounded-full bg-transparent`}
                                 >
-                                    <span className={`text-sm font-medium ${isSelected ? 'text-primary' : 'text-white'}`}>
+                                    <span className={`text-xs font-medium text-white`}>
                                         {item.label || item.icon}
                                     </span>
                                 </div>
