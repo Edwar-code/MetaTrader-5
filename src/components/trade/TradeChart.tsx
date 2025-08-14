@@ -218,7 +218,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
     useEffect(() => {
         if (isAuthenticated && connectionState === 'connected' && asset) {
             const mappedInterval = intervalMap[chartInterval];
-            const dataCount = isMobile ? 50 : 100;
+            const dataCount = isMobile ? 25 : 100;
             if (chartInterval === 'tick') {
                 subscribeToTicks(asset, dataCount);
             } else if (typeof mappedInterval === 'number') {
