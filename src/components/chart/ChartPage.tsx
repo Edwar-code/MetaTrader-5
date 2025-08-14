@@ -9,7 +9,6 @@ import { Sidebar } from '../trade/Sidebar';
 import { MarketSelector } from '../trade/MarketSelector';
 import { useDerivState } from '@/context/DerivContext';
 import { TimeframeWheel } from './TimeframeWheel';
-import { ChevronDown } from 'lucide-react';
 
 const formatPrice = (price: number | undefined) => {
   if (typeof price !== 'number' || isNaN(price)) {
@@ -63,7 +62,7 @@ export default function ChartPage() {
          <div className="absolute top-[100px] left-3 z-10">
           <div className="flex items-center gap-1">
             <span className="font-semibold text-primary">{displayAsset}</span>
-            <ChevronDown className="w-4 h-4 text-primary" />
+            <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-primary"></div>
             <span className="font-normal text-foreground">{intervalMap[chartInterval]}</span>
           </div>
           <p className="text-sm text-muted-foreground">{displayDescription}</p>
