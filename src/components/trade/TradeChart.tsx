@@ -87,16 +87,18 @@ const HeikinAshiCandleStick = (props: any) => {
 
     const isUp = close >= open;
     const color = isUp ? '#22c55e' : '#ef4444';
-
-    const bodyY = isUp ? y + (high - close) / (high - low) * height : y + (high - open) / (high - low) * height;
-    const bodyHeight = Math.max(1, Math.abs(open - close) / (high - low) * height);
     
+    // Y position of the body
+    const yBody = isUp ? y + (high - close) / (high-low) * height : y + (high - open) / (high - low) * height;
+    // Height of the body
+    const bodyHeight = Math.max(1, Math.abs(open - close) / (high - low) * height);
+
     return (
         <g stroke={color} fill={color} strokeWidth="1">
             {/* Wick */}
-            <path d={`M${x + width / 2},${y} L${x + width / 2},${y + height}`} />
+            <line x1={x + width / 2} y1={y} x2={x + width / 2} y2={y + height} />
             {/* Body */}
-            <rect x={x} y={bodyY} width={width} height={bodyHeight} fill={color} />
+            <rect x={x} y={yBody} width={width} height={bodyHeight} />
         </g>
     );
 };
@@ -119,10 +121,10 @@ const YAxisLabel = ({ viewBox, value }: any) => {
     const { y, width } = viewBox;
     return (
       <g>
-        <foreignObject x={viewBox.x} y={y - 10} width={width} height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 10} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
-            className="w-full h-full text-xs flex items-center justify-center rounded-sm bg-white text-black"
+            className="w-full h-full text-xs flex items-center justify-center rounded-sm text-black bg-transparent"
           >
             {value.toFixed(5)}
           </div>
