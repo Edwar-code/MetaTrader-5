@@ -65,7 +65,7 @@ const CandleStick = (props: any) => {
     const bodyY = isUp ? y + height - bodyHeight : y;
 
     return (
-      <g stroke={color} fill={isUp ? color : 'none'} strokeWidth="1">
+      <g stroke={color} fill={color} strokeWidth="1">
         <path d={`M${x + width / 2},${props.y} L${x + width / 2},${y + height}`} />
         <rect x={x} y={bodyY} width={width} height={bodyHeight} />
       </g>
@@ -84,6 +84,21 @@ const MarkerDot = ({ cx, cy, payload, type }: any) => {
 };
 MarkerDot.displayName = 'MarkerDot';
 
+
+const YAxisLabel = ({ x, y, payload, price, isUp }: any) => {
+    if (!price) return null;
+    const color = isUp ? 'text-green-500' : 'text-red-500';
+    const bgColor = isUp ? 'bg-green-500/10' : 'bg-red-500/10';
+    return (
+        <g transform={`translate(${x}, ${y})`}>
+            <foreignObject x={0} y={-10} width="55" height="20">
+                 <div xmlns="http://www.w3.org/1999/xhtml" className={`w-full h-full text-xs font-bold flex items-center justify-center rounded-sm ${color} ${bgColor}`}>
+                    {price.toFixed(5)}
+                </div>
+            </foreignObject>
+        </g>
+    );
+};
 
 const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
@@ -127,23 +142,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
 };
 LiveAreaChart.displayName = 'LiveAreaChart';
 
-const YAxisLabel = ({ x, y, payload, price, isUp }: any) => {
-    if (!price) return null;
-    const color = isUp ? 'text-green-500' : 'text-red-500';
-    const bgColor = isUp ? 'bg-green-500/10' : 'bg-red-500/10';
-    return (
-        <g transform={`translate(${x}, ${y})`}>
-            <foreignObject x={0} y={-10} width="55" height="20">
-                 <div xmlns="http://www.w3.org/1999/xhtml" className={`w-full h-full text-xs font-bold flex items-center justify-center rounded-sm ${color} ${bgColor}`}>
-                    {price.toFixed(5)}
-                </div>
-            </foreignObject>
-        </g>
-    );
-};
-
-
-const LiveCandlestickChart = ({ data, yAxisDomain, markers }: { data: (Candle & {body: [number, number]})[], yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
+const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }} animationDuration={0}>
@@ -153,6 +152,24 @@ const LiveCandlestickChart = ({ data, yAxisDomain, markers }: { data: (Candle & 
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="body" shape={<CandleStick />} isAnimationActive={false} barSize={6} />
                 {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
+                {lastPrice > 0 && (
+                    <YAxis
+                        yAxisId="lastPriceAxis"
+                        orientation="right"
+                        domain={[lastPrice, lastPrice]}
+                        ticks={[lastPrice]}
+                        tick={
+                            <YAxisLabel
+                                price={lastPrice}
+                                isUp={isUp}
+                            />
+                        }
+                        axisLine={false}
+                        tickLine={false}
+                        width={55}
+                        allowDataOverflow={true}
+                    />
+                )}
             </ComposedChart>
         </ResponsiveContainer>
     );
@@ -264,10 +281,11 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
                     ) : (
                         (chartType === 'area' || isTickChart)
                         ? <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} />
-                        : <LiveCandlestickChart data={chartDataForCandle} yAxisDomain={yAxisDomain} markers={markers} />
+                        : <LiveCandlestickChart data={chartDataForCandle} isUp={isUp} lastPrice={lastPrice} yAxisDomain={yAxisDomain} markers={markers} />
                     )}
                 </div>
             </CardContent>
         </Card>
     );
 }
+
