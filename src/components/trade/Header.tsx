@@ -12,6 +12,7 @@ export default function Header({ totalProfit }: HeaderProps) {
   const isZero = profitValue === 0;
 
   const profitString = isLoss ? totalProfit : `+${totalProfit}`;
+  const profitColor = isLoss ? 'text-[#FF3B30]' : 'text-[#007AFF]';
 
   return (
     <header className="shrink-0">
@@ -20,7 +21,7 @@ export default function Header({ totalProfit }: HeaderProps) {
           <Sidebar />
           <div>
             <div className="text-[11px] font-medium text-foreground">Trade</div>
-            <div className={`text-sm font-semibold ${isLoss ? 'text-destructive' : 'text-sky-500'}`}>
+            <div className={`text-sm font-semibold ${isZero ? 'text-foreground' : profitColor}`}>
               {profitString} USD
             </div>
           </div>

@@ -9,17 +9,18 @@ export default function PositionItem({ position }: PositionItemProps) {
   const isLoss = profitValue < 0;
 
   const profitString = isLoss ? position.profit : `+${position.profit}`;
-  const profitColor = isLoss ? 'text-destructive' : 'text-sky-500';
+  const profitColor = isLoss ? 'text-[#FF3B30]' : 'text-[#007AFF]';
+  const typeColor = position.type === 'buy' ? 'text-[#007AFF]' : 'text-[#FF3B30]';
 
   return (
     <div className="flex items-center justify-between py-[2.1px] px-4">
       <div className="flex-1">
         <div className="flex items-center gap-1 leading-none">
           <span className="text-sm font-bold text-card-foreground">{position.symbol},</span>
-          <span className={`text-sm font-semibold ${profitColor}`}>
+          <span className={`text-sm font-semibold ${typeColor}`}>
             {position.type}
           </span>
-          <span className={`text-sm font-semibold ${profitColor}`}>
+          <span className={`text-sm font-semibold ${typeColor}`}>
             {position.volume}
           </span>
         </div>
