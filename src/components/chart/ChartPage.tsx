@@ -8,6 +8,7 @@ import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 import { Sidebar } from '../trade/Sidebar';
 import { MarketSelector } from '../trade/MarketSelector';
 import { useDerivState } from '@/context/DerivContext';
+import { TimeframeWheel } from './TimeframeWheel';
 
 export default function ChartPage() {
   const { activeSymbols } = useDerivState();
@@ -22,6 +23,8 @@ export default function ChartPage() {
 
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
+  const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
+
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
@@ -41,7 +44,9 @@ export default function ChartPage() {
         <div className="flex items-center space-x-4">
           <CrosshairIcon />
           <FunctionIcon />
-          <ClockIcon />
+          <button onClick={() => setIsTimeframeWheelOpen(!isTimeframeWheelOpen)}>
+            <ClockIcon />
+          </button>
           <ShapesIcon />
         </div>
       </div>
@@ -77,6 +82,15 @@ export default function ChartPage() {
       
       {/* Chart Container */}
       <div className="flex-1 bg-gray-50 relative min-h-0">
+        <TimeframeWheel
+            isOpen={isTimeframeWheelOpen}
+            onClose={() => setIsTimeframeWheelOpen(false)}
+            selectedInterval={chartInterval}
+            onSelectInterval={(interval) => {
+              setChartInterval(interval);
+              setIsTimeframeWheelOpen(false);
+            }}
+          />
         <TradeChart
           asset={selectedAsset}
           assetLabel={assetLabel}

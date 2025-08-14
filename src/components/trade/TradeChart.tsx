@@ -26,9 +26,10 @@ interface TradeChartProps {
     setChartType: (type: string) => void;
 }
 
-const intervalMap: { [key: string]: number } = {
+const intervalMap: { [key: string]: number | string } = {
   '1m': 60, '5m': 300, '15m': 900,
-  '1h': 3600, '1d': 86400,
+  '30m': 1800, '1h': 3600, '4h': 14400,
+  '1d': 86400, '1W': '1W', '1M': '1M'
 };
 
 const intervalDisplayMap: { [key: string]: string } = {
@@ -36,8 +37,12 @@ const intervalDisplayMap: { [key: string]: string } = {
     '1m': 'M1',
     '5m': 'M5',
     '15m': 'M15',
+    '30m': 'M30',
     '1h': 'H1',
+    '4h': 'H4',
     '1d': 'D1',
+    '1W': 'W1',
+    '1M': 'MN',
   };
 
 // Heikin-Ashi calculation logic
@@ -148,16 +153,16 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
 
     return (
         <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 20, right: 30, left: -10, bottom: 5 }} animationDuration={0}>
+            <AreaChart data={data} margin={{ top: 20, right: 20, left: -10, bottom: 20 }} animationDuration={0}>
             <defs>
                 <linearGradient id="chartGradientArea" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0.4}/>
                 <stop offset="95%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0}/>
                 </linearGradient>
             </defs>
-            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} tickCount={5} />
+            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} tickCount={5} />
             <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} tickCount={10}/>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+            <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="hsl(var(--border))" />
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
             {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
@@ -179,10 +184,10 @@ LiveAreaChart.displayName = 'LiveAreaChart';
 const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
     return (
         <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={data} margin={{ top: 20, right: 20, left: -10, bottom: 5 }} animationDuration={0}>
-                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} tickCount={5} />
+            <ComposedChart data={data} margin={{ top: 20, right: 20, left: -10, bottom: 20 }} animationDuration={0}>
+                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} tickCount={5} />
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(5) : ''} tickCount={10}/>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="body" shape={<HeikinAshiCandleStick />} isAnimationActive={false} barSize={6} />
                 {markers.map((m, i) => <ReferenceDot key={i} x={m.epoch} y={m.price} r={6} shape={<MarkerDot type={m.type} />} isFront={true} />)}
@@ -208,10 +213,15 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
 
     useEffect(() => {
         if (isAuthenticated && connectionState === 'connected' && asset) {
+            const mappedInterval = intervalMap[chartInterval];
             if (chartInterval === 'tick') {
                 subscribeToTicks(asset);
+            } else if (typeof mappedInterval === 'number') {
+                subscribeToCandles(asset, mappedInterval);
             } else {
-                subscribeToCandles(asset, intervalMap[chartInterval]);
+                // Handle string intervals like '1W', '1M' if your context supports them
+                console.warn(`String-based interval "${mappedInterval}" is not yet supported.`);
+                 subscribeToCandles(asset, 86400); // fallback to daily
             }
         }
         return () => { if (isAuthenticated) unsubscribeFromChart(); };
