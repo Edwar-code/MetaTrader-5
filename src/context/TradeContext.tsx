@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import type { Position } from '@/lib/data';
-import { positions as staticPositions, accountSummary as staticAccountSummary } from '@/lib/data';
+import { accountSummary as staticAccountSummary } from '@/lib/data';
 
 interface AccountSummaryData {
   balance: string;
@@ -39,11 +39,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
   const [accountSummary, setAccountSummary] = useState<AccountSummaryData>(staticAccountSummary);
 
   const addPosition = useCallback((position: Position) => {
-    // When adding a position, filter out any static placeholders
-    setPositions(prev => {
-      const activePositions = prev.filter(p => p.id.startsWith('sim-'));
-      return [position, ...activePositions];
-    });
+    setPositions(prev => [position, ...prev]);
   }, []);
 
   const updatePositions = useCallback((currentPrice: number, symbol: string) => {
