@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import BottomNav from '../trade/BottomNav';
 import { TradeChart } from '../trade/TradeChart';
 import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
@@ -10,8 +10,17 @@ import { MarketSelector } from '../trade/MarketSelector';
 import { useDerivState } from '@/context/DerivContext';
 import { TimeframeWheel } from './TimeframeWheel';
 
+const formatPrice = (price: number | undefined) => {
+  if (typeof price !== 'number' || isNaN(price)) {
+    return { integer: '-', fractional: '--' };
+  }
+  const priceString = price.toFixed(2);
+  const [integer, fractional] = priceString.split('.');
+  return { integer, fractional };
+};
+
 export default function ChartPage() {
-  const { activeSymbols } = useDerivState();
+  const { activeSymbols, ticks } = useDerivState();
   
   const forexSymbols = activeSymbols.filter(s => s.market === 'forex');
   const initialAsset = forexSymbols.length > 0 ? forexSymbols[0].symbol : 'frxXAUUSD';
@@ -23,6 +32,13 @@ export default function ChartPage() {
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
+
+  const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
+  const sellPrice = lastTick?.quote;
+  const buyPrice = sellPrice !== undefined ? sellPrice + 0.20 : undefined;
+
+  const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
+  const formattedBuyPrice = useMemo(() => formatPrice(buyPrice), [buyPrice]);
 
 
   return (
@@ -68,8 +84,8 @@ export default function ChartPage() {
         <div className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
-            <span className="text-[13px] font-bold">3346</span>
-            <span className="text-[22px] font-bold">.12</span>
+            <span className="text-[13px] font-bold">{formattedSellPrice.integer}</span>
+            <span className="text-[22px] font-bold">.{formattedSellPrice.fractional}</span>
           </div>
         </div>
         <div className="bg-gray-100 px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4]">
@@ -86,8 +102,8 @@ export default function ChartPage() {
         <div className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
           <div className="font-normal opacity-90 text-[10px] leading-none">BUY</div>
           <div className="leading-none text-center w-full">
-            <span className="text-[13px] font-bold">3346</span>
-            <span className="text-[22px] font-bold">.32</span>
+            <span className="text-[13px] font-bold">{formattedBuyPrice.integer}</span>
+            <span className="text-[22px] font-bold">.{formattedBuyPrice.fractional}</span>
           </div>
         </div>
       </div>
