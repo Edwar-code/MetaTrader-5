@@ -10,6 +10,7 @@ import { useDerivState } from '@/context/DerivContext';
 import { TimeframeWheel } from './TimeframeWheel';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useTrade } from '@/context/TradeContext';
 
 const formatPrice = (price: number | undefined) => {
   if (typeof price !== 'number' || isNaN(price)) {
@@ -21,7 +22,8 @@ const formatPrice = (price: number | undefined) => {
 };
 
 export default function ChartPage() {
-  const { ticks, buyContract, isAuthenticated } = useDerivState();
+  const { ticks, isAuthenticated } = useDerivState();
+  const { addPosition } = useTrade();
   const { toast } = useToast();
   
   const [selectedAsset, setAsset] = useState('frxXAUUSD');
@@ -39,39 +41,41 @@ export default function ChartPage() {
   const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
   const formattedBuyPrice = useMemo(() => formatPrice(buyPrice), [buyPrice]);
 
-  const handleTrade = async (tradeType: 'CALL' | 'PUT') => {
+  const handleTrade = async (tradeType: 'buy' | 'sell') => {
     if (!isAuthenticated) {
       toast({ title: 'Authentication Error', description: 'Please connect your account to trade.', variant: 'destructive' });
       return;
     }
-    const price = tradeType === 'CALL' ? buyPrice : sellPrice;
-    if (price === undefined) {
+
+    const price = tradeType === 'buy' ? buyPrice : sellPrice;
+    if (price === undefined || !lastTick) {
       toast({ title: 'Trade Error', description: 'Could not get the current price.', variant: 'destructive' });
       return;
     }
+    
+    addPosition({
+      symbol: 'XAUUSD', // Using display name for now
+      type: tradeType,
+      volume: lotSize,
+      openPrice: price.toFixed(2),
+      currentPrice: price.toFixed(2),
+      profit: '0.00',
+      date: new Date().toISOString(),
+      id: `sim-${Date.now()}`,
+      sl: '—',
+      tp: '—',
+      swap: '0.00',
+    });
 
-    const tradeParams = {
-      contract_type: tradeType,
-      symbol: selectedAsset,
-      amount: parseFloat(lotSize),
-      duration: 5,
-      duration_unit: 't',
-      basis: 'stake',
+    const newMarker: ChartMarker = {
+      epoch: lastTick.epoch,
+      price: price,
+      type: 'entry',
+      tradeType: tradeType === 'buy' ? 'BUY' : 'SELL',
+      lotSize: lotSize,
     };
-
-    const result = await buyContract(tradeParams);
-
-    if (result && !result.error) {
-      const newMarker: ChartMarker = {
-        epoch: result.buy.start_time,
-        price: price,
-        type: 'entry',
-        tradeType: tradeType === 'CALL' ? 'BUY' : 'SELL',
-        lotSize: lotSize,
-      };
-      setChartMarkers(prev => [...prev, newMarker]);
-      toast({ title: 'Trade Placed!', description: `Successfully placed a ${tradeType === 'CALL' ? 'BUY' : 'SELL'} order.` });
-    }
+    setChartMarkers(prev => [...prev, newMarker]);
+    toast({ title: 'Trade Placed!', description: `Successfully placed a ${tradeType.toUpperCase()} order.` });
   };
 
   const intervalMap: { [key: string]: string } = {
@@ -140,7 +144,7 @@ export default function ChartPage() {
 
       {/* SELL/BUY Section - Absolutely Positioned */}
       <div className="absolute left-0 right-0 flex z-10" style={{top: '48.6px'}}>
-        <div onClick={() => handleTrade('PUT')} className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
+        <div onClick={() => handleTrade('sell')} className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedSellPrice.integer}</span>
@@ -163,7 +167,7 @@ export default function ChartPage() {
             </button>
           </div>
         </div>
-        <div onClick={() => handleTrade('CALL')} className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
+        <div onClick={() => handleTrade('buy')} className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
           <div className="font-normal opacity-90 text-[10px] leading-none">BUY</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedBuyPrice.integer}</span>

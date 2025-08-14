@@ -1,13 +1,15 @@
 'use client';
 
-import { accountSummary, positions } from '@/lib/data';
 import AccountSummary from './AccountSummary';
 import BottomNav from './BottomNav';
 import Header from './Header';
 import PositionsList from './PositionsList';
 import InstallPrompt from './InstallPrompt';
+import { useTrade } from '@/context/TradeContext';
 
 export default function TradingPage() {
+  const { positions, accountSummary } = useTrade();
+
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       <Header totalProfit={accountSummary.totalProfit} />

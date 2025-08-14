@@ -357,7 +357,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
         
         setProfitTable([]); 
         setRunningTrades([]);
-        setActiveToken(newToken);
+        setActiveToken( newToken);
         
         toast({
             title: "Switching Account...",
@@ -406,7 +406,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
         if (!isAuthenticated || !api) throw new Error("Not authenticated");
         
         try {
-            const result = await api.basic.buy(parameters);
+             const result = await api.basic.buy(parameters);
 
             if (result.error) {
                 let detailedMessage = result.error.message;
@@ -700,5 +700,3 @@ export function useDerivChart() {
     }
     return context;
 }
-
-    

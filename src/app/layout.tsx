@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { DerivProvider } from '@/context/DerivContext';
+import { TradeProvider } from '@/context/TradeContext';
 
 export const metadata: Metadata = {
   title: 'TradeView',
@@ -34,7 +35,9 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <DerivProvider>
-          <main>{children}</main>
+          <TradeProvider>
+            <main>{children}</main>
+          </TradeProvider>
           <Toaster />
         </DerivProvider>
       </body>
