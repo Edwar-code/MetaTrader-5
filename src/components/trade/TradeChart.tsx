@@ -82,22 +82,31 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 CustomTooltip.displayName = 'CustomTooltip';
 
 const HeikinAshiCandleStick = (props: any) => {
-    const { x, y, width, height, open, close, high, low } = props;
+    const { x, y, width, height, open, close, high, low, yAxis } = props;
     const isUp = close >= open;
     const color = isUp ? '#22c55e' : '#ef4444';
 
-    // The pixel height of the candle body, with a minimum of 1px to be visible
-    const bodyHeight = Math.max(1, Math.abs(y - props.y));
-    const bodyY = isUp ? y + height - bodyHeight : y;
-
-    return (
-      <g stroke={color} fill={color} strokeWidth="1">
-        {/* This path draws the wicks */}
-        <path d={`M${x + width / 2},${props.y} L${x + width / 2},${y + height}`} />
-        {/* This rect draws the body */}
-        <rect x={x} y={bodyY} width={width} height={bodyHeight} fill={color} />
-      </g>
-    );
+    if (yAxis.type === 'number' && typeof yAxis.scale === 'function') {
+        const scale = yAxis.scale;
+        const yOpen = scale(open);
+        const yClose = scale(close);
+        const yHigh = scale(high);
+        const yLow = scale(low);
+        
+        const bodyHeight = Math.abs(yOpen - yClose);
+        const bodyY = Math.min(yOpen, yClose);
+        
+        return (
+          <g stroke={color} fill={color} strokeWidth="1">
+            {/* Wick */}
+            <path d={`M${x + width / 2},${yHigh} L${x + width / 2},${yLow}`} />
+            {/* Body */}
+            <rect x={x} y={bodyY} width={width} height={bodyHeight} fill={color} />
+          </g>
+        );
+    }
+    
+    return null;
 };
 HeikinAshiCandleStick.displayName = 'HeikinAshiCandleStick';
 
@@ -320,3 +329,6 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
 }
 
 
+
+
+    
