@@ -22,7 +22,7 @@ const formatPrice = (price: number | undefined) => {
 export default function ChartPage() {
   const { ticks } = useDerivState();
   
-  const [selectedAsset] = useState('frxXAUUSD');
+  const [selectedAsset, setAsset] = useState('frxXAUUSD');
   const [chartInterval, setChartInterval] = useState('1m');
   const [chartType, setChartType] = useState('candle');
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
@@ -94,7 +94,7 @@ export default function ChartPage() {
             <button className="cursor-pointer p-1">
                 <ChevronUp className="h-5 w-5 text-gray-700" />
             </button>
-            <span className="text-base font-semibold text-gray-800 min-w-[24px] text-center">1.00</span>
+            <span className="text-base text-gray-800 min-w-[24px] text-center">1.00</span>
             <button className="cursor-pointer p-1">
                 <ChevronDown className="h-5 w-5 text-gray-700" />
             </button>
