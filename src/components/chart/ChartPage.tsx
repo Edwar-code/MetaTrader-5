@@ -23,7 +23,7 @@ const formatPrice = (price: number | undefined) => {
 
 export default function ChartPage() {
   const { ticks, isAuthenticated } = useDerivState();
-  const { addPosition, updatePositions } = useTrade();
+  const { positions, addPosition } = useTrade();
   const { toast } = useToast();
   
   const [selectedAsset, setAsset] = useState('frxXAUUSD');
@@ -31,19 +31,21 @@ export default function ChartPage() {
   const [chartType, setChartType] = useState('candle');
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
   const [lotSize, setLotSize] = useState('0.01');
-  const [chartMarkers, setChartMarkers] = useState<ChartMarker[]>([]);
+
+  const chartMarkers = useMemo((): ChartMarker[] => {
+    return positions.map(pos => ({
+      epoch: new Date(pos.date).getTime() / 1000,
+      price: parseFloat(pos.openPrice),
+      type: 'entry',
+      tradeType: pos.type === 'buy' ? 'BUY' : 'SELL',
+      lotSize: pos.volume,
+    }));
+  }, [positions]);
 
 
   const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
   const sellPrice = lastTick?.quote;
   const buyPrice = sellPrice !== undefined ? sellPrice + 0.20 : undefined;
-
-  useEffect(() => {
-    if (lastTick) {
-      updatePositions(lastTick.quote, 'XAUUSD');
-    }
-  }, [lastTick, updatePositions]);
-
 
   const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
   const formattedBuyPrice = useMemo(() => formatPrice(buyPrice), [buyPrice]);
@@ -74,14 +76,6 @@ export default function ChartPage() {
       swap: '0.00',
     });
 
-    const newMarker: ChartMarker = {
-      epoch: lastTick.epoch,
-      price: price,
-      type: 'entry',
-      tradeType: tradeType === 'buy' ? 'BUY' : 'SELL',
-      lotSize: lotSize,
-    };
-    setChartMarkers(prev => [...prev, newMarker]);
     toast({ title: 'Trade Placed!', description: `Successfully placed a ${tradeType.toUpperCase()} order.` });
   };
 

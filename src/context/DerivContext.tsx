@@ -4,6 +4,7 @@
 import { useToast } from "@/hooks/use-toast";
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef, useMemo } from "react";
 import DerivAPI from '@deriv/deriv-api';
+import { useTrade } from "./TradeContext";
 
 // #region Types
 export interface RunningTrade {
@@ -103,7 +104,7 @@ const DerivChartContext = createContext<DerivChartState | undefined>(undefined);
 // #endregion
 
 
-export function DerivProvider({ children }: { children: ReactNode }) {
+function DerivProviderContent({ children }: { children: ReactNode }) {
     const apiRef = useRef<DerivAPI | null>(null);
     const [connectionState, setConnectionState] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -120,6 +121,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
     const [areLogsCleared, setAreLogsCleared] = useState(false);
     const [chartError, setChartError] = useState<string | null>(null);
     const [proofOfAddressStatus, setProofOfAddressStatus] = useState<VerificationStatus | null>(null);
+    const { updatePositions } = useTrade();
     
     const chartSubscription = useRef<any>(null);
     const tickSubscription = useRef<any>(null);
@@ -128,6 +130,13 @@ export function DerivProvider({ children }: { children: ReactNode }) {
     const transactionSubscription = useRef<any>(null);
     
     const { toast } = useToast();
+
+    useEffect(() => {
+        const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
+        if (lastTick) {
+            updatePositions(lastTick.quote, lastTick.symbol);
+        }
+    }, [ticks, updatePositions]);
 
     const clearProfitTable = useCallback(() => {
         localStorage.setItem('deriv_trade_logs_cleared', 'true');
@@ -684,6 +693,15 @@ export function DerivProvider({ children }: { children: ReactNode }) {
         </DerivStateContext.Provider>
     );
 }
+
+export function DerivProvider({ children }: { children: ReactNode }) {
+    return (
+        <DerivProviderContent>
+            {children}
+        </DerivProviderContent>
+    );
+}
+
 
 export function useDerivState() {
     const context = useContext(DerivStateContext);

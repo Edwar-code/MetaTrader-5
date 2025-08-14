@@ -34,12 +34,12 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/mt5.svg" />
       </head>
       <body className="font-body antialiased">
-        <DerivProvider>
-          <TradeProvider>
+        <TradeProvider>
+          <DerivProvider>
             <main>{children}</main>
-          </TradeProvider>
-          <Toaster />
-        </DerivProvider>
+            <Toaster />
+          </DerivProvider>
+        </TradeProvider>
       </body>
     </html>
   );
