@@ -117,7 +117,7 @@ export default function ChartPage() {
               type="text"
               value={lotSize}
               onChange={handleLotChange}
-              className="text-[14.5px] text-gray-800 min-w-[40px] w-14 text-center bg-transparent border-none focus:ring-0 focus-visible:outline-none"
+              className="text-[13px] text-gray-800 min-w-[40px] w-14 text-center bg-transparent border-none focus:ring-0 focus-visible:outline-none"
             />
             <button className="cursor-pointer p-1" onClick={() => adjustLotSize(0.01)}>
                 <ChevronUp className="h-5 w-5 text-gray-700" />
