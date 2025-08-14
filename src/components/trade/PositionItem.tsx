@@ -22,8 +22,8 @@ export default function PositionItem({ position }: PositionItemProps) {
   const isLoss = profitValue < 0;
 
   const profitString = isLoss ? position.profit : `+${position.profit}`;
-  const profitColor = isLoss ? 'text-[#FF3B30]' : 'text-[#007AFF]';
-  const typeColor = position.type === 'buy' ? 'text-[#007AFF]' : 'text-[#FF3B30]';
+  const profitColor = isLoss ? '#FF3B30' : '#007AFF';
+  const typeColor = position.type === 'buy' ? '#007AFF' : '#FF3B30';
 
   return (
     <div className="flex flex-col py-2 px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
@@ -52,7 +52,7 @@ export default function PositionItem({ position }: PositionItemProps) {
         </div>
 
         {isExpanded && (
-            <div className="mt-2 pt-2 border-t border-dashed border-border">
+            <div className="mt-2 pt-2">
                 <div className="text-sm text-muted-foreground mb-2">
                     {position.date}
                 </div>
