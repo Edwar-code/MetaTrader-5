@@ -82,31 +82,29 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 CustomTooltip.displayName = 'CustomTooltip';
 
 const HeikinAshiCandleStick = (props: any) => {
-    const { x, y, width, height, open, close, high, low, yAxis } = props;
+    const { x, y, width, height, open, close, high, low } = props;
+    if (high === undefined || low === undefined || open === undefined || close === undefined || !isFinite(high) || !isFinite(low)) return null;
+    
     const isUp = close >= open;
     const color = isUp ? '#22c55e' : '#ef4444';
 
-    if (yAxis.type === 'number' && typeof yAxis.scale === 'function') {
-        const scale = yAxis.scale;
-        const yOpen = scale(open);
-        const yClose = scale(close);
-        const yHigh = scale(high);
-        const yLow = scale(low);
-        
-        const bodyHeight = Math.abs(yOpen - yClose);
-        const bodyY = Math.min(yOpen, yClose);
-        
-        return (
-          <g stroke={color} fill={color} strokeWidth="1">
+    const range = high - low;
+    // Handle the case where the price doesn't move to avoid division by zero.
+    if (range === 0) {
+        return <path d={`M${x},${y + height / 2} L${x + width},${y + height / 2}`} stroke={color} strokeWidth="1" />;
+    }
+
+    const bodyHeight = Math.max(1, Math.abs(((open - close) / range) * height));
+    const bodyY = y + ((high - Math.max(open, close)) / range) * height;
+
+    return (
+        <g stroke={color} fill={color} strokeWidth="1">
             {/* Wick */}
-            <path d={`M${x + width / 2},${yHigh} L${x + width / 2},${yLow}`} />
+            <path d={`M${x + width / 2},${y} L${x + width / 2},${y + height}`} />
             {/* Body */}
             <rect x={x} y={bodyY} width={width} height={bodyHeight} fill={color} />
-          </g>
-        );
-    }
-    
-    return null;
+        </g>
+    );
 };
 HeikinAshiCandleStick.displayName = 'HeikinAshiCandleStick';
 
@@ -330,5 +328,7 @@ export function TradeChart({ asset, assetLabel, markers = [], chartInterval, set
 
 
 
+
+    
 
     
