@@ -8,6 +8,7 @@ import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 import { Sidebar } from '../trade/Sidebar';
 import { useDerivState } from '@/context/DerivContext';
 import { TimeframeWheel } from './TimeframeWheel';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 
 const formatPrice = (price: number | undefined) => {
   if (typeof price !== 'number' || isNaN(price)) {
@@ -89,14 +90,14 @@ export default function ChartPage() {
           </div>
         </div>
         <div className="bg-white px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4]">
-          <div className="flex items-center space-x-6">
-            <div className="cursor-pointer p-1">
-              <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-gray-600"></div>
-            </div>
-            <span className="text-sm font-normal text-gray-800 min-w-[18px] text-center">10</span>
-            <div className="cursor-pointer p-1">
-              <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[6px] border-b-gray-600"></div>
-            </div>
+          <div className="flex items-center space-x-4">
+            <button className="cursor-pointer p-1">
+                <ChevronUp className="h-5 w-5 text-gray-700" />
+            </button>
+            <span className="text-base font-semibold text-gray-800 min-w-[24px] text-center">1.00</span>
+            <button className="cursor-pointer p-1">
+                <ChevronDown className="h-5 w-5 text-gray-700" />
+            </button>
           </div>
         </div>
         <div className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
