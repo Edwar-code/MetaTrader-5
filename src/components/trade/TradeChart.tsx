@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceDot, ReferenceLine } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -126,7 +126,7 @@ const YAxisLabel = ({ viewBox, value }: any) => {
         <foreignObject x={width} y={y - 10} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
-            className="w-full h-full text-xs flex items-center justify-center rounded-sm text-green-600 bg-transparent"
+            className="w-full h-full text-xs flex items-center justify-center rounded-sm text-black bg-transparent"
           >
             {value.toFixed(2)}
           </div>
