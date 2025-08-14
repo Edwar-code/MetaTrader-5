@@ -16,9 +16,9 @@ import type { Position } from '@/lib/types';
 
 const formatPrice = (price: number | undefined) => {
   if (typeof price !== 'number' || isNaN(price)) {
-    return { integer: '-', fractional: '-----' };
+    return { integer: '-', fractional: '--' };
   }
-  const priceString = price.toFixed(5);
+  const priceString = price.toFixed(2);
   const parts = priceString.split('.');
   return { integer: parts[0], fractional: parts[1] };
 };
