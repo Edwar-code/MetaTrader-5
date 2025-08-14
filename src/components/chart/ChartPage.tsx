@@ -61,7 +61,7 @@ export default function ChartPage() {
       <div className="flex-1 bg-gray-50 relative min-h-0">
          <div className="absolute top-[100px] left-3 z-10">
           <div className="flex items-center gap-1">
-            <span className="font-semibold text-primary">{displayAsset}</span>
+            <span className="font-normal text-primary">{displayAsset}</span>
             <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-primary"></div>
             <span className="font-normal text-foreground">{intervalMap[chartInterval]}</span>
           </div>
