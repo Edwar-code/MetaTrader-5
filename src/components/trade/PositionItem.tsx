@@ -22,18 +22,26 @@ export default function PositionItem({ position }: PositionItemProps) {
   const profitValue = position.pnl;
   const isLoss = profitValue < 0;
 
-  const profitString = profitValue.toFixed(2);
+  const profitString = isLoss ? profitValue.toFixed(2) : profitValue.toFixed(2);
   const profitColor = isLoss ? '#FF3B30' : '#007AFF';
   const typeColor = position.type === 'BUY' ? '#007AFF' : '#FF3B30';
 
   const formattedType = position.type.toLowerCase();
+  
+  const formatPair = (pair: string) => {
+    if (pair === 'frxXAUUSD') {
+      return 'XAUUSD.m';
+    }
+    return pair;
+  };
+
 
   return (
     <div className="flex flex-col py-2 px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="flex items-center justify-between">
             <div className="flex-1">
                 <div className="flex items-center gap-1 leading-none">
-                <span className="text-sm font-bold text-card-foreground">{position.pair},</span>
+                <span className="text-sm font-bold text-card-foreground">{formatPair(position.pair)},</span>
                 <span className={`text-sm font-normal`} style={{ color: typeColor }}>
                     {formattedType}
                 </span>
