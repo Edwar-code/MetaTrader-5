@@ -134,7 +134,7 @@ const OrderPriceLabel = ({ viewBox, value, tradeType }: any) => {
         <foreignObject x={width} y={y - 10} width="70" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
-            className="w-full h-full text-xs flex items-center justify-center text-black bg-white/90 font-semibold border"
+            className="w-full h-full text-xs flex items-center justify-center text-black bg-white/90 border"
             style={{ borderColor: color }}
           >
             {value.toFixed(2)}
@@ -154,7 +154,7 @@ const YAxisLabel = ({ viewBox, value }: any) => {
         <foreignObject x={width} y={y - 10} width="70" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
-            className="w-full h-full text-xs flex items-center justify-center text-white bg-[#16A085] font-semibold"
+            className="w-full h-full text-xs flex items-center justify-center text-white bg-[#16A085]"
           >
             {value.toFixed(2)}
           </div>
@@ -366,3 +366,4 @@ export function TradeChart(props: TradeChartProps) {
     
 
     
+
