@@ -228,7 +228,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
                 <stop offset="95%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0}/>
                 </linearGradient>
             </defs>
-            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} ticks={sixMinuteTicks} />
+            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} ticks={sixMinuteTicks} />
             <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} />
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
             <Tooltip content={<CustomTooltip />} />
@@ -280,7 +280,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 7, left: -10, bottom: 20 }} animationDuration={0}>
-                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} ticks={sixMinuteTicks} />
+                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} ticks={sixMinuteTicks} />
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18}/>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
@@ -431,5 +431,7 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
+
+    
 
     
