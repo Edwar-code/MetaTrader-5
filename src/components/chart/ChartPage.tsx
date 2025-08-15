@@ -51,7 +51,7 @@ export default function ChartPage() {
   // Use latestPrice for the most up-to-date quote, fallback to tick stream
   const sellPrice = latestPrice[selectedAsset] || lastTick?.quote;
   // A small, static spread for display purposes.
-  const spread = 0.02;
+  const spread = 0.20;
   const buyPrice = sellPrice !== undefined ? sellPrice + spread : undefined;
 
   const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
