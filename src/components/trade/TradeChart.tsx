@@ -61,6 +61,33 @@ const calculateHeikinAshi = (candles: Candle[]): Candle[] => {
     }, []);
 };
 
+const get6MinuteTicks = (data: { epoch: number }[]): number[] => {
+    if (!data || data.length < 2) return [];
+  
+    const dataMin = data[0].epoch;
+    const dataMax = data[data.length - 1].epoch;
+    const interval = 6 * 60; // 6 minutes in seconds
+    const maxTicks = 6;
+  
+    // Find the first tick that is a multiple of the interval
+    const firstTick = Math.ceil(dataMin / interval) * interval;
+  
+    const ticks: number[] = [];
+    for (let i = firstTick; i <= dataMax; i += interval) {
+      ticks.push(i);
+    }
+
+    if (ticks.length === 0 && data.length > 0) {
+        ticks.push(data[0].epoch);
+    }
+  
+    if (ticks.length > maxTicks) {
+      const step = Math.ceil(ticks.length / maxTicks);
+      return ticks.filter((_, i) => i % step === 0);
+    }
+  
+    return ticks;
+};
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -185,6 +212,7 @@ BuyPriceLabel.displayName = 'BuyPriceLabel';
 
 const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
+    const sixMinuteTicks = React.useMemo(() => get6MinuteTicks(data), [data]);
 
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -195,7 +223,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
                 <stop offset="95%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0}/>
                 </linearGradient>
             </defs>
-            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} tickCount={5} interval="preserveStartEnd" />
+            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} ticks={sixMinuteTicks} />
             <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} />
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
             <Tooltip content={<CustomTooltip />} />
@@ -243,10 +271,11 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
 LiveAreaChart.displayName = 'LiveAreaChart';
 
 const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buyPrice }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
+    const sixMinuteTicks = React.useMemo(() => get6MinuteTicks(data), [data]);
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 7, left: -10, bottom: 20 }} animationDuration={0}>
-                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} tickCount={5} interval="preserveStartEnd" />
+                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} ticks={sixMinuteTicks} />
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18}/>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
