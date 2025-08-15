@@ -28,6 +28,7 @@ interface TradeChartProps {
     setChartInterval: (interval: string) => void;
     chartType: string;
     setChartType: (type: string) => void;
+    buyPrice?: number;
 }
 
 const intervalMap: { [key: string]: number | string } = {
@@ -161,10 +162,28 @@ const YAxisLabel = ({ viewBox, value }: any) => {
         </foreignObject>
       </g>
     );
-  };
+};
 YAxisLabel.displayName = 'YAxisLabel';
 
-const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
+const BuyPriceLabel = ({ viewBox, value }: any) => {
+    if (!viewBox || value === undefined) return null;
+    const { y, width } = viewBox;
+    return (
+      <g>
+        <foreignObject x={width} y={y - 10} width="70" height="20" className="overflow-visible">
+          <div
+            xmlns="http://www.w3.org/1999/xhtml"
+            className="w-full h-full text-xs flex items-center justify-center text-white bg-[#E74C3C]"
+          >
+            {value.toFixed(2)}
+          </div>
+        </foreignObject>
+      </g>
+    );
+};
+BuyPriceLabel.displayName = 'BuyPriceLabel';
+
+const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
 
     return (
@@ -209,13 +228,21 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
                     label={<YAxisLabel value={lastTick.quote} />}
                 />
             )}
+             {buyPrice && (
+                <ReferenceLine 
+                    y={buyPrice} 
+                    stroke="#E74C3C" 
+                    strokeWidth={1} 
+                    label={<BuyPriceLabel value={buyPrice} />}
+                />
+            )}
             </AreaChart>
         </ResponsiveContainer>
     );
 };
 LiveAreaChart.displayName = 'LiveAreaChart';
 
-const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[] }) => {
+const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buyPrice }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 20, left: -10, bottom: 20 }} animationDuration={0}>
@@ -257,6 +284,14 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: {
                         label={<YAxisLabel value={lastPrice}/>}
                     />
                 )}
+                {buyPrice && (
+                    <ReferenceLine 
+                        y={buyPrice} 
+                        stroke="#E74C3C" 
+                        strokeWidth={1} 
+                        label={<BuyPriceLabel value={buyPrice} />}
+                    />
+                )}
             </ComposedChart>
         </ResponsiveContainer>
     );
@@ -264,7 +299,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: {
 LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 
-function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType }: TradeChartProps) {
+function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, buyPrice }: TradeChartProps) {
     const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
     const isMobile = useIsMobile();
@@ -345,8 +380,8 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
                         </div>
                     ) : (
                         (chartType === 'area' || isTickChart)
-                        ? <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} />
-                        : <LiveCandlestickChart data={chartDataForCandle} isUp={isUp} lastPrice={lastPrice} yAxisDomain={yAxisDomain} markers={markers} />
+                        ? <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} />
+                        : <LiveCandlestickChart data={chartDataForCandle} isUp={isUp} lastPrice={lastPrice} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} />
                     )}
                 </div>
             </CardContent>

@@ -119,6 +119,7 @@ export default function ChartPage() {
           setChartInterval={setChartInterval}
           chartType={chartType}
           setChartType={setChartType}
+          buyPrice={buyPrice}
         />
       </div>
 
