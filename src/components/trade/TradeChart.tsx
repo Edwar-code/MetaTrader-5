@@ -63,24 +63,29 @@ const calculateHeikinAshi = (candles: Candle[]): Candle[] => {
 
 const get6MinuteTicks = (data: { epoch: number }[]): number[] => {
     if (!data || data.length < 2) return [];
-  
+
     const dataMin = data[0].epoch;
     const dataMax = data[data.length - 1].epoch;
-    const interval = 6 * 60; // 6 minutes in seconds
+    const intervalSeconds = 6 * 60; // 6 minutes in seconds
     const maxTicks = 6;
-  
-    // Find the first tick that is a multiple of the interval
-    const firstTick = Math.ceil(dataMin / interval) * interval;
-  
+
+    // Find the first timestamp that is a multiple of intervalSeconds after or equal to dataMin
+    const firstTick = Math.ceil(dataMin / intervalSeconds) * intervalSeconds;
+
     const ticks: number[] = [];
-    for (let i = firstTick; i <= dataMax; i += interval) {
-      ticks.push(i);
+    for (let currentTick = firstTick; currentTick <= dataMax; currentTick += intervalSeconds) {
+        ticks.push(currentTick);
+    }
+    
+    // If no ticks are generated within the range, it can happen if the range is too small.
+    // As a fallback, we can add the start and end of the data.
+    if (ticks.length === 0) {
+        ticks.push(dataMin);
+        if(dataMax > dataMin) ticks.push(dataMax);
+        return ticks;
     }
 
-    if (ticks.length === 0 && data.length > 0) {
-        ticks.push(data[0].epoch);
-    }
-  
+    // If we have too many ticks, we need to reduce them to maxTicks.
     if (ticks.length > maxTicks) {
       const step = Math.ceil(ticks.length / maxTicks);
       return ticks.filter((_, i) => i % step === 0);
@@ -223,7 +228,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
                 <stop offset="95%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0}/>
                 </linearGradient>
             </defs>
-            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} ticks={sixMinuteTicks} />
+            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} ticks={sixMinuteTicks} />
             <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} />
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
             <Tooltip content={<CustomTooltip />} />
@@ -275,7 +280,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 7, left: -10, bottom: 20 }} animationDuration={0}>
-                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} ticks={sixMinuteTicks} />
+                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} ticks={sixMinuteTicks} />
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18}/>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
