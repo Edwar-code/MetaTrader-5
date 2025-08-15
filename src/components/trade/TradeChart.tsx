@@ -132,10 +132,10 @@ const OrderPriceLabel = ({ viewBox, value, tradeType }: any) => {
   
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="45" height="20" className="overflow-visible">
+        <foreignObject x={width + 7} y={y - 10} width="45" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
-            className="w-full h-full text-xs flex items-center justify-center bg-white/90 border"
+            className="w-full h-full text-xs flex items-center justify-center bg-white/90 border px-1"
             style={{ borderColor: color, color: color }}
           >
             {value.toFixed(2)}
@@ -152,10 +152,10 @@ const YAxisLabel = ({ viewBox, value }: any) => {
     const { y, width } = viewBox;
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="45" height="20" className="overflow-visible">
+        <foreignObject x={width + 7} y={y - 10} width="45" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
-            className="w-full h-full text-xs flex items-center justify-center text-white bg-[#16A085]"
+            className="w-full h-full text-xs flex items-center justify-center text-white bg-[#16A085] px-1"
           >
             {value.toFixed(2)}
           </div>
@@ -170,10 +170,10 @@ const BuyPriceLabel = ({ viewBox, value }: any) => {
     const { y, width } = viewBox;
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="45" height="20" className="overflow-visible">
+        <foreignObject x={width + 7} y={y - 10} width="45" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
-            className="w-full h-full text-xs flex items-center justify-center text-white bg-[#E74C3C]"
+            className="w-full h-full text-xs flex items-center justify-center text-white bg-[#E74C3C] px-1"
           >
             {value.toFixed(2)}
           </div>
@@ -195,8 +195,8 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
                 <stop offset="95%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0}/>
                 </linearGradient>
             </defs>
-            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} tickCount={5} />
-            <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18}/>
+            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} tickCount={5} interval="preserveStartEnd" />
+            <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} />
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
@@ -246,7 +246,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 7, left: -10, bottom: 20 }} animationDuration={0}>
-                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} tickCount={5} />
+                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} tickCount={5} interval="preserveStartEnd" />
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18}/>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
@@ -397,3 +397,5 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
+
+    
