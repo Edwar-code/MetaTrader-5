@@ -124,6 +124,27 @@ const MarkerLabel = ({ viewBox, value, tradeType, lotSize }: any) => {
 };
 MarkerLabel.displayName = 'MarkerLabel';
 
+const OrderPriceLabel = ({ viewBox, value, tradeType }: any) => {
+    if (!viewBox || value === undefined) return null;
+    const { y, width } = viewBox;
+    const color = tradeType === 'BUY' ? '#007AFF' : '#FF3B30';
+  
+    return (
+      <g>
+        <foreignObject x={width} y={y - 10} width="70" height="20" className="overflow-visible">
+          <div
+            xmlns="http://www.w3.org/1999/xhtml"
+            className="w-full h-full text-xs flex items-center justify-center rounded-sm text-black bg-white/90 font-semibold border"
+            style={{ borderColor: color }}
+          >
+            {value.toFixed(2)}
+          </div>
+        </foreignObject>
+      </g>
+    );
+};
+OrderPriceLabel.displayName = 'OrderPriceLabel';
+
 
 const YAxisLabel = ({ viewBox, value }: any) => {
     if (!viewBox || value === undefined) return null;
@@ -133,7 +154,7 @@ const YAxisLabel = ({ viewBox, value }: any) => {
         <foreignObject x={width} y={y - 10} width="70" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
-            className="w-full h-full text-xs flex items-center justify-center rounded-sm text-black bg-transparent font-semibold"
+            className="w-full h-full text-xs flex items-center justify-center rounded-sm text-white bg-green-500 font-semibold"
           >
             {value.toFixed(2)}
           </div>
@@ -161,13 +182,23 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
             {markers.map((m, i) => m.type === 'entry' && (
+                <ReferenceLine
+                    key={`marker-text-${i}`}
+                    y={m.price}
+                    stroke="transparent" // Hide the line for the text label
+                    label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />}
+                    ifOverflow="visible"
+                />
+            ))}
+            {markers.map((m, i) => m.type === 'entry' && (
                 <ReferenceLine 
-                    key={`marker-${i}`}
+                    key={`marker-line-${i}`}
                     y={m.price}
                     stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'}
                     strokeDasharray="3 3"
                     strokeWidth={1}
-                    label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />}
+                    label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} />}
+                    ifOverflow="visible"
                 />
             ))}
             {lastTick && (
@@ -193,16 +224,31 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: {
                 <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="hsl(var(--border))" />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="body" shape={<HeikinAshiCandleStick />} isAnimationActive={false} barSize={6} />
+                
+                {/* Render text label separately */}
+                 {markers.map((m, i) => m.type === 'entry' && (
+                    <ReferenceLine
+                        key={`marker-text-${i}`}
+                        y={m.price}
+                        stroke="transparent" 
+                        label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />}
+                        ifOverflow="visible"
+                    />
+                ))}
+                
+                {/* Render the line and price label */}
                 {markers.map((m, i) => m.type === 'entry' && (
                      <ReferenceLine 
-                        key={`marker-${i}`}
+                        key={`marker-line-${i}`}
                         y={m.price}
                         stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'}
                         strokeDasharray="3 3"
                         strokeWidth={1}
-                        label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />}
+                        label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} />}
+                        ifOverflow="visible"
                     />
                 ))}
+
                 {lastPrice > 0 && (
                      <ReferenceLine 
                         y={lastPrice} 
@@ -316,5 +362,7 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
+
+    
 
     
