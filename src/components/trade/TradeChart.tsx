@@ -132,7 +132,7 @@ const OrderPriceLabel = ({ viewBox, value, tradeType }: any) => {
   
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="70" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 10} width="50" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center bg-white/90 border"
@@ -152,7 +152,7 @@ const YAxisLabel = ({ viewBox, value }: any) => {
     const { y, width } = viewBox;
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="70" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 10} width="50" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center text-white bg-[#16A085]"
@@ -170,7 +170,7 @@ const BuyPriceLabel = ({ viewBox, value }: any) => {
     const { y, width } = viewBox;
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="70" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 10} width="50" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center text-white bg-[#E74C3C]"
