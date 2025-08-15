@@ -116,7 +116,7 @@ const MarkerLabel = ({ viewBox, value, tradeType, lotSize }: any) => {
     const color = tradeType === 'BUY' ? '#007AFF' : '#FF3B30';
     return (
         <g>
-            <text x={x + 10} y={y} dy={-4} fill={color} fontSize="12" fontWeight="bold">
+            <text x={x + 10} y={y} dy={-4} fill={color} fontSize="12">
                 {text}
             </text>
         </g>
@@ -166,7 +166,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers }: { data: Tick[], isU
                     y={m.price}
                     stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'}
                     strokeDasharray="3 3"
-                    strokeWidth={2}
+                    strokeWidth={1}
                     label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />}
                 />
             ))}
@@ -199,7 +199,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers }: {
                         y={m.price}
                         stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'}
                         strokeDasharray="3 3"
-                        strokeWidth={2}
+                        strokeWidth={1}
                         label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />}
                     />
                 ))}
@@ -316,3 +316,5 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
+
+    
