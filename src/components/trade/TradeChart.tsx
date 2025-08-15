@@ -132,7 +132,7 @@ const OrderPriceLabel = ({ viewBox, value, tradeType }: any) => {
   
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="50" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 10} width="45" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center bg-white/90 border"
@@ -152,7 +152,7 @@ const YAxisLabel = ({ viewBox, value }: any) => {
     const { y, width } = viewBox;
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="50" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 10} width="45" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center text-white bg-[#16A085]"
@@ -170,7 +170,7 @@ const BuyPriceLabel = ({ viewBox, value }: any) => {
     const { y, width } = viewBox;
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="50" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 10} width="45" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center text-white bg-[#E74C3C]"
@@ -188,7 +188,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
 
     return (
         <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 20, right: 20, left: -10, bottom: 20 }} animationDuration={0}>
+            <AreaChart data={data} margin={{ top: 20, right: 50, left: -10, bottom: 20 }} animationDuration={0}>
             <defs>
                 <linearGradient id="chartGradientArea" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0.4}/>
@@ -245,7 +245,7 @@ LiveAreaChart.displayName = 'LiveAreaChart';
 const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buyPrice }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
     return (
         <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={data} margin={{ top: 20, right: 20, left: -10, bottom: 20 }} animationDuration={0}>
+            <ComposedChart data={data} margin={{ top: 20, right: 50, left: -10, bottom: 20 }} animationDuration={0}>
                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={true} tickLine={true} tickCount={5} />
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fill: 'black', fontWeight: 'normal' }} axisLine={false} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18}/>
                 <CartesianGrid strokeDasharray="3 3" vertical={true} stroke="hsl(var(--border))" />
