@@ -242,7 +242,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
                 </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={sixMinuteTicks} />
+            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax + 1000']} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={sixMinuteTicks} />
             <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fontWeight: 'normal' }} axisLine={{ stroke: '#ccc' }} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1} />
             
             <Tooltip content={<CustomTooltip />} />
@@ -300,7 +300,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 57 }} animationDuration={0}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={sixMinuteTicks} />
+                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax + 1000']} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={sixMinuteTicks} />
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fontWeight: 'normal' }} axisLine={{ stroke: '#ccc' }} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1}/>
                 
                 <Tooltip content={<CustomTooltip />} />
@@ -458,5 +458,6 @@ export function TradeChart(props: TradeChartProps) {
     
 
     
+
 
 
