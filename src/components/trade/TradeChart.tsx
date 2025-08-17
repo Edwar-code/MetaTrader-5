@@ -61,15 +61,13 @@ const calculateHeikinAshi = (candles: Candle[]): Candle[] => {
     }, []);
 };
 
-const get6MinuteTicks = (data: { epoch: number }[]): number[] => {
+const getMinuteTicks = (data: { epoch: number }[], intervalMinutes: number, maxTicks: number): number[] => {
     if (!data || data.length < 2) return [];
 
     const dataMin = data[0].epoch;
     const dataMax = data[data.length - 1].epoch;
-    const intervalSeconds = 6 * 60; // 6 minutes in seconds
-    const maxTicks = 6;
+    const intervalSeconds = intervalMinutes * 60;
 
-    // Find the first timestamp that is a multiple of intervalSeconds after or equal to dataMin
     const firstTick = Math.ceil(dataMin / intervalSeconds) * intervalSeconds;
 
     const ticks: number[] = [];
@@ -77,20 +75,30 @@ const get6MinuteTicks = (data: { epoch: number }[]): number[] => {
         ticks.push(currentTick);
     }
     
-    // If no ticks are generated within the range, it can happen if the range is too small.
-    // As a fallback, we can add the start and end of the data.
     if (ticks.length === 0) {
         ticks.push(dataMin);
         if(dataMax > dataMin) ticks.push(dataMax);
         return ticks;
     }
 
-    // If we have too many ticks, we need to reduce them to maxTicks.
     if (ticks.length > maxTicks) {
       const step = Math.ceil(ticks.length / maxTicks);
       return ticks.filter((_, i) => i % step === 0);
     }
   
+    return ticks;
+};
+
+const getAllMinuteTicks = (data: { epoch: number }[]): number[] => {
+    if (!data || data.length < 2) return [];
+    const dataMin = data[0].epoch;
+    const dataMax = data[data.length - 1].epoch;
+    const intervalSeconds = 60; // 1 minute
+    const firstTick = Math.ceil(dataMin / intervalSeconds) * intervalSeconds;
+    const ticks: number[] = [];
+    for (let currentTick = firstTick; currentTick <= dataMax; currentTick += intervalSeconds) {
+        ticks.push(currentTick);
+    }
     return ticks;
 };
 
@@ -230,7 +238,8 @@ CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
 const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
-    const sixMinuteTicks = React.useMemo(() => get6MinuteTicks(data), [data]);
+    const labelTicks = React.useMemo(() => getMinuteTicks(data, 6, 6), [data]);
+    const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
     
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -241,8 +250,13 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
                 <stop offset="95%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0}/>
                 </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax + 10']} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={sixMinuteTicks} />
+            <CartesianGrid strokeDasharray="3 3" verticalCoordinatesGenerator={() => gridTicks} />
+            
+            {/* Visible X-axis with labels every 6 mins */}
+            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
+            {/* Hidden X-axis for grid lines every 1 min */}
+            <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
+
             <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fontWeight: 'normal' }} axisLine={{ stroke: '#ccc' }} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1} />
             
             <Tooltip content={<CustomTooltip />} />
@@ -293,14 +307,20 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
 LiveAreaChart.displayName = 'LiveAreaChart';
 
 const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buyPrice }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
-    const sixMinuteTicks = React.useMemo(() => get6MinuteTicks(data), [data]);
+    const labelTicks = React.useMemo(() => getMinuteTicks(data, 6, 6), [data]);
+    const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
     const lastCandle = data.length > 0 ? data[data.length-1] : null;
 
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 57 }} animationDuration={0}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax + 10']} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={sixMinuteTicks} />
+                <CartesianGrid strokeDasharray="3 3" verticalCoordinatesGenerator={() => gridTicks} />
+                
+                {/* Visible X-axis with labels every 6 mins */}
+                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
+                {/* Hidden X-axis for grid lines every 1 min */}
+                <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
+
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fontWeight: 'normal' }} axisLine={{ stroke: '#ccc' }} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1}/>
                 
                 <Tooltip content={<CustomTooltip />} />
@@ -458,6 +478,7 @@ export function TradeChart(props: TradeChartProps) {
     
 
     
+
 
 
 
