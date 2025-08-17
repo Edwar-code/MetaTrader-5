@@ -218,9 +218,9 @@ BuyPriceLabel.displayName = 'BuyPriceLabel';
 const CurrentTimeIndicator = ({ viewBox }: any) => {
   if (!viewBox) return null;
   const { x, y } = viewBox;
-  // Position the arrow above the axis line
+  // Position the arrow on the x-axis line
   return (
-    <svg x={x - 4} y={y + 12} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg x={x - 4} y={y} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M4 0L8 8H0L4 0Z" fill="#8E8E93"/>
     </svg>
   );
