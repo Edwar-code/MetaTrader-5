@@ -102,7 +102,7 @@ export default function ChartPage() {
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       
       {/* Chart Container - Now takes full space and is behind other elements */}
-      <div className="flex-1 bg-gray-50 relative min-h-0 pt-[48px] border pb-14">
+      <div className="flex-1 bg-gray-50 relative min-h-0 pt-[48px] border pb-6">
          <div className="absolute top-[110px] left-3 z-10">
           <div className="flex items-center gap-1">
             <span className="font-normal text-primary text-[12.5px]">{displayAsset}</span>
