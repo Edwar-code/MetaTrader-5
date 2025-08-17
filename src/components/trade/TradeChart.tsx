@@ -218,10 +218,11 @@ BuyPriceLabel.displayName = 'BuyPriceLabel';
 const CurrentTimeIndicator = ({ viewBox, chartHeight }: any) => {
   if (!viewBox || !chartHeight) return null;
   const { x } = viewBox;
-  // Position the arrow at the bottom of the chart content area
+  // Position the arrow at the bottom of the chart content area, on the x-axis line
+  const yPosition = chartHeight;
   return (
-    <svg x={x - 4} y={chartHeight - 8} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0 0L4 8L8 0H0Z" fill="#8E8E93"/>
+    <svg x={x - 4} y={yPosition - 8} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 8L0 0L8 0L4 8Z" fill="#8E8E93"/>
     </svg>
   );
 };
@@ -231,14 +232,16 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
     const sixMinuteTicks = React.useMemo(() => get6MinuteTicks(data), [data]);
     const chartRef = React.useRef<any>(null);
-    const [chartHeight, setChartHeight] = React.useState(0);
+    const [chartContentHeight, setChartContentHeight] = React.useState(0);
 
     React.useEffect(() => {
-        if (chartRef.current) {
-            const height = chartRef.current.getInternalState().height;
-            setChartHeight(height);
+        if (chartRef.current && chartRef.current.chartInstance) {
+            const internalState = chartRef.current.chartInstance.getInternalState();
+            if (internalState && internalState.chartHeight) {
+                setChartContentHeight(internalState.chartHeight);
+            }
         }
-    }, [chartRef.current]);
+    }, []);
 
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -291,8 +294,8 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
                     label={<BuyPriceLabel value={buyPrice} />}
                 />
             )}
-            {lastTick && chartHeight > 0 && (
-              <ReferenceLine x={lastTick.epoch} stroke="transparent" label={<CurrentTimeIndicator chartHeight={chartHeight} />} ifOverflow="visible" />
+            {lastTick && chartContentHeight > 0 && (
+              <ReferenceLine x={lastTick.epoch} stroke="transparent" label={<CurrentTimeIndicator chartHeight={chartContentHeight} />} ifOverflow="visible" />
             )}
             </AreaChart>
         </ResponsiveContainer>
@@ -304,14 +307,16 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
     const sixMinuteTicks = React.useMemo(() => get6MinuteTicks(data), [data]);
     const lastCandle = data.length > 0 ? data[data.length - 1] : null;
     const chartRef = React.useRef<any>(null);
-    const [chartHeight, setChartHeight] = React.useState(0);
+    const [chartContentHeight, setChartContentHeight] = React.useState(0);
 
     React.useEffect(() => {
-        if (chartRef.current) {
-            const height = chartRef.current.getInternalState().height;
-            setChartHeight(height);
+        if (chartRef.current && chartRef.current.chartInstance) {
+            const internalState = chartRef.current.chartInstance.getInternalState();
+            if (internalState && internalState.chartHeight) {
+                setChartContentHeight(internalState.chartHeight);
+            }
         }
-    }, [chartRef.current]);
+    }, []);
 
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -363,8 +368,8 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
                         label={<BuyPriceLabel value={buyPrice} />}
                     />
                 )}
-                {lastCandle && chartHeight > 0 && (
-                  <ReferenceLine x={lastCandle.epoch} stroke="transparent" label={<CurrentTimeIndicator chartHeight={chartHeight} />} ifOverflow="visible" />
+                {lastCandle && chartContentHeight > 0 && (
+                  <ReferenceLine x={lastCandle.epoch} stroke="transparent" label={<CurrentTimeIndicator chartHeight={chartContentHeight} />} ifOverflow="visible" />
                 )}
             </ComposedChart>
         </ResponsiveContainer>
