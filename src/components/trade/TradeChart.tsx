@@ -221,8 +221,8 @@ const CurrentTimeIndicator = ({ viewBox, chartHeight }: any) => {
   // Position the arrow at the bottom of the chart content area, on the x-axis line
   const yPosition = chartHeight;
   return (
-    <svg x={x - 4} y={yPosition - 8} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 8L0 0L8 0L4 8Z" fill="#8E8E93"/>
+    <svg x={x - 4} y={yPosition} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 8L0 0H8L4 8Z" fill="#8E8E93"/>
     </svg>
   );
 };
@@ -254,7 +254,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
             </defs>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={sixMinuteTicks} />
-            <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fontWeight: 'normal' }} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#ccc' }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1} />
+            <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fontWeight: 'normal' }} axisLine={{ stroke: '#ccc' }} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1} />
             
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
@@ -323,7 +323,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
             <ComposedChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 57 }} animationDuration={0} ref={chartRef}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', 'dataMax']} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={sixMinuteTicks} />
-                <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fontWeight: 'normal' }} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#ccc' }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1}/>
+                <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fontWeight: 'normal' }} axisLine={{ stroke: '#ccc' }} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1}/>
                 
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="body" shape={<HeikinAshiCandleStick />} isAnimationActive={false} barSize={6} />
