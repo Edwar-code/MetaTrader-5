@@ -250,7 +250,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
                 <stop offset="95%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0}/>
                 </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" verticalCoordinatesGenerator={() => gridTicks} />
+            <CartesianGrid strokeDasharray="3 3" verticalCoordinatesGenerator={(props) => props.tick.map((tick: any) => tick.coordinate)} />
             
             {/* Visible X-axis with labels every 6 mins */}
             <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
@@ -314,7 +314,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 57 }} animationDuration={0}>
-                <CartesianGrid strokeDasharray="3 3" verticalCoordinatesGenerator={() => gridTicks} />
+                <CartesianGrid strokeDasharray="3 3" verticalCoordinatesGenerator={(props) => props.tick.map((tick: any) => tick.coordinate)} />
                 
                 {/* Visible X-axis with labels every 6 mins */}
                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
@@ -478,6 +478,7 @@ export function TradeChart(props: TradeChartProps) {
     
 
     
+
 
 
 
