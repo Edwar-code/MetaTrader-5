@@ -314,7 +314,9 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
             <ComposedChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 57 }} animationDuration={0}>
                 <CartesianGrid strokeDasharray="3 3" vertical={true} />
                 
+                {/* Visible X-axis with labels every 6 mins */}
                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
+                {/* Hidden X-axis for per-minute grid lines */}
                 <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
 
                 <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fontWeight: 'normal' }} axisLine={{ stroke: '#ccc' }} tickLine={false} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1}/>
@@ -474,6 +476,7 @@ export function TradeChart(props: TradeChartProps) {
     
 
     
+
 
 
 
