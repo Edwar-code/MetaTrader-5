@@ -220,7 +220,17 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
   const { x, y, height } = viewBox;
   // Position the arrow on the x-axis line
   return (
-    <svg x={x - 4} y={y + height} width="8" height="4" viewBox="0 0 8 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg x={x - 4} y={y + height - 10} width="8" height="4" viewBox="0 0 8 4" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ animation: 'flash 1.5s infinite' }}>
+       <defs>
+        <style>
+          {`
+            @keyframes flash {
+              0%, 100% { opacity: 1; }
+              50% { opacity: 0.2; }
+            }
+          `}
+        </style>
+      </defs>
       <path d="M4 0L8 4H0L4 0Z" fill="#8E8E93"/>
     </svg>
   );
@@ -230,6 +240,7 @@ CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
     const sixMinuteTicks = React.useMemo(() => get6MinuteTicks(data), [data]);
+    const lastGridlineTick = sixMinuteTicks.length > 0 ? sixMinuteTicks[sixMinuteTicks.length - 1] : null;
     
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -282,8 +293,8 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
                     label={<BuyPriceLabel value={buyPrice} />}
                 />
             )}
-            {lastTick && (
-              <ReferenceLine x={lastTick.epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" />
+            {lastGridlineTick && (
+              <ReferenceLine x={lastGridlineTick} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" />
             )}
             </AreaChart>
         </ResponsiveContainer>
@@ -293,7 +304,7 @@ LiveAreaChart.displayName = 'LiveAreaChart';
 
 const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buyPrice }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
     const sixMinuteTicks = React.useMemo(() => get6MinuteTicks(data), [data]);
-    const lastCandle = data.length > 0 ? data[data.length - 1] : null;
+    const lastGridlineTick = sixMinuteTicks.length > 0 ? sixMinuteTicks[sixMinuteTicks.length - 1] : null;
 
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -345,8 +356,8 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
                         label={<BuyPriceLabel value={buyPrice} />}
                     />
                 )}
-                {lastCandle && (
-                  <ReferenceLine x={lastCandle.epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" />
+                {lastGridlineTick && (
+                  <ReferenceLine x={lastGridlineTick} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" />
                 )}
             </ComposedChart>
         </ResponsiveContainer>
