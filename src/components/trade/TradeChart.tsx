@@ -220,8 +220,8 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
   const { x, y, height } = viewBox;
   // Position the arrow on the x-axis line
   return (
-    <svg x={x - 3.5} y={y + height} width="7" height="6" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3.5 0L7 6H0L3.5 0Z" fill="#8E8E93"/>
+    <svg x={x - 5} y={y + height} width="10" height="5" viewBox="0 0 10 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 0L10 5H0L5 0Z" fill="#8E8E93"/>
     </svg>
   );
 };
