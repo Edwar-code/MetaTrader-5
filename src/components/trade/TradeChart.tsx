@@ -238,7 +238,7 @@ CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
 const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
-    const labelTicks = React.useMemo(() => getMinuteTicks(data, 6, 6), [data]);
+    const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
     
     return (
@@ -305,7 +305,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
 LiveAreaChart.displayName = 'LiveAreaChart';
 
 const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buyPrice }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
-    const labelTicks = React.useMemo(() => getMinuteTicks(data, 6, 6), [data]);
+    const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
     const lastCandle = data.length > 0 ? data[data.length-1] : null;
 
@@ -476,6 +476,7 @@ export function TradeChart(props: TradeChartProps) {
     
 
     
+
 
 
 
