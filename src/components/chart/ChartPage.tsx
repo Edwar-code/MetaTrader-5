@@ -168,7 +168,7 @@ export default function ChartPage() {
             <span className="text-[22px] font-bold">.{formattedSellPrice.fractional}</span>
           </div>
         </div>
-        <div className="bg-white px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4]">
+        <div className="bg-white px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4] border-b border-gray-300">
           <div className="flex items-center space-x-2">
             <button className="cursor-pointer p-1" onClick={() => adjustLotSize(-0.01)}>
                 <ChevronDown className="h-5 w-5 text-gray-700" />
