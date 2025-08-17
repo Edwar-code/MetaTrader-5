@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import BottomNav from '../trade/BottomNav';
 import { TradeChart, type ChartMarker } from '../trade/TradeChart';
 import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
@@ -12,6 +12,7 @@ import { TimeframeWheel } from './TimeframeWheel';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Position } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 
 const formatPrice = (price: number | undefined) => {
@@ -33,6 +34,9 @@ export default function ChartPage() {
   const [chartType, setChartType] = useState('candle');
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
   const [lotSize, setLotSize] = useState(0.01);
+  const [priceDirection, setPriceDirection] = useState<'up' | 'down' | 'neutral'>('neutral');
+
+  const prevSellPriceRef = useRef<number | undefined>();
 
   const chartMarkers = useMemo((): ChartMarker[] => {
     return positions
@@ -53,6 +57,19 @@ export default function ChartPage() {
   // A small, static spread for display purposes.
   const spread = 0.20;
   const buyPrice = sellPrice !== undefined ? sellPrice + spread : undefined;
+
+  useEffect(() => {
+    if (sellPrice !== undefined) {
+      if (prevSellPriceRef.current !== undefined) {
+        if (sellPrice > prevSellPriceRef.current) {
+          setPriceDirection('up');
+        } else if (sellPrice < prevSellPriceRef.current) {
+          setPriceDirection('down');
+        }
+      }
+      prevSellPriceRef.current = sellPrice;
+    }
+  }, [sellPrice]);
 
   const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
   const formattedBuyPrice = useMemo(() => formatPrice(buyPrice), [buyPrice]);
@@ -98,6 +115,9 @@ export default function ChartPage() {
     });
   };
 
+  const sellButtonColor = priceDirection === 'up' ? 'bg-blue-600' : 'bg-red-500';
+  const buyButtonColor = priceDirection === 'up' ? 'bg-blue-600' : 'bg-red-500';
+
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       
@@ -141,7 +161,7 @@ export default function ChartPage() {
 
       {/* SELL/BUY Section - Absolutely Positioned */}
       <div className="absolute left-0 right-0 flex z-10" style={{top: '48.6px'}}>
-        <div onClick={() => onTrade('SELL')} className="bg-red-500 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
+        <div onClick={() => onTrade('SELL')} className={cn("text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1 transition-colors duration-200", sellButtonColor)}>
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedSellPrice.integer}</span>
@@ -164,7 +184,7 @@ export default function ChartPage() {
             </button>
           </div>
         </div>
-        <div onClick={() => onTrade('BUY')} className="bg-blue-600 text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1">
+        <div onClick={() => onTrade('BUY')} className={cn("text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1 transition-colors duration-200", buyButtonColor)}>
           <div className="font-normal opacity-90 text-[10px] leading-none">BUY</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedBuyPrice.integer}</span>
