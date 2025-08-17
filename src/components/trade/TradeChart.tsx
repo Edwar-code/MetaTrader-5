@@ -220,8 +220,8 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
   const { x, y, height } = viewBox;
   // Position the arrow on the x-axis line
   return (
-    <svg x={x - 4} y={y + height} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 0L8 8H0L4 0Z" fill="#8E8E93"/>
+    <svg x={x - 3.5} y={y + height} width="7" height="6" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3.5 0L7 6H0L3.5 0Z" fill="#8E8E93"/>
     </svg>
   );
 };
@@ -453,5 +453,7 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
+
+    
 
     
