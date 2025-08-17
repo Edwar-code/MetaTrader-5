@@ -219,8 +219,8 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
   if (!viewBox) return null;
   const { x } = viewBox;
   return (
-    <svg x={x - 4} y={-8} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 8L0 0H8L4 8Z" fill="#8E8E93"/>
+    <svg x={x - 4} y={0} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 8L0 0H8L4 8Z" transform="rotate(180 4 4)" fill="#8E8E93"/>
     </svg>
   );
 };
