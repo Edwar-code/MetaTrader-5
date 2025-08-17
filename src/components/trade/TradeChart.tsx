@@ -218,9 +218,10 @@ BuyPriceLabel.displayName = 'BuyPriceLabel';
 const CurrentTimeIndicator = ({ viewBox }: any) => {
   if (!viewBox) return null;
   const { x, y, height } = viewBox;
-  // Position the arrow on the x-axis line
+  // Position the arrow on the x-axis line. y + height is the axis line itself.
+  // We subtract the arrow's height (4px) to make it sit ON TOP of the line.
   return (
-    <svg x={x - 4} y={y + height - 10} width="8" height="4" viewBox="0 0 8 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg x={x - 4} y={y + height - 4} width="8" height="4" viewBox="0 0 8 4" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M4 0L8 4H0L4 0Z" fill="#8E8E93"/>
     </svg>
   );
@@ -457,4 +458,5 @@ export function TradeChart(props: TradeChartProps) {
     
 
     
+
 
