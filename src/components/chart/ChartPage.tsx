@@ -115,9 +115,6 @@ export default function ChartPage() {
     });
   };
 
-  const sellButtonColor = priceDirection === 'up' ? 'bg-blue-600' : 'bg-red-500';
-  const buyButtonColor = priceDirection === 'up' ? 'bg-blue-600' : 'bg-red-500';
-
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       
@@ -161,7 +158,11 @@ export default function ChartPage() {
 
       {/* SELL/BUY Section - Absolutely Positioned */}
       <div className="absolute left-0 right-0 flex z-10" style={{top: '48.1px'}}>
-        <div onClick={() => onTrade('SELL')} className={cn("text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1 transition-colors duration-200", sellButtonColor)}>
+        <div 
+          onClick={() => onTrade('SELL')} 
+          className="text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1 transition-colors duration-200"
+          style={{ backgroundColor: priceDirection === 'up' ? '#3082ff' : '#EF4444' }}
+        >
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedSellPrice.integer}</span>
@@ -184,7 +185,11 @@ export default function ChartPage() {
             </button>
           </div>
         </div>
-        <div onClick={() => onTrade('BUY')} className={cn("text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1 transition-colors duration-200", buyButtonColor)}>
+        <div 
+          onClick={() => onTrade('BUY')} 
+          className="text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1 transition-colors duration-200"
+          style={{ backgroundColor: priceDirection === 'up' ? '#3082ff' : '#EF4444' }}
+        >
           <div className="font-normal opacity-90 text-[10px] leading-none">BUY</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedBuyPrice.integer}</span>
