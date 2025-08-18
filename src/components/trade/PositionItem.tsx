@@ -50,9 +50,9 @@ export default function PositionItem({ position }: PositionItemProps) {
                 </span>
                 </div>
                 <div className="flex items-center gap-1.5 leading-none mt-1">
-                <span className="text-sm font-bold text-muted-foreground">{position.entryPrice.toFixed(5)}</span>
-                <span className="text-base font-light text-muted-foreground">→</span>
-                <span className="text-sm font-bold text-muted-foreground">{position.currentPrice.toFixed(2)}</span>
+                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.entryPrice.toFixed(5)}</span>
+                <span className="text-base font-light" style={{ color: '#838282' }}>→</span>
+                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.currentPrice.toFixed(2)}</span>
                 </div>
             </div>
             <div className="text-right">
