@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 
 export const TradeIcon = () => (
@@ -22,11 +23,11 @@ export const ChartIcon = () => (
 );
 
 export const MessagesIcon = () => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.57_5a87660a.jpg" alt="Messages Icon" width={24} height={24} className="object-contain" />
+    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.57_5a87660a.jpg" alt="Messages Icon" width={22} height={22} className="object-contain" />
 );
 
 export const HistoryIcon = () => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.56_253ecbbb.jpg" alt="History Icon" width={24} height={24} className="object-contain" />
+    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.56_253ecbbb.jpg" alt="History Icon" width={22} height={22} className="object-contain" />
 );
 
 export const SortIcon = () => (
