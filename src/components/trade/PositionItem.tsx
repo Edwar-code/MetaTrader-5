@@ -36,7 +36,7 @@ export default function PositionItem({ position }: PositionItemProps) {
     <div className="flex flex-col py-2 px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="flex justify-between">
             <div className="flex-1">
-                <div className="flex items-center gap-1 leading-none">
+                <div className="flex items-center gap-1 leading-none -mb-1">
                   {isGold ? (
                     <div className="flex items-center">
                        <div className="relative top-[-1px]">
@@ -54,7 +54,7 @@ export default function PositionItem({ position }: PositionItemProps) {
                       {position.size}
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5 leading-none mt-px">
+                <div className="flex items-center gap-1.5 leading-none">
                 <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.entryPrice.toFixed(5)}</span>
                 <span className="text-base font-light" style={{ color: '#838282' }}>→</span>
                 <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.currentPrice.toFixed(2)}</span>
