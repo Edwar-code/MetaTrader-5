@@ -60,5 +60,5 @@ export const SpacedMoreHorizontalIcon = () => (
 );
 
 export const TradeTitleIcon = () => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.22.17_f0a77256.jpg" alt="Trade Title" width={80} height={32} className="object-contain" />
+    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.22.17_f0a77256.jpg" alt="Trade Title" width={40} height={10} className="object-contain" />
 );
