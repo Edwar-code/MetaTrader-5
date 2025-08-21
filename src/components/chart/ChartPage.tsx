@@ -4,7 +4,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import BottomNav from '../trade/BottomNav';
 import { TradeChart, type ChartMarker } from '../trade/TradeChart';
-import { CrosshairIcon, FunctionIcon, ClockIcon, ShapesIcon } from './icons';
 import { Sidebar } from '../trade/Sidebar';
 import { useDerivState } from '@/context/DerivContext';
 import { useTradeState } from '@/context/TradeContext';
@@ -12,7 +11,7 @@ import { TimeframeWheel } from './TimeframeWheel';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Position } from '@/lib/types';
-import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 
 const formatPrice = (price: number | undefined) => {
@@ -147,12 +146,9 @@ export default function ChartPage() {
         </div>
         <div className="flex-1"></div>
         <div className="flex items-center space-x-4">
-          <CrosshairIcon />
-          <FunctionIcon />
-          <button onClick={() => setIsTimeframeWheelOpen(!isTimeframeWheelOpen)}>
-            <ClockIcon />
-          </button>
-          <ShapesIcon />
+           <button onClick={() => setIsTimeframeWheelOpen(!isTimeframeWheelOpen)} className="h-6 w-6">
+             <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg" alt="Chart settings" width={24} height={24} />
+           </button>
         </div>
       </div>
 
@@ -161,7 +157,7 @@ export default function ChartPage() {
         <div 
           onClick={() => onTrade('SELL')} 
           className="text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1 transition-colors duration-200"
-          style={{ backgroundColor: priceDirection === 'up' ? '#3082ff' : '#EF4444' }}
+          style={{ backgroundColor: '#c40909' }}
         >
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
@@ -188,7 +184,7 @@ export default function ChartPage() {
         <div 
           onClick={() => onTrade('BUY')} 
           className="text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1 transition-colors duration-200"
-          style={{ backgroundColor: priceDirection === 'up' ? '#3082ff' : '#EF4444' }}
+          style={{ backgroundColor: '#3082ff' }}
         >
           <div className="font-normal opacity-90 text-[10px] leading-none">BUY</div>
           <div className="leading-none text-center w-full">
