@@ -4,9 +4,10 @@ import { SortIcon, AddOrderIcon } from './icons';
 
 interface HeaderProps {
   totalProfit: string;
+  hasOpenPositions: boolean;
 }
 
-export default function Header({ totalProfit }: HeaderProps) {
+export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
   const profitValue = parseFloat(totalProfit.replace(/ /g, ''));
   const isLoss = profitValue < 0;
   const isZero = profitValue === 0;
@@ -21,10 +22,14 @@ export default function Header({ totalProfit }: HeaderProps) {
         <div className="flex items-center gap-1">
           <Sidebar />
           <div>
-            <div className="text-[11px] font-medium text-foreground">Trade</div>
-            <div className={`text-sm font-semibold ${isZero ? 'text-foreground' : profitColor}`}>
-              {profitString} USD
+            <div className={`font-medium text-foreground ${hasOpenPositions ? 'text-[11px]' : 'text-[21px]'}`}>
+              Trade
             </div>
+            {hasOpenPositions && (
+              <div className={`text-sm font-semibold ${isZero ? 'text-foreground' : profitColor}`}>
+                {profitString} USD
+              </div>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-[11px]">
