@@ -25,7 +25,7 @@ export default function PositionItem({ position }: PositionItemProps) {
 
   const profitString = isLoss ? profitValue.toFixed(2) : profitValue.toFixed(2);
   const profitColor = isLoss ? '#c40909' : '#3082ff';
-  const typeColor = position.type === 'BUY' ? '#3082ff' : '#982022';
+  const typeColor = position.type === 'BUY' ? '#3082ff' : '#932120';
 
   const formattedType = position.type.toLowerCase();
   
@@ -39,7 +39,7 @@ export default function PositionItem({ position }: PositionItemProps) {
                 <div className="flex items-center gap-1 leading-none">
                   {isGold ? (
                     <div className="flex items-center">
-                      <div style={{ paddingTop: '2px' }}>
+                      <div className="pt-[2px]">
                         <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.33.35_e00bef8a.jpg" alt="XAUUSD" width={50} height={9} className="object-contain" />
                       </div>
                       <span className="text-sm font-bold text-card-foreground">.m,</span>
