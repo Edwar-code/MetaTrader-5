@@ -35,7 +35,7 @@ export const SortIcon = () => (
 );
 
 export const AddOrderIcon = () => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/fileplus.jpg" alt="Add Order Icon" width={24} height={24} className="object-contain" />
+    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/fileplus.jpg" alt="Add Order Icon" width={24} height={22} className="object-contain" />
 );
 
 export const SpacedMoreHorizontalIcon = () => (
