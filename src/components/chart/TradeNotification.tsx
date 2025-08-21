@@ -33,12 +33,12 @@ const TradeNotification = ({ tradeDetails, onClose }: TradeNotificationProps) =>
     <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-auto bg-white rounded-md shadow-lg p-2 flex items-center animate-slide-in-bottom z-50">
       <div className="w-1 h-8 bg-blue-500 rounded-l-md mr-3"></div>
       <div className="flex items-center space-x-3 text-sm">
-        <span className="font-medium text-gray-800">{displayAsset}</span>
-        <span className={`font-medium ${type === 'SELL' ? 'text-red-500' : 'text-blue-500'}`}>
+        <span className="font-normal text-gray-800">{displayAsset}</span>
+        <span className={`font-normal ${type === 'SELL' ? 'text-red-500' : 'text-blue-500'}`}>
           {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
         </span>
-        <span className="font-medium text-gray-800">{size.toFixed(2)}</span>
-        <span className="font-medium text-blue-500">done</span>
+        <span className="font-normal text-gray-800">{size.toFixed(2)}</span>
+        <span className="font-normal text-blue-500">done</span>
       </div>
     </div>
   );
