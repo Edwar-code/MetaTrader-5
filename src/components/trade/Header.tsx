@@ -26,7 +26,7 @@ export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
             {hasOpenPositions ? (
               <>
                 <div className="text-foreground text-[11px]">Trade</div>
-                <div className={`text-sm font-semibold ${isZero ? 'text-foreground' : profitColor}`}>
+                <div className={`text-base font-semibold ${isZero ? 'text-foreground' : profitColor}`}>
                   {profitString} USD
                 </div>
               </>
