@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Sidebar } from './Sidebar';
-import { SortIcon, AddOrderIcon } from './icons';
+import { SortIcon, AddOrderIcon, NewCustomIcon } from './icons';
 
 interface HeaderProps {
   totalProfit: string;
@@ -33,6 +33,9 @@ export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
           </div>
         </div>
         <div className="flex items-center gap-[11px]">
+          <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
+            <NewCustomIcon />
+          </Button>
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
             <SortIcon />
           </Button>

@@ -30,6 +30,10 @@ export const HistoryIcon = () => (
     <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.56_253ecbbb.jpg" alt="History Icon" width={22} height={22} className="object-contain" />
 );
 
+export const NewCustomIcon = () => (
+    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.08.30_b5f774fc.jpg" alt="New Custom Icon" width={24} height={24} className="object-contain" />
+);
+
 export const SortIcon = () => (
     <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/updown.jpg" alt="Sort Icon" width={24} height={24} className="object-contain" />
 );
