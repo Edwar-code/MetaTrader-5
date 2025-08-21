@@ -68,7 +68,7 @@ export function TimeframeWheel({ isOpen, onClose, selectedInterval, onSelectInte
 
                 {/* Inner transparent circle with border */}
                 <div
-                    className="absolute rounded-full border-2 border-primary/50 bg-card"
+                    className="absolute rounded-full border-2 border-primary/50 bg-transparent"
                     style={{
                         width: `${(RADIUS - 50) * 2}px`,
                         height: `${(RADIUS - 50) * 2}px`,
