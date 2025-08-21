@@ -30,9 +30,9 @@ const TradeNotification = ({ tradeDetails, onClose }: TradeNotificationProps) =>
   const displayAsset = pair === 'frxXAUUSD' ? 'XAUUSD' : pair;
 
   return (
-    <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-auto flex items-center animate-slide-in-bottom z-50 bg-white px-4 py-2 rounded-md shadow-lg">
+    <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-auto flex items-center animate-slide-in-bottom z-50 bg-white rounded-md shadow-lg">
       <div className="w-1 h-8 bg-blue-500 mr-3"></div>
-      <div className="flex items-center space-x-3 text-sm">
+      <div className="flex items-center space-x-3 text-sm pr-4">
         <span className="font-normal text-gray-800">{displayAsset}</span>
         <span className={`font-normal ${type === 'SELL' ? 'text-red-500' : 'text-blue-500'}`}>
           {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
