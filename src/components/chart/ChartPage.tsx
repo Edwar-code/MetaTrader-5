@@ -146,8 +146,8 @@ export default function ChartPage() {
         </div>
         <div className="flex-1"></div>
         <div className="flex items-center space-x-4">
-           <button onClick={() => setIsTimeframeWheelOpen(!isTimeframeWheelOpen)} className="h-6 w-6">
-             <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg" alt="Chart settings" width={24} height={24} />
+           <button onClick={() => setIsTimeframeWheelOpen(!isTimeframeWheelOpen)} style={{ height: '50px', width: '90px' }}>
+             <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg" alt="Chart settings" width={90} height={50} />
            </button>
         </div>
       </div>
