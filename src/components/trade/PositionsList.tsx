@@ -11,6 +11,10 @@ interface PositionsListProps {
 }
 
 export default function PositionsList({ positions }: PositionsListProps) {
+  if (positions.length === 0) {
+    return <Separator />;
+  }
+
   return (
     <div>
       <div className="px-4 py-[1.7px] border-t border-b bg-muted/50">

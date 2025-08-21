@@ -6,6 +6,7 @@ interface AccountSummaryProps {
     freeMargin: string;
     marginLevel: string;
   };
+  hasOpenPositions: boolean;
 }
 
 const SummaryItem = ({ label, value }: { label: string; value: string }) => {
@@ -27,14 +28,14 @@ const SummaryItem = ({ label, value }: { label: string; value: string }) => {
   );
 };
 
-export default function AccountSummary({ data }: AccountSummaryProps) {
+export default function AccountSummary({ data, hasOpenPositions }: AccountSummaryProps) {
   return (
     <div className="p-4 space-y-2">
       <SummaryItem label="Balance" value={data.balance} />
       <SummaryItem label="Equity" value={data.equity} />
-      <SummaryItem label="Margin" value={data.margin} />
+      {hasOpenPositions && <SummaryItem label="Margin" value={data.margin} />}
       <SummaryItem label="Free margin" value={data.freeMargin} />
-      <SummaryItem label="Margin Level (%)" value={data.marginLevel} />
+      {hasOpenPositions && <SummaryItem label="Margin Level (%)" value={data.marginLevel} />}
     </div>
   );
 }

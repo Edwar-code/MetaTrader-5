@@ -7,9 +7,12 @@ import Header from './Header';
 import PositionsList from './PositionsList';
 import InstallPrompt from './InstallPrompt';
 import { useTradeState } from '@/context/TradeContext';
+import { Separator } from '../ui/separator';
 
 export default function TradingPage() {
   const { positions, equity, balance, totalPnl } = useTradeState();
+
+  const hasOpenPositions = positions.length > 0;
 
   const accountSummary = useMemo(() => {
     return {
@@ -23,10 +26,14 @@ export default function TradingPage() {
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
-      <Header totalProfit={totalPnl.toFixed(2)} hasOpenPositions={positions.length > 0} />
+      <Header totalProfit={totalPnl.toFixed(2)} hasOpenPositions={hasOpenPositions} />
       <div className="flex-1 overflow-y-auto pb-16">
-        <AccountSummary data={accountSummary} />
-        <PositionsList positions={positions} />
+        <AccountSummary data={accountSummary} hasOpenPositions={hasOpenPositions} />
+        {hasOpenPositions ? (
+          <PositionsList positions={positions} />
+        ) : (
+          <div className="border-t"></div>
+        )}
         <InstallPrompt />
       </div>
       <BottomNav />
