@@ -222,7 +222,7 @@ export default function ChartPage() {
             }}
           />
       
-      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-[210px] flex flex-col items-center z-50" style={{ marginBottom: '11px' }}>
+      <div className="absolute bottom-16 left-0 right-0 mx-auto w-[210px] flex flex-col items-center z-50" style={{ marginBottom: '11px' }}>
         {tradeNotifications.map((trade, index) => (
             <TradeNotification 
                 key={trade.id}
