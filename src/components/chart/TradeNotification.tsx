@@ -32,7 +32,7 @@ const TradeNotification = ({ tradeDetails, onClose }: TradeNotificationProps) =>
   return (
     <div 
       className="absolute bottom-24 left-1/2 flex items-center bg-white shadow-lg animate-slide-in-bottom z-50"
-      style={{ width: '280px', transform: 'translateX(-50%)' }}
+      style={{ width: '300px', transform: 'translateX(-50%)' }}
     >
       <div className="w-1 h-8 bg-blue-500 mr-3"></div>
       <div className="flex items-center space-x-3 text-sm pr-4">
