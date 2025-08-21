@@ -8,7 +8,6 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import {
-  Menu,
   LineChart,
   Newspaper,
   Mail,
@@ -23,6 +22,7 @@ import {
 import { Separator } from '../ui/separator';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 const NavItem = ({ icon, label, badge, ad, active, href }: { icon: React.ReactNode, label: string, href: string, badge?: number, ad?: boolean, active?: boolean }) => (
   <Link href={href} className={`flex items-center gap-6 px-6 py-3 text-sm font-medium ${active ? 'bg-primary/10 text-primary' : 'text-foreground'}`}>
@@ -39,8 +39,8 @@ export function Sidebar() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Menu className="h-[45px] w-[45px]" strokeWidth={3.5} />
+        <Button variant="ghost" size="icon" className="h-10 w-10 hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
+          <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.16.32_d0e4afc0.jpg" alt="Menu" width={24} height={24} className="object-contain" />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-[81%] p-0 bg-card [&>[data-state=open]]:hidden">
