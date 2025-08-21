@@ -38,7 +38,7 @@ export default function PositionItem({ position }: PositionItemProps) {
             <div className="flex-1">
                 <div className="flex items-center gap-1 leading-none">
                   {isGold ? (
-                    <div className="flex items-baseline">
+                    <div className="flex">
                       <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.33.35_e00bef8a.jpg" alt="XAUUSD" width={50} height={9} className="object-contain" style={{ position: 'relative', top: '4.5px' }} />
                       <span className="text-sm font-bold text-card-foreground">.m,</span>
                     </div>
