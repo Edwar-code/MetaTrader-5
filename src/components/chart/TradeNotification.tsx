@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -19,14 +18,20 @@ const TradeNotification = ({ tradeDetails, onClose }: TradeNotificationProps) =>
 
   useEffect(() => {
     if (tradeDetails) {
+      // This timer handles the switch from the loading spinner to the "done" text.
+      // It will run after 2 seconds.
       const loadingTimer = setTimeout(() => {
         setIsLoading(false);
-      }, 2000); // Show loader for 2 seconds
+      }, 2000);
 
+      // This timer handles the automatic closing of the entire notification.
+      // It will run 5 seconds after the component first appears.
       const closeTimer = setTimeout(() => {
         onClose(tradeDetails.id);
-      }, 3000); // Hide after 3 seconds total (2s loading + 1s done)
+      }, 5000); // Changed from 3000 to 5000
 
+      // This is a cleanup function. It's good practice to clear timers
+      // if the component unmounts before they fire.
       return () => {
         clearTimeout(loadingTimer);
         clearTimeout(closeTimer);
