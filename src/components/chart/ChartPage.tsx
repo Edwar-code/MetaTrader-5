@@ -157,7 +157,7 @@ export default function ChartPage() {
         <div 
           onClick={() => onTrade('SELL')} 
           className="text-white flex-grow-[0.3] cursor-pointer flex flex-col justify-center items-start pl-1.5 pt-1 transition-colors duration-200"
-          style={{ backgroundColor: '#c40909' }}
+          style={{ backgroundColor: '#ea4d4a' }}
         >
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
