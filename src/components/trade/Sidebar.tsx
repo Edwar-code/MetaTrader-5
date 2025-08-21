@@ -40,7 +40,7 @@ export function Sidebar() {
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Menu className="h-[34px] w-[34px]" strokeWidth={3.5} />
+          <Menu className="h-[45px] w-[45px]" strokeWidth={3.5} />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-[81%] p-0 bg-card [&>[data-state=open]]:hidden">
