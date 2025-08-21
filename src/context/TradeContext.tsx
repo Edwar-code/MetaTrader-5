@@ -58,11 +58,6 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                 );
                 
                 if (hasHitStopLoss) {
-                    toast({
-                        title: "Stop Loss Triggered",
-                        description: `${pos.pair} closed at ${pos.stopLoss}`,
-                        variant: "destructive"
-                    });
                     handleClosePosition(pos.id, pos.stopLoss);
                     return; 
                 }
@@ -73,10 +68,6 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                 );
 
                 if (hasHitTakeProfit) {
-                    toast({
-                        title: "Take Profit Hit",
-                        description: `${pos.pair} closed at ${pos.takeProfit}`,
-                    });
                     handleClosePosition(pos.id, pos.takeProfit);
                 }
             });
@@ -130,11 +121,6 @@ export function TradeProvider({ children }: { children: ReactNode }) {
             const closePrice = customClosePrice || latestPrice[positionToClose.pair] || positionToClose.currentPrice;
 
             if (!closePrice || closePrice <= 0) {
-                toast({
-                    title: "Cannot Close Trade",
-                    description: "Market price is unavailable.",
-                    variant: "destructive"
-                });
                 return prev;
             }
 
@@ -152,17 +138,9 @@ export function TradeProvider({ children }: { children: ReactNode }) {
             
             setBalance(prevBalance => prevBalance + finalPnl);
 
-            // if(!customClosePrice){
-            //     toast({
-            //         title: "Trade Closed Manually",
-            //         description: `Closed ${positionToClose.pair} for a P/L of $${finalPnl.toFixed(2)}`,
-            //         variant: finalPnl >= 0 ? "default" : "destructive"
-            //     });
-            // }
-
             return prev.filter(p => p.id !== positionId);
         });
-    }, [latestPrice, toast]);
+    }, [latestPrice]);
 
     const handleBulkClosePositions = useCallback((filter: 'all' | 'profitable' | 'losing') => {
         let positionsToClose: Position[] = [];
@@ -183,10 +161,6 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         });
 
         if (positionsToClose.length === 0) {
-            toast({
-                title: 'No Trades to Close',
-                description: `You have no open positions that are ${filter}.`,
-            });
             return;
         }
 
@@ -194,24 +168,11 @@ export function TradeProvider({ children }: { children: ReactNode }) {
              // We pass the calculated PNL so we don't rely on state to close it
             handleClosePosition(pos.id, latestPrice[pos.pair] || pos.currentPrice);
         });
-
-         const totalPnl = positionsToClose.reduce((acc, pos) => acc + (pos.pnl || 0), 0);
-
-        // toast({
-        //     title: `Bulk Close Successful`,
-        //     description: `Closed ${positionsToClose.length} positions. Total P/L: $${totalPnl.toFixed(2)}`,
-        //     variant: totalPnl >= 0 ? "default" : "destructive"
-        // });
-
-    }, [positions, latestPrice, handleClosePosition, toast]);
+    }, [positions, latestPrice, handleClosePosition]);
 
     const handleUpdatePosition = useCallback((positionId: string, updates: Partial<Pick<Position, 'stopLoss' | 'takeProfit'>>) => {
         setPositions(prev => prev.map(p => p.id === positionId ? { ...p, ...updates } : p));
-         toast({
-            title: "Trade Updated",
-            description: `SL/TP for trade ${positionId} has been updated.`,
-        });
-    }, [toast]);
+    }, []);
     
     const value = {
         positions: livePositions,
