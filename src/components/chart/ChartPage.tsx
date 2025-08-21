@@ -23,6 +23,13 @@ const formatPrice = (price: number | undefined) => {
   return { integer: parts[0], fractional: parts[1] };
 };
 
+interface TradeNotificationData {
+  id: string;
+  pair: string;
+  type: 'BUY' | 'SELL';
+  size: number;
+}
+
 export default function ChartPage() {
   const { ticks, connectionState, latestPrice } = useDerivState();
   const { positions, handleTrade } = useTradeState();
@@ -33,7 +40,7 @@ export default function ChartPage() {
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
   const [lotSize, setLotSize] = useState(0.01);
   const [priceDirection, setPriceDirection] = useState<'up' | 'down' | 'neutral'>('neutral');
-  const [tradeNotification, setTradeNotification] = useState<{ pair: string, type: 'BUY' | 'SELL', size: number } | null>(null);
+  const [tradeNotifications, setTradeNotifications] = useState<TradeNotificationData[]>([]);
 
 
   const prevSellPriceRef = useRef<number | undefined>();
@@ -90,9 +97,15 @@ export default function ChartPage() {
     const success = await handleTrade(tradeData);
     
     if (success) {
-      setTradeNotification(tradeData);
+      const newNotification = { ...tradeData, id: new Date().getTime().toString() };
+      setTradeNotifications(prev => [...prev, newNotification]);
     }
   };
+
+  const handleCloseNotification = (id: string) => {
+    setTradeNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
 
   const intervalMap: { [key: string]: string } = {
     '1m': 'M1', '5m': 'M5', '15m': 'M15', '30m': 'M30', '1h': 'H1', '4h': 'H4', '1d': 'D1', '1W': 'W1', '1M': 'MN', 'tick': 'Tick'
@@ -209,12 +222,20 @@ export default function ChartPage() {
             }}
           />
       
-      <TradeNotification 
-        tradeDetails={tradeNotification}
-        onClose={() => setTradeNotification(null)}
-      />
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-[210px] flex flex-col items-center z-50" style={{ marginBottom: '11px' }}>
+        {tradeNotifications.map((trade, index) => (
+            <TradeNotification 
+                key={trade.id}
+                tradeDetails={trade}
+                onClose={() => handleCloseNotification(trade.id)}
+            />
+        ))}
+      </div>
+
 
       <BottomNav />
     </div>
   );
 }
+
+    

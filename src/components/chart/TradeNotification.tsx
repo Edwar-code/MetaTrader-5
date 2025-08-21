@@ -1,22 +1,23 @@
+
 'use client';
 
 import { useEffect } from 'react';
-import type { Position } from '@/lib/types';
 
 interface TradeNotificationProps {
   tradeDetails: {
+    id: string;
     pair: string;
     type: 'BUY' | 'SELL';
     size: number;
   } | null;
-  onClose: () => void;
+  onClose: (id: string) => void;
 }
 
 const TradeNotification = ({ tradeDetails, onClose }: TradeNotificationProps) => {
   useEffect(() => {
     if (tradeDetails) {
       const timer = setTimeout(() => {
-        onClose();
+        onClose(tradeDetails.id);
       }, 3000); // Hide after 3 seconds
       return () => clearTimeout(timer);
     }
@@ -31,8 +32,8 @@ const TradeNotification = ({ tradeDetails, onClose }: TradeNotificationProps) =>
 
   return (
     <div 
-      className="absolute bottom-16 left-1/2 flex items-center bg-white shadow-lg animate-slide-in-bottom z-50"
-      style={{ width: '210px', transform: 'translateX(-50%)', marginBottom: '11px' }}
+      className="flex items-center bg-white shadow-lg animate-slide-in-bottom"
+      style={{ width: '210px', marginBottom: '5px' }}
     >
       <div className="w-1 h-8 bg-blue-500 mr-3"></div>
       <div className="flex items-center text-[12.5px] pr-4">
@@ -48,3 +49,5 @@ const TradeNotification = ({ tradeDetails, onClose }: TradeNotificationProps) =>
 };
 
 export default TradeNotification;
+
+    
