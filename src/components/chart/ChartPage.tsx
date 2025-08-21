@@ -9,9 +9,9 @@ import { useDerivState } from '@/context/DerivContext';
 import { useTradeState } from '@/context/TradeContext';
 import { TimeframeWheel } from './TimeframeWheel';
 import { ChevronUp, ChevronDown } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 import type { Position } from '@/lib/types';
 import Image from 'next/image';
+import TradeNotification from './TradeNotification';
 
 
 const formatPrice = (price: number | undefined) => {
@@ -26,7 +26,6 @@ const formatPrice = (price: number | undefined) => {
 export default function ChartPage() {
   const { ticks, connectionState, latestPrice } = useDerivState();
   const { positions, handleTrade } = useTradeState();
-  const { toast } = useToast();
   
   const [selectedAsset, setAsset] = useState('frxXAUUSD');
   const [chartInterval, setChartInterval] = useState('1m');
@@ -34,6 +33,8 @@ export default function ChartPage() {
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
   const [lotSize, setLotSize] = useState(0.01);
   const [priceDirection, setPriceDirection] = useState<'up' | 'down' | 'neutral'>('neutral');
+  const [tradeNotification, setTradeNotification] = useState<{ pair: string, type: 'BUY' | 'SELL', size: number } | null>(null);
+
 
   const prevSellPriceRef = useRef<number | undefined>();
 
@@ -73,21 +74,24 @@ export default function ChartPage() {
   const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
   const formattedBuyPrice = useMemo(() => formatPrice(buyPrice), [buyPrice]);
 
-  const onTrade = (tradeType: 'BUY' | 'SELL') => {
-    if (connectionState !== 'connected') {
-      toast({ title: 'Not Connected', description: 'Please wait for connection to be established.', variant: 'destructive' });
-      return;
-    }
-     if (!sellPrice) {
-      toast({ title: 'Trade Error', description: 'Could not get the current price.', variant: 'destructive' });
+  const onTrade = async (tradeType: 'BUY' | 'SELL') => {
+    if (connectionState !== 'connected' || !sellPrice) {
+      // Handle error case, maybe show a different kind of notification
+      console.error('Cannot trade, not connected or price unavailable.');
       return;
     }
 
-    handleTrade({
+    const tradeData = {
       pair: selectedAsset,
       type: tradeType,
       size: lotSize,
-    });
+    };
+    
+    const success = await handleTrade(tradeData);
+    
+    if (success) {
+      setTradeNotification(tradeData);
+    }
   };
 
   const intervalMap: { [key: string]: string } = {
@@ -204,6 +208,11 @@ export default function ChartPage() {
               setIsTimeframeWheelOpen(false);
             }}
           />
+      
+      <TradeNotification 
+        tradeDetails={tradeNotification}
+        onClose={() => setTradeNotification(null)}
+      />
 
       <BottomNav />
     </div>

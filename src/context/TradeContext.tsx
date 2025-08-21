@@ -12,7 +12,7 @@ interface TradeState {
     balance: number;
     equity: number;
     totalPnl: number;
-    handleTrade: (trade: Omit<Position, 'id' | 'currentPrice' | 'pnl' | 'entryPrice' | 'openTime'>) => void;
+    handleTrade: (trade: Omit<Position, 'id' | 'currentPrice' | 'pnl' | 'entryPrice' | 'openTime'>) => Promise<boolean>;
     handleClosePosition: (positionId: string, customClosePrice?: number) => void;
     handleBulkClosePositions: (filter: 'all' | 'profitable' | 'losing') => void;
     handleUpdatePosition: (positionId: string, updates: Partial<Pick<Position, 'stopLoss' | 'takeProfit'>>) => void;
@@ -77,18 +77,18 @@ export function TradeProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [latestPrice]);
 
-    const handleTrade = useCallback(async (trade: Omit<Position, 'id' | 'currentPrice' | 'pnl' | 'entryPrice' | 'openTime'>) => {
+    const handleTrade = useCallback(async (trade: Omit<Position, 'id' | 'currentPrice' | 'pnl' | 'entryPrice' | 'openTime'>): Promise<boolean> => {
         try {
             const ticks = await getTicks(trade.pair, 1);
             const entryPrice = ticks.length > 0 ? ticks[0].quote : latestPrice[trade.pair];
 
             if (!entryPrice || entryPrice <= 0) {
-                toast({
+                 toast({
                     title: "Market Closed",
                     description: "Cannot place trade, price data is not available.",
                     variant: "destructive"
                 });
-                return;
+                return false;
             }
 
             const newPosition: Position = {
@@ -100,16 +100,14 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                 pnl: 0,
             };
             setPositions(prev => [...prev, newPosition]);
-            toast({
-                title: "Trade Opened",
-                description: `${trade.type} ${trade.size} lot of ${trade.pair} at ${entryPrice.toFixed(5)}`,
-            });
+            return true;
         } catch (error: any) {
              toast({
                 title: "Trade Failed",
                 description: error.message || "Could not fetch latest price to open trade.",
                 variant: "destructive"
             });
+            return false;
         }
     }, [getTicks, latestPrice, toast]);
 
@@ -121,6 +119,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
             const closePrice = customClosePrice || latestPrice[positionToClose.pair] || positionToClose.currentPrice;
 
             if (!closePrice || closePrice <= 0) {
+                // Don't close if we can't get a valid price
                 return prev;
             }
 
@@ -135,7 +134,6 @@ export function TradeProvider({ children }: { children: ReactNode }) {
             };
 
             setClosedPositions(prevClosed => [closedPosition, ...prevClosed]);
-            
             setBalance(prevBalance => prevBalance + finalPnl);
 
             return prev.filter(p => p.id !== positionId);
@@ -165,7 +163,6 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         }
 
         positionsToClose.forEach(pos => {
-             // We pass the calculated PNL so we don't rely on state to close it
             handleClosePosition(pos.id, latestPrice[pos.pair] || pos.currentPrice);
         });
     }, [positions, latestPrice, handleClosePosition]);
