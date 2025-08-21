@@ -140,14 +140,14 @@ export default function ChartPage() {
       </div>
 
       {/* Top Navigation - Absolutely Positioned */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2.5 bg-white border-b border-gray-300 z-20 h-[48px]">
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between pl-3 pr-[7px] py-2.5 bg-white border-b border-gray-300 z-20 h-[48px]">
         <div className="flex items-center">
           <Sidebar />
         </div>
         <div className="flex-1"></div>
         <div className="flex items-center space-x-4">
-           <button onClick={() => setIsTimeframeWheelOpen(!isTimeframeWheelOpen)} style={{ height: '105px', width: '260px' }}>
-             <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg" alt="Chart settings" width={260} height={105} />
+           <button onClick={() => setIsTimeframeWheelOpen(!isTimeframeWheelOpen)} style={{ height: '90px', width: '260px' }}>
+             <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg" alt="Chart settings" width={260} height={90} />
            </button>
         </div>
       </div>
