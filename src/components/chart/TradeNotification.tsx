@@ -40,7 +40,7 @@ const TradeNotification = ({ tradeDetails, onClose }: TradeNotificationProps) =>
         <span className={`font-normal mr-3 ${type === 'SELL' ? 'text-red-500' : 'text-blue-500'}`}>
           {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
         </span>
-        <span className="font-normal text-gray-800 mr-[25px]">{size.toFixed(2)}</span>
+        <span className="font-normal text-gray-800 mr-[30px]">{size.toFixed(2)}</span>
         <span className="font-normal text-blue-500">done</span>
       </div>
     </div>
