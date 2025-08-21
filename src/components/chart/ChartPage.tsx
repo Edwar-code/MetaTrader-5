@@ -140,7 +140,7 @@ export default function ChartPage() {
       </div>
 
       {/* Top Navigation - Absolutely Positioned */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between pl-3 pr-[7px] py-2.5 bg-white border-b border-gray-300 z-20 h-[48px]">
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between pl-3 pr-[4px] py-2.5 bg-white border-b border-gray-300 z-20 h-[48px]">
         <div className="flex items-center">
           <Sidebar />
         </div>
