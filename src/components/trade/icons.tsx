@@ -58,3 +58,7 @@ export const SpacedMoreHorizontalIcon = () => (
     <circle cx="20" cy="12" r="1" />
   </svg>
 );
+
+export const TradeTitleIcon = () => (
+    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.22.17_f0a77256.jpg" alt="Trade Title" width={80} height={32} className="object-contain" />
+);

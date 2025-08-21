@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Sidebar } from './Sidebar';
-import { SortIcon, AddOrderIcon, NewCustomIcon } from './icons';
+import { SortIcon, AddOrderIcon, NewCustomIcon, TradeTitleIcon } from './icons';
+import Image from 'next/image';
 
 interface HeaderProps {
   totalProfit: string;
@@ -22,13 +23,15 @@ export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
         <div className="flex items-center gap-1">
           <Sidebar />
           <div>
-            <div className={`text-foreground ${hasOpenPositions ? 'text-[11px]' : 'text-[15px]'}`}>
-              Trade
-            </div>
-            {hasOpenPositions && (
-              <div className={`text-sm font-semibold ${isZero ? 'text-foreground' : profitColor}`}>
-                {profitString} USD
-              </div>
+            {hasOpenPositions ? (
+              <>
+                <div className="text-foreground text-[11px]">Trade</div>
+                <div className={`text-sm font-semibold ${isZero ? 'text-foreground' : profitColor}`}>
+                  {profitString} USD
+                </div>
+              </>
+            ) : (
+              <TradeTitleIcon />
             )}
           </div>
         </div>
