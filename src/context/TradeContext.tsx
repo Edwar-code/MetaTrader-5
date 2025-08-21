@@ -152,13 +152,13 @@ export function TradeProvider({ children }: { children: ReactNode }) {
             
             setBalance(prevBalance => prevBalance + finalPnl);
 
-            if(!customClosePrice){
-                toast({
-                    title: "Trade Closed Manually",
-                    description: `Closed ${positionToClose.pair} for a P/L of $${finalPnl.toFixed(2)}`,
-                    variant: finalPnl >= 0 ? "default" : "destructive"
-                });
-            }
+            // if(!customClosePrice){
+            //     toast({
+            //         title: "Trade Closed Manually",
+            //         description: `Closed ${positionToClose.pair} for a P/L of $${finalPnl.toFixed(2)}`,
+            //         variant: finalPnl >= 0 ? "default" : "destructive"
+            //     });
+            // }
 
             return prev.filter(p => p.id !== positionId);
         });
@@ -197,11 +197,11 @@ export function TradeProvider({ children }: { children: ReactNode }) {
 
          const totalPnl = positionsToClose.reduce((acc, pos) => acc + (pos.pnl || 0), 0);
 
-        toast({
-            title: `Bulk Close Successful`,
-            description: `Closed ${positionsToClose.length} positions. Total P/L: $${totalPnl.toFixed(2)}`,
-            variant: totalPnl >= 0 ? "default" : "destructive"
-        });
+        // toast({
+        //     title: `Bulk Close Successful`,
+        //     description: `Closed ${positionsToClose.length} positions. Total P/L: $${totalPnl.toFixed(2)}`,
+        //     variant: totalPnl >= 0 ? "default" : "destructive"
+        // });
 
     }, [positions, latestPrice, handleClosePosition, toast]);
 
