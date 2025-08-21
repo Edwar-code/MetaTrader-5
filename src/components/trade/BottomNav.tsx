@@ -1,8 +1,8 @@
 
 'use client';
 
-import { ArrowUpDown, History } from 'lucide-react';
-import { TradeIcon, ChartIcon, MessagesIcon } from './icons';
+import { ArrowUpDown } from 'lucide-react';
+import { TradeIcon, ChartIcon, MessagesIcon, HistoryIcon } from './icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -42,7 +42,7 @@ export default function BottomNav() {
         <NavItem href="#" icon={<ArrowUpDown size={20} />} label="Quotes" />
         <NavItem href={chartHref} icon={<ChartIcon />} label="Charts" isActive={pathname === '/chart'} />
         <NavItem href="/" icon={<TradeIcon />} label="Trade" isActive={pathname === '/'} />
-        <NavItem href="#" icon={<History size={20} />} label="History" />
+        <NavItem href="#" icon={<HistoryIcon />} label="History" />
         <NavItem href="#" icon={<MessagesIcon />} label="Messages" />
       </div>
     </footer>
