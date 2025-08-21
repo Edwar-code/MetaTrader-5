@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import type { Position } from '@/lib/types';
 import { format } from 'date-fns';
+import Image from 'next/image';
 
 interface PositionItemProps {
   position: Position;
@@ -28,12 +29,7 @@ export default function PositionItem({ position }: PositionItemProps) {
 
   const formattedType = position.type.toLowerCase();
   
-  const formatPair = (pair: string) => {
-    if (pair === 'frxXAUUSD') {
-      return 'XAUUSD.m';
-    }
-    return pair;
-  };
+  const isGold = position.pair === 'frxXAUUSD';
 
 
   return (
@@ -41,13 +37,20 @@ export default function PositionItem({ position }: PositionItemProps) {
         <div className="flex items-center justify-between">
             <div className="flex-1">
                 <div className="flex items-center gap-1 leading-none">
-                <span className="text-sm font-bold text-card-foreground">{formatPair(position.pair)},</span>
-                <span className={`text-sm font-normal`} style={{ color: typeColor }}>
-                    {formattedType}
-                </span>
-                <span className={`text-sm font-normal`} style={{ color: typeColor }}>
-                    {position.size}
-                </span>
+                  {isGold ? (
+                    <div className="flex items-baseline">
+                      <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.33.35_e00bef8a.jpg" alt="XAUUSD" width={60} height={12} className="object-contain" />
+                      <span className="text-sm font-bold text-card-foreground">.m,</span>
+                    </div>
+                  ) : (
+                    <span className="text-sm font-bold text-card-foreground">{position.pair},</span>
+                  )}
+                  <span className={`text-sm font-normal`} style={{ color: typeColor }}>
+                      {formattedType}
+                  </span>
+                  <span className={`text-sm font-normal`} style={{ color: typeColor }}>
+                      {position.size}
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5 leading-none mt-1">
                 <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.entryPrice.toFixed(5)}</span>
