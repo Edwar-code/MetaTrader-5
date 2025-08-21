@@ -22,7 +22,7 @@ export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
         <div className="flex items-center gap-1">
           <Sidebar />
           <div>
-            <div className={`font-medium text-foreground ${hasOpenPositions ? 'text-[11px]' : 'text-[21px]'}`}>
+            <div className={`text-foreground ${hasOpenPositions ? 'text-[11px]' : 'text-[21px]'}`}>
               Trade
             </div>
             {hasOpenPositions && (
