@@ -10,28 +10,30 @@ interface TradeNotificationProps {
     type: 'BUY' | 'SELL';
     size: number;
   } | null;
+  // This prop is now stable thanks to useCallback in the parent
   onClose: (id: string) => void;
 }
 
 const TradeNotification = ({ tradeDetails, onClose }: TradeNotificationProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
+  // This hook runs ONLY ONCE when a new notification is created.
+  // Because 'tradeDetails' and 'onClose' are now stable, this effect will
+  // not be re-triggered, allowing the timers to run their full course.
   useEffect(() => {
     if (tradeDetails) {
-      // This timer handles the switch from the loading spinner to the "done" text.
-      // It will run after 2 seconds.
+      // Timer to switch from "loading" to "done" after 2 seconds
       const loadingTimer = setTimeout(() => {
         setIsLoading(false);
       }, 2000);
 
-      // This timer handles the automatic closing of the entire notification.
-      // It will run 5 seconds after the component first appears.
+      // Timer to remove the entire notification after 5 seconds total
       const closeTimer = setTimeout(() => {
         onClose(tradeDetails.id);
-      }, 5000); // Changed from 3000 to 5000
+      }, 5000);
 
-      // This is a cleanup function. It's good practice to clear timers
-      // if the component unmounts before they fire.
+      // Cleanup function: If a component were to be removed early for any reason,
+      // this prevents memory leaks by clearing the timers.
       return () => {
         clearTimeout(loadingTimer);
         clearTimeout(closeTimer);
