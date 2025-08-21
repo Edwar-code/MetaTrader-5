@@ -17,7 +17,7 @@ export default function Header({ totalProfit }: HeaderProps) {
 
   return (
     <header className="shrink-0">
-      <div className="flex items-center justify-between pl-2 pr-[10px] py-3">
+      <div className="flex items-center justify-between pl-2 pr-[8px] py-3">
         <div className="flex items-center gap-1">
           <Sidebar />
           <div>
