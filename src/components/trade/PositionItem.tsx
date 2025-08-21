@@ -35,7 +35,7 @@ export default function PositionItem({ position }: PositionItemProps) {
     <div className="flex flex-col py-2 px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="flex justify-between">
             <div className="flex-1">
-                <div className="flex items-center gap-1 leading-none mb-[-5.5px]">
+                <div className="flex items-center gap-1 leading-none mb-[-7px]">
                   {isGold ? (
                     <div className="flex items-center">
                        <div className="relative top-[-1px]">
