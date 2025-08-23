@@ -47,8 +47,11 @@ export function Sidebar() {
         <div className="flex flex-col h-full">
           <div className="p-4 pt-8">
             <div className="flex items-center gap-3">
-              <div className="w-5 h-5 bg-green-600 flex items-center justify-center rounded-sm">
-                <span className="text-white font-bold text-xs">FBS</span>
+              <div
+                className="bg-green-600 flex items-center justify-center rounded-sm"
+                style={{ width: '34px', height: '34px' }}
+              >
+                <span className="text-white font-bold text-sm">FBS</span>
               </div>
               <div>
                 <h2 className="text-card-foreground">Market Maker</h2>
