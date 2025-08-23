@@ -80,7 +80,7 @@ export default function AccountsPage() {
   const { balance } = useTradeState();
 
   return (
-    <div className="relative flex flex-col h-[100svh] w-full bg-muted/40 shadow-lg overflow-hidden">
+    <div className="relative flex flex-col h-[100svh] w-full bg-white shadow-lg overflow-hidden">
       <header className="shrink-0 bg-white">
         <div className="flex items-center justify-between pl-2 pr-4 py-2 border-b">
           <div className="flex items-center gap-2">
