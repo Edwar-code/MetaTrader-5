@@ -53,8 +53,8 @@ export function Sidebar() {
                 <span className="text-white font-bold text-sm">FBS</span>
               </div>
               <div>
-                <h2 className="text-card-foreground">Market Maker</h2>
-                <p className="text-sm text-muted-foreground">103498268 - FBS-Demo</p>
+                <h2 className="text-card-foreground">EDWARD KIBE MUNENE</h2>
+                <p className="text-sm text-muted-foreground">40311301 - FBS-Real</p>
                 <Link href="/accounts" className="text-primary text-sm font-medium mt-1 inline-block">Manage accounts</Link>
               </div>
             </div>
