@@ -56,13 +56,14 @@ export function Sidebar() {
               <div>
                 <h2 className="text-card-foreground">Market Maker</h2>
                 <p className="text-sm text-muted-foreground">103498268 - FBS-Demo</p>
-                <a href="#" className="text-primary text-sm font-medium mt-1 inline-block">Manage accounts</a>
+                <Link href="/accounts" className="text-primary text-sm font-medium mt-1 inline-block">Manage accounts</Link>
               </div>
             </div>
           </div>
           <Separator className="my-2" />
           <nav className="flex-1 flex flex-col">
             <NavItem href="/" icon={<LineChart size={24} />} label="Trade" active={pathname === '/' || pathname.startsWith('/chart')} />
+            <NavItem href="/accounts" icon={<Users size={24} />} label="Accounts" active={pathname === '/accounts'} />
             <NavItem href="#" icon={<Newspaper size={24} />} label="News" />
             <NavItem href="#" icon={<Mail size={24} />} label="Mailbox" badge={8} />
             <NavItem href="#" icon={<BookText size={24} />} label="Journal" />

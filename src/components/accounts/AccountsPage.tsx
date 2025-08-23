@@ -1,0 +1,158 @@
+'use client';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Sidebar } from '@/components/trade/Sidebar';
+import { MoreVertical, Plus } from 'lucide-react';
+import BottomNav from '@/components/trade/BottomNav';
+import { AccountSettingsIcon, QrCodeIcon, BellIcon, InfoIcon, FbsLogo, MatchSecuritiesLogo } from './icons';
+
+const AccountCard = ({
+  logo,
+  broker,
+  accountName,
+  accountNumber,
+  accountDetails,
+  balance,
+  currency,
+  isMain = false,
+}: {
+  logo: React.ReactNode;
+  broker: string;
+  accountName?: string;
+  accountNumber: string;
+  accountDetails?: string;
+  balance: string;
+  currency: string;
+  isMain?: boolean;
+}) => (
+  <Card className="shadow-sm border-none overflow-hidden bg-white">
+    <CardContent className="p-4">
+      {isMain && (
+        <div className="flex flex-col items-center text-center mb-4">
+          <div className="mb-3">{logo}</div>
+          <p className="font-bold text-lg text-foreground">{accountName}</p>
+          <p className="text-sm text-primary">{broker}</p>
+          <p className="text-sm text-muted-foreground mt-2">{accountNumber}</p>
+          <p className="text-sm text-muted-foreground">{accountDetails}</p>
+          <p className="text-2xl font-light text-foreground mt-4">{balance} <span className="text-xl">{currency}</span></p>
+        </div>
+      )}
+      {!isMain && (
+         <div className="flex items-center gap-4">
+            {logo}
+            <div className="flex-1">
+                <p className="font-semibold text-foreground">{broker}</p>
+                <p className="text-sm text-primary">{accountName}</p>
+                <p className="text-xs text-muted-foreground">{accountNumber}</p>
+            </div>
+            <div className="text-right">
+                <p className="font-light text-xl text-foreground">{balance}</p>
+                <p className="text-xs text-muted-foreground">{currency}, last known</p>
+            </div>
+         </div>
+      )}
+    </CardContent>
+     <div className={`flex items-center justify-between px-4 pb-4 ${isMain ? '' : 'pt-2'}`}>
+        <QrCodeIcon />
+        {isMain ? <BellIcon /> : <InfoIcon />}
+     </div>
+  </Card>
+);
+
+const DemoBadge = () => (
+  <div className="absolute top-0 right-0">
+    <div className="relative w-16 h-16">
+      <div 
+        className="absolute top-0 right-0 w-0 h-0 border-t-[40px] border-t-green-500 border-l-[40px] border-l-transparent"
+      >
+      </div>
+      <span className="absolute top-[8px] right-[1px] text-white text-xs font-bold transform -rotate-45 -translate-y-1/2 translate-x-1/2" style={{transform: 'rotate(45deg)', top: '9px', right: '4px'}}>
+        Demo
+      </span>
+    </div>
+  </div>
+);
+
+
+export default function AccountsPage() {
+  return (
+    <div className="relative flex flex-col h-[100svh] w-full bg-muted/40 shadow-lg overflow-hidden">
+      <header className="shrink-0 bg-white">
+        <div className="flex items-center justify-between pl-2 pr-4 py-2 border-b">
+          <div className="flex items-center gap-2">
+            <Sidebar />
+            <h1 className="text-xl font-medium">Accounts</h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon">
+              <AccountSettingsIcon />
+            </Button>
+            <Button variant="ghost" size="icon">
+              <Plus size={24} />
+            </Button>
+            <Button variant="ghost" size="icon">
+              <MoreVertical size={24} />
+            </Button>
+          </div>
+        </div>
+      </header>
+      <div className="flex-1 overflow-y-auto pb-20 space-y-4 p-2">
+        <AccountCard
+          logo={<FbsLogo size={52} />}
+          broker="FBS Markets Inc."
+          accountName="EDWARD KIBE MUNENE"
+          accountNumber="40311301 — FBS-Real"
+          accountDetails="DC-305-Johannesburg-5R1, Hedge"
+          balance="1.26"
+          currency="USD"
+          isMain={true}
+        />
+        <div className="px-2 pt-2">
+            <p className="text-sm text-muted-foreground">Connect to:</p>
+        </div>
+
+        <div className="relative">
+            <AccountCard
+                logo={<FbsLogo size={40} />}
+                broker="Market Maker"
+                accountName="FBS Markets Inc."
+                accountNumber="103671922 — FBS-Demo"
+                balance="0.00"
+                currency="USD"
+            />
+            <DemoBadge />
+        </div>
+        <div className="relative">
+             <AccountCard
+                logo={<FbsLogo size={40} />}
+                broker="Market Maker"
+                accountName="FBS Markets Inc."
+                accountNumber="103498268 — FBS-Demo"
+                balance="2.39"
+                currency="USD"
+            />
+            <DemoBadge />
+        </div>
+        <div className="relative">
+            <Card className="shadow-sm border-none overflow-hidden bg-white">
+                <CardContent className="p-4">
+                    <div className="flex items-center gap-4">
+                        <MatchSecuritiesLogo />
+                        <div className="flex-1">
+                            <p className="font-semibold text-foreground">Match Securities Ltd.</p>
+                            <p className="text-sm text-muted-foreground">Match-Securities-Ltd-Demo</p>
+                            <p className="text-xs text-muted-foreground">103498268 — MT5</p>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+            <DemoBadge />
+        </div>
+
+      </div>
+      <BottomNav />
+    </div>
+  );
+}
