@@ -35,9 +35,9 @@ const AccountCard = ({
         <div className="flex flex-col items-center text-center mb-4">
           <div className="mb-3">{logo}</div>
           <p className="font-bold text-lg text-[#707175]">{accountName}</p>
-          <p className="text-sm text-primary">{broker}</p>
-          <p className="text-sm text-muted-foreground mt-2">{accountNumber}</p>
-          <p className="text-sm text-muted-foreground">{accountDetails}</p>
+          <p className="text-sm text-primary" style={{ color: '#296ec2' }}>{broker}</p>
+          <p className="text-sm mt-2" style={{ color: '#848484' }}>{accountNumber}</p>
+          <p className="text-sm" style={{ color: '#848484' }}>{accountDetails}</p>
           <p className="text-2xl font-light text-foreground mt-4">{balance} <span className="text-xl">{currency}</span></p>
         </div>
       )}
