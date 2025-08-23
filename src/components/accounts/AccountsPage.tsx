@@ -38,7 +38,14 @@ const AccountCard = ({
         <div className="flex flex-col items-center text-center mb-4">
           <div className="mb-3">{logo}</div>
           {isLoading ? (
-            <p className="text-lg text-muted-foreground animate-pulse">Connecting...</p>
+            <>
+              <p className="text-lg text-muted-foreground animate-pulse">Connecting...</p>
+              <p className="invisible font-bold text-lg text-[#707175]">{accountName}</p>
+              <p className="text-sm text-primary" style={{ color: '#296ec2' }}>{broker}</p>
+              <p className="text-sm mt-2" style={{ color: '#848484' }}>{accountNumber}</p>
+              <p className="invisible text-sm" style={{ color: '#848484' }}>{accountDetails}</p>
+              <p className="invisible text-2xl font-light text-foreground mt-4">{balance} {currency}</p>
+            </>
           ) : (
             <>
               <p className="font-bold text-lg text-[#707175]">{accountName}</p>
