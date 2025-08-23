@@ -109,48 +109,6 @@ export default function AccountsPage() {
           currency="USD"
           isMain={true}
         />
-        <div className="px-2 pt-2">
-            <p className="text-sm text-muted-foreground">Connect to:</p>
-        </div>
-
-        <div className="relative">
-            <AccountCard
-                logo={<FbsLogo size={40} />}
-                broker="Market Maker"
-                accountName="FBS Markets Inc."
-                accountNumber="103671922 — FBS-Demo"
-                balance="0.00"
-                currency="USD"
-            />
-            <DemoBadge />
-        </div>
-        <div className="relative">
-             <AccountCard
-                logo={<FbsLogo size={40} />}
-                broker="Market Maker"
-                accountName="FBS Markets Inc."
-                accountNumber="103498268 — FBS-Demo"
-                balance="2.39"
-                currency="USD"
-            />
-            <DemoBadge />
-        </div>
-        <div className="relative">
-            <Card className="shadow-sm border-none overflow-hidden bg-white">
-                <CardContent className="p-4">
-                    <div className="flex items-center gap-4">
-                        <MatchSecuritiesLogo />
-                        <div className="flex-1">
-                            <p className="font-semibold text-foreground">Match Securities Ltd.</p>
-                            <p className="text-sm text-muted-foreground">Match-Securities-Ltd-Demo</p>
-                            <p className="text-xs text-muted-foreground">103498268 — MT5</p>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-            <DemoBadge />
-        </div>
-
       </div>
       <BottomNav />
     </div>
