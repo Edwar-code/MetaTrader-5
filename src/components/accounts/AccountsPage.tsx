@@ -38,7 +38,7 @@ const AccountCard = ({
           <p className="text-sm text-primary" style={{ color: '#296ec2' }}>{broker}</p>
           <p className="text-sm mt-2" style={{ color: '#848484' }}>{accountNumber}</p>
           <p className="text-sm" style={{ color: '#848484' }}>{accountDetails}</p>
-          <p className="text-2xl font-light text-foreground mt-4">{balance} <span className="text-xl">{currency}</span></p>
+          <p className="text-2xl font-light text-foreground mt-4">{balance} {currency}</p>
         </div>
       )}
       {!isMain && (
