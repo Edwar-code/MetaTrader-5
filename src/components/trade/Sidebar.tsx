@@ -51,7 +51,7 @@ export function Sidebar() {
                 <span className="text-white font-bold text-lg">FBS</span>
               </div>
               <div>
-                <h2 className="font-semibold text-card-foreground">Market Maker</h2>
+                <h2 className="text-card-foreground">Market Maker</h2>
                 <p className="text-sm text-muted-foreground">103498268 - FBS-Demo</p>
               </div>
             </div>
