@@ -46,7 +46,7 @@ export function Sidebar() {
       <SheetContent side="left" className="w-[81%] p-0 bg-card [&>[data-state=open]]:hidden">
         <div className="flex flex-col h-full">
           <div className="pl-[10px] pr-4 py-4 pt-8">
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-4">
               <div
                 className="bg-green-600 flex items-center justify-center rounded-sm shrink-0"
                 style={{ width: '34px', height: '34px' }}
