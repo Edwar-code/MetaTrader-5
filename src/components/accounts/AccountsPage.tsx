@@ -94,10 +94,10 @@ export default function AccountsPage() {
               <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_ea71798f.jpg" alt="Account Settings" width={28} height={28} />
             </Button>
             <Button variant="ghost" className="h-auto w-auto p-0 [&_svg]:size-auto">
-              <Plus size={29} />
+              <Plus size={29} className="text-[#534b48]" />
             </Button>
             <Button variant="ghost" className="h-auto w-auto p-0 [&_svg]:size-auto">
-              <MoreVertical size={29} />
+              <MoreVertical size={29} className="text-[#534b48]" />
             </Button>
           </div>
         </div>
