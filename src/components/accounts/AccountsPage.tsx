@@ -32,7 +32,7 @@ const AccountCard = ({
       {isMain && (
         <div className="flex flex-col items-center text-center mb-4">
           <div className="mb-3">{logo}</div>
-          <p className="font-bold text-lg text-foreground">{accountName}</p>
+          <p className="font-bold text-lg text-[#707175]">{accountName}</p>
           <p className="text-sm text-primary">{broker}</p>
           <p className="text-sm text-muted-foreground mt-2">{accountNumber}</p>
           <p className="text-sm text-muted-foreground">{accountDetails}</p>
