@@ -9,6 +9,7 @@ import BottomNav from '@/components/trade/BottomNav';
 import { BellIcon, InfoIcon } from './icons';
 import { useTradeState } from '@/context/TradeContext';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 const AccountCard = ({
   logo,
@@ -19,6 +20,7 @@ const AccountCard = ({
   balance,
   currency,
   isMain = false,
+  isLoading,
 }: {
   logo: React.ReactNode;
   broker: string;
@@ -28,17 +30,24 @@ const AccountCard = ({
   balance: string;
   currency: string;
   isMain?: boolean;
+  isLoading: boolean;
 }) => (
   <Card className="shadow-sm border-none overflow-hidden bg-[#f8f9f9] rounded-none">
     <CardContent className="px-4 pt-4 pb-[2px]">
       {isMain && (
         <div className="flex flex-col items-center text-center mb-4">
           <div className="mb-3">{logo}</div>
-          <p className="font-bold text-lg text-[#707175]">{accountName}</p>
-          <p className="text-sm text-primary" style={{ color: '#296ec2' }}>{broker}</p>
-          <p className="text-sm mt-2" style={{ color: '#848484' }}>{accountNumber}</p>
-          <p className="text-sm" style={{ color: '#848484' }}>{accountDetails}</p>
-          <p className="text-2xl font-light text-foreground mt-4">{balance} {currency}</p>
+          {isLoading ? (
+            <p className="text-lg text-muted-foreground animate-pulse">Connecting...</p>
+          ) : (
+            <>
+              <p className="font-bold text-lg text-[#707175]">{accountName}</p>
+              <p className="text-sm text-primary" style={{ color: '#296ec2' }}>{broker}</p>
+              <p className="text-sm mt-2" style={{ color: '#848484' }}>{accountNumber}</p>
+              <p className="text-sm" style={{ color: '#848484' }}>{accountDetails}</p>
+              <p className="text-2xl font-light text-foreground mt-4">{balance} {currency}</p>
+            </>
+          )}
         </div>
       )}
       {!isMain && (
@@ -56,10 +65,12 @@ const AccountCard = ({
          </div>
       )}
     </CardContent>
-     <div className={`flex items-center justify-between px-4 pb-4 ${isMain ? 'mt-[-4px]' : 'pt-2'}`}>
+     {!isLoading && (
+      <div className={`flex items-center justify-between px-4 pb-4 ${isMain ? 'mt-[-4px]' : 'pt-2'}`}>
         <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_1a61dd2a.jpg" alt="Scanner Icon" width={24} height={24} />
         {isMain ? <BellIcon /> : <InfoIcon />}
-     </div>
+      </div>
+     )}
   </Card>
 );
 
@@ -80,6 +91,14 @@ const DemoBadge = () => (
 
 export default function AccountsPage() {
   const { balance } = useTradeState();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-white shadow-lg overflow-hidden">
@@ -112,6 +131,7 @@ export default function AccountsPage() {
           balance={balance.toFixed(2)}
           currency="USD"
           isMain={true}
+          isLoading={loading}
         />
       </div>
       <BottomNav />
