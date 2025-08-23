@@ -30,7 +30,7 @@ const AccountCard = ({
   isMain?: boolean;
 }) => (
   <Card className="shadow-sm border-none overflow-hidden bg-[#f8f9f9] rounded-none">
-    <CardContent className="p-4">
+    <CardContent className="px-4 pt-4 pb-[2px]">
       {isMain && (
         <div className="flex flex-col items-center text-center mb-4">
           <div className="mb-3">{logo}</div>
