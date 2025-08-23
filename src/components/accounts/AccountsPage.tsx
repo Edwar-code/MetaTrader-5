@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Sidebar } from '@/components/trade/Sidebar';
 import { MoreVertical, Plus } from 'lucide-react';
 import BottomNav from '@/components/trade/BottomNav';
-import { BellIcon, InfoIcon, FbsLogo } from './icons';
+import { BellIcon, InfoIcon } from './icons';
 import { useTradeState } from '@/context/TradeContext';
 import Image from 'next/image';
 
@@ -87,7 +87,7 @@ export default function AccountsPage() {
         <div className="flex items-center justify-between pl-2 pr-4 py-2">
           <div className="flex items-center gap-2">
             <Sidebar />
-            <h1 className="text-xl font-medium">Accounts</h1>
+            <h1 className="text-[11px] font-medium">Accounts</h1>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon">
@@ -104,7 +104,7 @@ export default function AccountsPage() {
       </header>
       <div className="flex-1 overflow-y-auto pb-20 space-y-4 p-2">
         <AccountCard
-          logo={<FbsLogo size={52} />}
+          logo={<Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.19.22_1608d54d.jpg" alt="FBS Logo" width={52} height={52} />}
           broker="FBS Markets Inc."
           accountName="EDWARD KIBE MUNENE"
           accountNumber="40311301 — FBS-Real"
