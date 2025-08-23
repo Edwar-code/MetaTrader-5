@@ -87,7 +87,7 @@ export default function AccountsPage() {
         <div className="flex items-center justify-between pl-2 pr-4 py-2">
           <div className="flex items-center gap-2">
             <Sidebar />
-            <h1 className="text-[14px] font-medium">Accounts</h1>
+            <h1 className="text-[15.5px] font-medium">Accounts</h1>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" className="h-auto w-auto p-0">
