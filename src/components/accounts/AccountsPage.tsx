@@ -91,13 +91,13 @@ export default function AccountsPage() {
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" className="h-auto w-auto p-0">
-              <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_ea71798f.jpg" alt="Account Settings" width={24} height={24} />
+              <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_ea71798f.jpg" alt="Account Settings" width={28} height={28} />
             </Button>
             <Button variant="ghost" size="icon" className="h-auto w-auto p-0">
-              <Plus size={24} />
+              <Plus size={28} />
             </Button>
             <Button variant="ghost" size="icon" className="h-auto w-auto p-0">
-              <MoreVertical size={24} />
+              <MoreVertical size={28} />
             </Button>
           </div>
         </div>
