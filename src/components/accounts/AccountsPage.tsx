@@ -89,7 +89,7 @@ export default function AccountsPage() {
             <Sidebar />
             <h1 className="text-[15.5px] font-medium">Accounts</h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-[20px]">
             <Button variant="ghost" size="icon" className="h-auto w-auto p-0">
               <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_ea71798f.jpg" alt="Account Settings" width={28} height={28} />
             </Button>
