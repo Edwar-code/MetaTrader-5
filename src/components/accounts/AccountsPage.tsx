@@ -52,7 +52,7 @@ const AccountCard = ({
               <p className="text-sm text-primary" style={{ color: '#296ec2' }}>{broker}</p>
               <p className="text-sm mt-2" style={{ color: '#848484' }}>{accountNumber}</p>
               <p className="text-sm" style={{ color: '#848484' }}>{accountDetails}</p>
-              <p className="text-2xl font-light text-foreground mt-4">{balance} {currency}</p>
+              <p className="text-2xl font-light text-foreground mt-4">{balance} <span className="text-2xl font-light text-foreground">{currency}</span></p>
             </>
           )}
         </div>
@@ -120,10 +120,10 @@ export default function AccountsPage() {
               <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_ea71798f.jpg" alt="Account Settings" width={28} height={28} />
             </Button>
             <Button variant="ghost" className="h-auto w-auto p-0 [&_svg]:size-auto">
-              <Plus size={29} className="text-[#534b48]" />
+              <Plus size={25.5} className="text-[#534b48]" />
             </Button>
             <Button variant="ghost" className="h-auto w-auto p-0 [&_svg]:size-auto">
-              <MoreVertical size={29} className="text-[#534b48]" />
+              <MoreVertical size={25.5} className="text-[#534b48]" />
             </Button>
           </div>
         </div>
