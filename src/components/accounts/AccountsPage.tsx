@@ -56,7 +56,7 @@ const AccountCard = ({
          </div>
       )}
     </CardContent>
-     <div className={`flex items-center justify-between px-4 pb-4 ${isMain ? 'mt-[-5px]' : 'pt-2'}`}>
+     <div className={`flex items-center justify-between px-4 pb-4 ${isMain ? 'mt-[-4px]' : 'pt-2'}`}>
         <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_1a61dd2a.jpg" alt="Scanner Icon" width={24} height={24} />
         {isMain ? <BellIcon /> : <InfoIcon />}
      </div>
