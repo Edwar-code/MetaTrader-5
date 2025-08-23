@@ -39,11 +39,11 @@ const AccountCard = ({
           <div className="mb-3">{logo}</div>
           {isLoading ? (
             <>
-              <p className="font-bold text-lg text-[#707175]">{accountName}</p>
+              <p className="font-bold text-lg text-[#707175] invisible">{accountName}</p>
               <p className="text-sm text-primary" style={{ color: '#296ec2' }}>{broker}</p>
               <p className="text-sm mt-2" style={{ color: '#848484' }}>{accountNumber}</p>
-              <p className="text-lg text-muted-foreground animate-pulse">Connecting...</p>
               <p className="invisible text-sm" style={{ color: '#848484' }}>{accountDetails}</p>
+              <p className="text-lg text-muted-foreground animate-pulse mt-px">Connecting...</p>
               <p className="invisible text-2xl font-light text-foreground mt-4">{balance} {currency}</p>
             </>
           ) : (
@@ -103,7 +103,7 @@ export default function AccountsPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 500);
     return () => clearTimeout(timer);
   }, []);
 
