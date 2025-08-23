@@ -48,7 +48,7 @@ export function Sidebar() {
           <div className="pl-[10px] pr-4 py-4 pt-8">
             <div className="flex items-start gap-4">
               <div
-                className="bg-green-600 flex items-center justify-center rounded-sm shrink-0"
+                className="bg-green-600 flex items-center justify-center rounded-sm shrink-0 ml-2"
                 style={{ width: '34px', height: '34px' }}
               >
                 <span className="text-white font-bold text-sm">FBS</span>
