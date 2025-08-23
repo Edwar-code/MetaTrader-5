@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -5,8 +6,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Sidebar } from '@/components/trade/Sidebar';
 import { MoreVertical, Plus } from 'lucide-react';
 import BottomNav from '@/components/trade/BottomNav';
-import { AccountSettingsIcon, QrCodeIcon, BellIcon, InfoIcon, FbsLogo } from './icons';
+import { BellIcon, InfoIcon, FbsLogo } from './icons';
 import { useTradeState } from '@/context/TradeContext';
+import Image from 'next/image';
 
 const AccountCard = ({
   logo,
@@ -55,7 +57,7 @@ const AccountCard = ({
       )}
     </CardContent>
      <div className={`flex items-center justify-between px-4 pb-4 ${isMain ? '' : 'pt-2'}`}>
-        <QrCodeIcon />
+        <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_1a61dd2a.jpg" alt="Scanner Icon" width={24} height={24} />
         {isMain ? <BellIcon /> : <InfoIcon />}
      </div>
   </Card>
@@ -89,7 +91,7 @@ export default function AccountsPage() {
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon">
-              <AccountSettingsIcon />
+              <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_ea71798f.jpg" alt="Account Settings" width={24} height={24} />
             </Button>
             <Button variant="ghost" size="icon">
               <Plus size={24} />
