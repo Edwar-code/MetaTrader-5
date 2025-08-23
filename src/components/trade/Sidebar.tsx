@@ -45,7 +45,7 @@ export function Sidebar() {
       </SheetTrigger>
       <SheetContent side="left" className="w-[81%] p-0 bg-card [&>[data-state=open]]:hidden">
         <div className="flex flex-col h-full">
-          <div className="p-4 pt-8">
+          <div className="px-3 py-4 pt-8">
             <div className="flex items-center gap-3">
               <div
                 className="bg-green-600 flex items-center justify-center rounded-sm"
