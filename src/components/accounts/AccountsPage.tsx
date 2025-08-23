@@ -27,7 +27,7 @@ const AccountCard = ({
   currency: string;
   isMain?: boolean;
 }) => (
-  <Card className="shadow-sm border-none overflow-hidden bg-white">
+  <Card className="shadow-sm border-none overflow-hidden bg-[#f8f9f9]">
     <CardContent className="p-4">
       {isMain && (
         <div className="flex flex-col items-center text-center mb-4">
