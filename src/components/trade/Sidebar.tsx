@@ -46,9 +46,9 @@ export function Sidebar() {
       <SheetContent side="left" className="w-[81%] p-0 bg-card [&>[data-state=open]]:hidden">
         <div className="flex flex-col h-full">
           <div className="pl-[10px] pr-4 py-4 pt-8">
-            <div className="flex items-center gap-3">
+            <div className="flex items-start gap-3">
               <div
-                className="bg-green-600 flex items-center justify-center rounded-sm"
+                className="bg-green-600 flex items-center justify-center rounded-sm shrink-0"
                 style={{ width: '34px', height: '34px' }}
               >
                 <span className="text-white font-bold text-sm">FBS</span>
@@ -56,10 +56,8 @@ export function Sidebar() {
               <div>
                 <h2 className="text-card-foreground">Market Maker</h2>
                 <p className="text-sm text-muted-foreground">103498268 - FBS-Demo</p>
+                <a href="#" className="text-primary text-sm font-medium mt-1 inline-block">Manage accounts</a>
               </div>
-            </div>
-            <div>
-                <a href="#" className="text-primary text-sm font-medium mt-3">Manage accounts</a>
             </div>
           </div>
           <Separator className="my-2" />
