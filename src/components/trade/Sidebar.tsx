@@ -47,8 +47,8 @@ export function Sidebar() {
         <div className="flex flex-col h-full">
           <div className="p-4 pt-8">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-600 flex items-center justify-center rounded-md">
-                <span className="text-white font-bold text-lg">FBS</span>
+              <div className="w-5 h-5 bg-green-600 flex items-center justify-center rounded-sm">
+                <span className="text-white font-bold text-xs">FBS</span>
               </div>
               <div>
                 <h2 className="text-card-foreground">Market Maker</h2>
