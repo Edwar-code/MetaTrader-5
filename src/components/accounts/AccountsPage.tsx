@@ -2,11 +2,11 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { Sidebar } from '@/components/trade/Sidebar';
 import { MoreVertical, Plus } from 'lucide-react';
 import BottomNav from '@/components/trade/BottomNav';
-import { AccountSettingsIcon, QrCodeIcon, BellIcon, InfoIcon, FbsLogo, MatchSecuritiesLogo } from './icons';
+import { AccountSettingsIcon, QrCodeIcon, BellIcon, InfoIcon, FbsLogo } from './icons';
+import { useTradeState } from '@/context/TradeContext';
 
 const AccountCard = ({
   logo,
@@ -77,6 +77,8 @@ const DemoBadge = () => (
 
 
 export default function AccountsPage() {
+  const { balance } = useTradeState();
+
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-muted/40 shadow-lg overflow-hidden">
       <header className="shrink-0 bg-white">
@@ -105,7 +107,7 @@ export default function AccountsPage() {
           accountName="EDWARD KIBE MUNENE"
           accountNumber="40311301 — FBS-Real"
           accountDetails="DC-305-Johannesburg-5R1, Hedge"
-          balance="1.26"
+          balance={balance.toFixed(2)}
           currency="USD"
           isMain={true}
         />
