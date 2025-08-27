@@ -1,5 +1,27 @@
 
+'use client';
+
+import { useState, useEffect } from 'react';
 import Image from "next/image";
+import { useTheme } from 'next-themes';
+
+const ThemedIcon = ({ darkSrc, lightSrc, alt, width, height }: { darkSrc: string, lightSrc: string, alt: string, width: number, height: number }) => {
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+    
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) {
+        // Render a placeholder or the light theme version by default to avoid mismatch
+        return <Image src={lightSrc} alt={alt} width={width} height={height} className="object-contain" />;
+    }
+
+    const src = resolvedTheme === 'dark' ? darkSrc : lightSrc;
+    return <Image src={src} alt={alt} width={width} height={height} className="object-contain" />;
+};
+
 
 export const TradeIcon = () => (
   <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -22,40 +44,55 @@ export const ChartIcon = () => (
   </svg>
 );
 
-export const MessagesIcon = ({ theme }: { theme?: string }) => {
-    const src = theme === 'dark'
-        ? "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.20.44_6e0f932e.jpg"
-        : "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.57_5a87660a.jpg";
-    return <Image src={src} alt="Messages Icon" width={22} height={22} className="object-contain" />;
-};
+export const MessagesIcon = () => (
+    <ThemedIcon 
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.20.44_6e0f932e.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.57_5a87660a.jpg"
+        alt="Messages Icon"
+        width={22}
+        height={22}
+    />
+);
 
-export const HistoryIcon = ({ theme }: { theme?: string }) => {
-    const src = theme === 'dark'
-        ? "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.20.08_cb33e6bf.jpg"
-        : "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.56_253ecbbb.jpg";
-    return <Image src={src} alt="History Icon" width={22} height={22} className="object-contain" />;
-};
+export const HistoryIcon = () => (
+     <ThemedIcon 
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.20.08_cb33e6bf.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.56_253ecbbb.jpg"
+        alt="History Icon"
+        width={22}
+        height={22}
+    />
+);
 
-export const NewCustomIcon = ({ theme }: { theme?: string }) => {
-    const src = theme === 'dark'
-        ? "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.22.25_a60a1f40.jpg"
-        : "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.08.30_b5f774fc.jpg";
-    return <Image src={src} alt="New Custom Icon" width={24} height={24} className="object-contain" />;
-};
+export const NewCustomIcon = () => (
+    <ThemedIcon
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.22.25_a60a1f40.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.08.30_b5f774fc.jpg"
+        alt="New Custom Icon"
+        width={24}
+        height={24}
+    />
+);
 
-export const SortIcon = ({ theme }: { theme?: string }) => {
-    const src = theme === 'dark'
-        ? "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.22.53_7f99abb8.jpg"
-        : "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/updown.jpg";
-    return <Image src={src} alt="Sort Icon" width={24} height={24} className="object-contain" />;
-};
+export const SortIcon = () => (
+    <ThemedIcon
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.22.53_7f99abb8.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/updown.jpg"
+        alt="Sort Icon"
+        width={24}
+        height={24}
+    />
+);
 
-export const AddOrderIcon = ({ theme }: { theme?: string }) => {
-    const src = theme === 'dark'
-        ? "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.23.24_065d63f3.jpg"
-        : "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/fileplus.jpg";
-    return <Image src={src} alt="Add Order Icon" width={24} height={22} className="object-contain" />;
-};
+export const AddOrderIcon = () => (
+    <ThemedIcon
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.23.24_065d63f3.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/fileplus.jpg"
+        alt="Add Order Icon"
+        width={24}
+        height={22}
+    />
+);
 
 export const SpacedMoreHorizontalIcon = () => (
   <svg
@@ -74,10 +111,12 @@ export const SpacedMoreHorizontalIcon = () => (
   </svg>
 );
 
-export const TradeTitleIcon = ({ theme }: { theme?: string }) => {
-    const src = theme === 'dark'
-        ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.25.31_a6fa3b60.jpg'
-        : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.22.17_f0a77256.jpg';
-
-    return <Image src={src} alt="Trade Title" width={35} height={8.5} className="object-contain" />;
-};
+export const TradeTitleIcon = () => (
+    <ThemedIcon
+        darkSrc='https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.25.31_a6fa3b60.jpg'
+        lightSrc='https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.22.17_f0a77256.jpg'
+        alt="Trade Title"
+        width={35}
+        height={8.5}
+    />
+);

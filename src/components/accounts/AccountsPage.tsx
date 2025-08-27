@@ -102,27 +102,32 @@ const DemoBadge = () => (
 export default function AccountsPage() {
   const { balance } = useTradeState();
   const [loading, setLoading] = useState(true);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
     return () => clearTimeout(timer);
   }, []);
 
-  const headerIconSrc = theme === 'dark'
+  const headerIconSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.52.07_eff7dc80.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_ea71798f.jpg';
 
-  const scannerIconSrc = theme === 'dark'
+  const scannerIconSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.52.36_6f401008.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_1a61dd2a.jpg';
 
-  const fbsLogoSrc = theme === 'dark'
+  const fbsLogoSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.19.22_1608d54d.jpg';
-
+  
+  if (!mounted) {
+    return null; // or a loading skeleton
+  }
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-background shadow-lg overflow-hidden">

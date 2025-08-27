@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -36,15 +37,28 @@ const NavItem = ({ icon, label, badge, ad, active, href }: { icon: React.ReactNo
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  const menuIconSrc = theme === 'dark' 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const menuIconSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.19.37_df9b14de.jpg' 
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.16.32_d0e4afc0.jpg';
     
-  const fbsLogoSrc = theme === 'dark'
+  const fbsLogoSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg';
+
+  if (!mounted) {
+    return (
+      <Button variant="ghost" size="icon" className="h-10 w-10">
+        {/* Placeholder or skeleton */}
+      </Button>
+    );
+  }
 
   return (
     <Sheet>

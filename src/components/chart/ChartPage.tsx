@@ -34,7 +34,7 @@ interface TradeNotificationData {
 export default function ChartPage() {
   const { ticks, connectionState, latestPrice } = useDerivState();
   const { positions, handleTrade } = useTradeState();
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   
   const [selectedAsset, setAsset] = useState('frxXAUUSD');
   const [chartInterval, setChartInterval] = useState('1m');
@@ -43,7 +43,12 @@ export default function ChartPage() {
   const [lotSize, setLotSize] = useState(0.01);
   const [priceDirection, setPriceDirection] = useState<'up' | 'down' | 'neutral'>('neutral');
   const [tradeNotifications, setTradeNotifications] = useState<TradeNotificationData[]>([]);
+  const [mounted, setMounted] = useState(false);
 
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const prevSellPriceRef = useRef<number | undefined>();
 
@@ -133,10 +138,13 @@ export default function ChartPage() {
     });
   };
   
-  const chartSettingsImage = theme === 'dark'
+  const chartSettingsImage = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.19.12_c460d5de.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg';
 
+  if (!mounted) {
+    return null; // or a loading skeleton
+  }
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">

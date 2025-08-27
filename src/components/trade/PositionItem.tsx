@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Position } from '@/lib/types';
 import { format } from 'date-fns';
 import Image from 'next/image';
@@ -20,7 +20,12 @@ const DetailRow = ({ label, value }: { label: string; value: string | number }) 
 
 export default function PositionItem({ position }: PositionItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const profitValue = position.pnl;
   const isLoss = profitValue < 0;
@@ -33,10 +38,14 @@ export default function PositionItem({ position }: PositionItemProps) {
   
   const isGold = position.pair === 'frxXAUUSD';
 
-  const goldImageSrc = theme === 'dark' 
+  const goldImageSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.37.32_cdd3a05d.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.33.35_e00bef8a.jpg';
 
+  if (!mounted) {
+    // Render a skeleton or null during SSR and initial client render
+    return <div className="h-[48px] py-2 px-4" />;
+  }
 
   return (
     <div className="flex flex-col py-2 px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
