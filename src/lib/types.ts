@@ -37,7 +37,6 @@ export const TradeDecisionInputSchema = z.object({
   balance: z.number().describe('The current account balance.'),
   equity: z.number().describe('The current account equity (balance + P/L).'),
   positions: z.array(TradePositionSchema).describe('An array of all currently open trading positions.'),
-  marketContext: z.string().describe('A summary of the current market structure, trends, news, and key price levels for the asset being traded (XAUUSD).'),
 });
 export type TradeDecisionInput = z.infer<typeof TradeDecisionInputSchema>;
 

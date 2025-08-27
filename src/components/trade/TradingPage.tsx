@@ -11,12 +11,13 @@ import { Bot, X, Play, Timer } from 'lucide-react';
 import { Button } from '../ui/button';
 import { tradeDecision } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import type { Position } from '@/lib/types';
 
 export default function TradingPage() {
   const { positions, equity, balance, totalPnl, handleTrade, handleClosePosition } = useTradeState();
   const [showFab, setShowFab] = useState(true);
   const [isBotRunning, setIsBotRunning] = useState(false);
-  const [countdown, setCountdown] = useState(15);
+  const [countdown, setCountdown] = useState(600);
   const { toast } = useToast();
 
   const hasOpenPositions = positions.length > 0;
@@ -35,21 +36,36 @@ export default function TradingPage() {
     console.log('Running AI Bot Cycle...');
     toast({
       title: '🤖 AI Bot Analyzing...',
-      description: 'The bot is analyzing the market for opportunities.',
+      description: 'The bot is checking for trade actions.',
     });
 
-    // Rule: Close trades with 20% profit
-    const equityToConsider = equity > 0 ? equity : 1; // Avoid division by zero
-    positions.forEach(pos => {
-      const profitPercentage = (pos.pnl / equityToConsider) * 100;
-      if (profitPercentage >= 20) {
+    // Simplified rule check on the client-side for immediate action
+    const positionsCopy: Position[] = JSON.parse(JSON.stringify(positions));
+
+    for (const pos of positionsCopy) {
+      if (pos.pnl >= 100) {
         toast({
             title: `🤖 Taking Profit!`,
-            description: `Closing position #${pos.id.substring(0, 6)} with ${profitPercentage.toFixed(2)}% profit.`
+            description: `Closing position #${pos.id.substring(0, 6)} with $${pos.pnl.toFixed(2)} profit.`
         });
         handleClosePosition(pos.id);
+        return; // Stop this cycle after taking an action
       }
-    });
+      if (pos.pnl <= -200) {
+        toast({
+            title: `🤖 Cutting Loss!`,
+            description: `Closing position #${pos.id.substring(0, 6)} at $${pos.pnl.toFixed(2)} loss.`
+        });
+        handleClosePosition(pos.id);
+        return; // Stop this cycle after taking an action
+      }
+    }
+
+    // If no positions were closed, let the AI decide on a new one
+    if (positions.length > 0) {
+        toast({ title: "🤖 AI Bot Holding", description: "Monitoring open positions." });
+        return;
+    }
 
     try {
       const result = await tradeDecision({
@@ -67,8 +83,6 @@ export default function TradingPage() {
           stopLoss: p.stopLoss,
           takeProfit: p.takeProfit,
         })),
-        marketContext:
-          'Gold is currently in a strong uptrend after a brief consolidation. Key resistance at 2350, support at 2320. Economic data suggests potential for further upside.',
       });
 
       if (result.success && result.decision) {
@@ -113,7 +127,7 @@ export default function TradingPage() {
         setCountdown(prevCountdown => {
           if (prevCountdown <= 1) {
             runBotCycle();
-            return 15; // Reset countdown
+            return 600; // Reset countdown to 10 minutes
           }
           return prevCountdown - 1;
         });
@@ -126,11 +140,11 @@ export default function TradingPage() {
     setIsBotRunning(true);
     toast({
       title: 'Bot Enabled',
-      description: 'The AI bot will now trade automatically.',
+      description: 'The AI bot will now trade automatically every 10 minutes.',
     });
     // Immediately run the first cycle
     runBotCycle();
-    setCountdown(15);
+    setCountdown(600);
   };
   
   const handleDisableBot = () => {
@@ -141,6 +155,13 @@ export default function TradingPage() {
         description: 'The AI bot has been turned off and the button is hidden.',
       });
   }
+  
+  const formatCountdown = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
@@ -181,7 +202,7 @@ export default function TradingPage() {
               {isBotRunning ? (
                  <div className="flex flex-col items-center justify-center">
                     <Timer className="h-5 w-5" />
-                    <span className="text-xs font-bold">{countdown}s</span>
+                    <span className="text-xs font-bold">{formatCountdown(countdown)}</span>
                  </div>
               ) : (
                 <Bot className="h-7 w-7" />
