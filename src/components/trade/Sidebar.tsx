@@ -41,6 +41,10 @@ export function Sidebar() {
   const menuIconSrc = theme === 'dark' 
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.19.37_df9b14de.jpg' 
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.16.32_d0e4afc0.jpg';
+    
+  const fbsLogoSrc = theme === 'dark'
+    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
+    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg';
 
   return (
     <Sheet>
@@ -53,7 +57,7 @@ export function Sidebar() {
         <div className="flex flex-col h-full">
           <div className="pl-[10px] pr-4 py-4 pt-8">
             <div className="flex items-start gap-6 ml-2">
-              <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg" alt="FBS Logo" width={34} height={34} className="shrink-0" />
+              <Image src={fbsLogoSrc} alt="FBS Logo" width={34} height={34} className="shrink-0" />
               <div>
                 <h2 className="text-card-foreground">EDWARD KIBE MUNENE</h2>
                 <p className="text-sm text-muted-foreground">40311301 - FBS-Real</p>
