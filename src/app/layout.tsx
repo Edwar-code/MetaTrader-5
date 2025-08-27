@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { DerivProvider } from '@/context/DerivContext';
 import { TradeProvider } from '@/context/TradeContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 export const metadata: Metadata = {
   title: 'MetaTrader 5',
@@ -16,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -34,12 +35,14 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/mt5.svg" />
       </head>
       <body className="font-body antialiased">
-        <DerivProvider>
-          <TradeProvider>
-            <main>{children}</main>
-            <Toaster />
-          </TradeProvider>
-        </DerivProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <DerivProvider>
+            <TradeProvider>
+              <main>{children}</main>
+              <Toaster />
+            </TradeProvider>
+          </DerivProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

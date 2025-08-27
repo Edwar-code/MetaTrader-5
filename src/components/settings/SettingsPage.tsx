@@ -7,6 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter
 } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -14,16 +15,22 @@ import {
   XCircle,
   Link as LinkIcon,
   ArrowLeft,
+  Moon,
+  Sun,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useDerivState } from '@/context/DerivContext';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
+import { Label } from '../ui/label';
+import { Switch } from '../ui/switch';
 
 export default function SettingsPage() {
   const { toast } = useToast();
   const { isAuthenticated } = useDerivState();
   const [authUrl, setAuthUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const APP_ID = 96239;
@@ -48,6 +55,10 @@ export default function SettingsPage() {
     });
     window.location.reload();
   };
+
+  const handleThemeChange = (checked: boolean) => {
+    setTheme(checked ? 'dark' : 'light');
+  }
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-background shadow-lg overflow-hidden">
@@ -100,6 +111,27 @@ export default function SettingsPage() {
               </div>
             )}
           </CardContent>
+        </Card>
+        <Card>
+            <CardHeader>
+                <CardTitle className="font-headline">Appearance</CardTitle>
+                <CardDescription>
+                    Customize the look and feel of the app.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="flex items-center justify-between">
+                    <Label htmlFor="theme-switch" className="flex items-center gap-2">
+                        {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+                        <span>Dark Mode</span>
+                    </Label>
+                    <Switch
+                        id="theme-switch"
+                        checked={theme === 'dark'}
+                        onCheckedChange={handleThemeChange}
+                    />
+                </div>
+            </CardContent>
         </Card>
       </div>
     </div>
