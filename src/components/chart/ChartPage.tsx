@@ -135,7 +135,7 @@ export default function ChartPage() {
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       
       {/* Chart Container - Now takes full space and is behind other elements */}
-      <div className="flex-1 bg-gray-50 relative min-h-0 pt-[48px] border pb-[1.6rem]">
+      <div className="flex-1 bg-background relative min-h-0 pt-[48px] border pb-[1.6rem]">
          <div className="absolute top-[110px] left-3 z-10">
           <div className="flex items-center gap-1">
             <span className="font-normal text-primary text-[12.5px]">{displayAsset}</span>
@@ -157,7 +157,7 @@ export default function ChartPage() {
       </div>
 
       {/* Top Navigation - Absolutely Positioned */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between pl-3 pr-[4px] py-2.5 bg-white border-b border-gray-300 z-20 h-[48px]">
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between pl-3 pr-[4px] py-2.5 bg-card border-b z-20 h-[48px]">
         <div className="flex items-center">
           <Sidebar />
         </div>
@@ -182,19 +182,19 @@ export default function ChartPage() {
             <span className="text-[22px] font-bold">.{formattedSellPrice.fractional}</span>
           </div>
         </div>
-        <div className="bg-white px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4] border-b border-gray-300">
+        <div className="bg-background px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4] border-b">
           <div className="flex items-center space-x-2">
             <button className="cursor-pointer p-1" onClick={() => adjustLotSize(-0.01)}>
-                <ChevronDown className="h-5 w-5 text-gray-700" />
+                <ChevronDown className="h-5 w-5 text-muted-foreground" />
             </button>
              <input
               type="text"
               value={lotSize}
               onChange={handleLotChange}
-              className="text-[13px] text-gray-800 min-w-[40px] w-14 text-center bg-transparent border-none focus:ring-0 focus-visible:outline-none"
+              className="text-[13px] text-foreground min-w-[40px] w-14 text-center bg-transparent border-none focus:ring-0 focus-visible:outline-none"
             />
             <button className="cursor-pointer p-1" onClick={() => adjustLotSize(0.01)}>
-                <ChevronUp className="h-5 w-5 text-gray-700" />
+                <ChevronUp className="h-5 w-5 text-muted-foreground" />
             </button>
           </div>
         </div>
