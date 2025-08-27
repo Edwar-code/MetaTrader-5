@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -35,7 +36,7 @@ export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
                 </div>
               </>
             ) : (
-              <TradeTitleIcon />
+              <TradeTitleIcon theme={theme} />
             )}
           </div>
         </div>

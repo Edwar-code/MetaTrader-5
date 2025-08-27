@@ -74,6 +74,10 @@ export const SpacedMoreHorizontalIcon = () => (
   </svg>
 );
 
-export const TradeTitleIcon = () => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.22.17_f0a77256.jpg" alt="Trade Title" width={35} height={8.5} className="object-contain" />
-);
+export const TradeTitleIcon = ({ theme }: { theme?: string }) => {
+    const src = theme === 'dark'
+        ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.25.31_a6fa3b60.jpg'
+        : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.22.17_f0a77256.jpg';
+
+    return <Image src={src} alt="Trade Title" width={35} height={8.5} className="object-contain" />;
+};
