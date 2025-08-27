@@ -22,6 +22,7 @@ const AccountCard = ({
   currency,
   isMain = false,
   isLoading,
+  scannerIconSrc,
 }: {
   logo: React.ReactNode;
   broker: string;
@@ -32,6 +33,7 @@ const AccountCard = ({
   currency: string;
   isMain?: boolean;
   isLoading: boolean;
+  scannerIconSrc: string;
 }) => (
   <Card className="shadow-sm border-none overflow-hidden bg-muted/20 rounded-none">
     <CardContent className="px-4 pt-4 pb-[2px]">
@@ -75,7 +77,7 @@ const AccountCard = ({
     </CardContent>
      {!isLoading && (
       <div className={`flex items-center justify-between px-4 pb-4 ${isMain ? 'mt-[-4px]' : 'pt-2'}`}>
-        <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_1a61dd2a.jpg" alt="Scanner Icon" width={24} height={24} />
+        <Image src={scannerIconSrc} alt="Scanner Icon" width={24} height={24} />
         {isMain ? <BellIcon /> : <InfoIcon />}
       </div>
      )}
@@ -109,6 +111,14 @@ export default function AccountsPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  const headerIconSrc = theme === 'dark'
+    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.52.07_eff7dc80.jpg'
+    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_ea71798f.jpg';
+
+  const scannerIconSrc = theme === 'dark'
+    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.52.36_6f401008.jpg'
+    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_1a61dd2a.jpg';
+
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-background shadow-lg overflow-hidden">
       <header className="shrink-0 bg-card border-b">
@@ -119,7 +129,7 @@ export default function AccountsPage() {
           </div>
           <div className="flex items-center gap-[35px]">
             <Button variant="ghost" size="icon" className="h-auto w-auto p-0 [&_svg]:size-auto">
-              <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_ea71798f.jpg" alt="Account Settings" width={28} height={28} />
+              <Image src={headerIconSrc} alt="Account Settings" width={28} height={28} />
             </Button>
             <Button variant="ghost" className="h-auto w-auto p-0 [&_svg]:size-auto">
               <Plus size={25.5} className="text-foreground/80" />
@@ -145,6 +155,7 @@ export default function AccountsPage() {
           currency="USD"
           isMain={true}
           isLoading={loading}
+          scannerIconSrc={scannerIconSrc}
         />
       </div>
       <BottomNav />
