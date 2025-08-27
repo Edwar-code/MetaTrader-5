@@ -1,7 +1,10 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Sidebar } from './Sidebar';
 import { SortIcon, AddOrderIcon, NewCustomIcon, TradeTitleIcon } from './icons';
 import Image from 'next/image';
+import { useTheme } from 'next-themes';
 
 interface HeaderProps {
   totalProfit: string;
@@ -9,6 +12,7 @@ interface HeaderProps {
 }
 
 export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
+  const { theme } = useTheme();
   const profitValue = parseFloat(totalProfit.replace(/ /g, ''));
   const isLoss = profitValue < 0;
   const isZero = profitValue === 0;
@@ -37,13 +41,13 @@ export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
         </div>
         <div className="flex items-center gap-[11px]">
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
-            <NewCustomIcon />
+            <NewCustomIcon theme={theme} />
           </Button>
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
-            <SortIcon />
+            <SortIcon theme={theme} />
           </Button>
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
-            <AddOrderIcon />
+            <AddOrderIcon theme={theme} />
           </Button>
         </div>
       </div>

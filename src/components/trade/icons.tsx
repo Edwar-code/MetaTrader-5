@@ -36,17 +36,26 @@ export const HistoryIcon = ({ theme }: { theme?: string }) => {
     return <Image src={src} alt="History Icon" width={22} height={22} className="object-contain" />;
 };
 
-export const NewCustomIcon = () => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.08.30_b5f774fc.jpg" alt="New Custom Icon" width={24} height={24} className="object-contain" />
-);
+export const NewCustomIcon = ({ theme }: { theme?: string }) => {
+    const src = theme === 'dark'
+        ? "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.22.25_a60a1f40.jpg"
+        : "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.08.30_b5f774fc.jpg";
+    return <Image src={src} alt="New Custom Icon" width={24} height={24} className="object-contain" />;
+};
 
-export const SortIcon = () => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/updown.jpg" alt="Sort Icon" width={24} height={24} className="object-contain" />
-);
+export const SortIcon = ({ theme }: { theme?: string }) => {
+    const src = theme === 'dark'
+        ? "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.22.53_7f99abb8.jpg"
+        : "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/updown.jpg";
+    return <Image src={src} alt="Sort Icon" width={24} height={24} className="object-contain" />;
+};
 
-export const AddOrderIcon = () => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/fileplus.jpg" alt="Add Order Icon" width={24} height={22} className="object-contain" />
-);
+export const AddOrderIcon = ({ theme }: { theme?: string }) => {
+    const src = theme === 'dark'
+        ? "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.23.24_065d63f3.jpg"
+        : "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/fileplus.jpg";
+    return <Image src={src} alt="Add Order Icon" width={24} height={22} className="object-contain" />;
+};
 
 export const SpacedMoreHorizontalIcon = () => (
   <svg
