@@ -10,6 +10,7 @@ import { format, fromUnixTime } from 'date-fns';
 import { AlertTriangle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSearchParams } from 'next/navigation';
+import { useTheme } from 'next-themes';
 
 
 export interface ChartMarker {
@@ -236,7 +237,7 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
 };
 CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
-const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
+const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice, tickStyle }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
     const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
@@ -252,10 +253,10 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={true} />
             
-            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
+            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
             <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
 
-            <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fontWeight: 'normal' }} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1} />
+            <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1} />
             
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
@@ -304,7 +305,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice }: { data: T
 };
 LiveAreaChart.displayName = 'LiveAreaChart';
 
-const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buyPrice }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number }) => {
+const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buyPrice, tickStyle }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any }) => {
     const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
     const lastCandle = data.length > 0 ? data[data.length-1] : null;
@@ -315,11 +316,11 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
                 <CartesianGrid strokeDasharray="3 3" vertical={true} />
                 
                 {/* Visible X-axis with labels every 6 mins */}
-                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={{ fontSize: 12 }} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
+                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
                 {/* Hidden X-axis for per-minute grid lines */}
                 <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
 
-                <YAxis domain={yAxisDomain} tick={{ fontSize: 12, fontWeight: 'normal' }} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1}/>
+                <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1}/>
                 
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="body" shape={<HeikinAshiCandleStick />} isAnimationActive={false} barSize={6} />
@@ -380,6 +381,7 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
     const isMobile = useIsMobile();
     const searchParams = useSearchParams();
     const isMobileFromParam = searchParams.get('mobile') === 'true';
+    const { theme } = useTheme();
 
     React.useEffect(() => {
         if (connectionState === 'connected' && asset) {
@@ -438,6 +440,12 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
     const showLoader = connectionState !== 'connected' || (ticks.length === 0 && candles.length === 0 && !chartError);
     const isTickChart = chartInterval === 'tick';
 
+    const tickStyle = React.useMemo(() => ({
+        fontSize: 12,
+        fontWeight: 'normal',
+        fill: theme === 'dark' ? '#d3d9db' : 'hsl(var(--muted-foreground))'
+    }), [theme]);
+
     return (
         <Card className="h-full flex flex-col border-0 shadow-none rounded-none">
             <CardContent className="flex-1 min-h-0 w-full relative p-0">
@@ -455,8 +463,8 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
                         </div>
                     ) : (
                         (chartType === 'area' || isTickChart)
-                        ? <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} />
-                        : <LiveCandlestickChart data={chartDataForCandle} isUp={isUp} lastPrice={lastPrice} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} />
+                        ? <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} />
+                        : <LiveCandlestickChart data={chartDataForCandle} isUp={isUp} lastPrice={lastPrice} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} />
                     )}
                 </div>
             </CardContent>
@@ -492,5 +500,6 @@ export function TradeChart(props: TradeChartProps) {
 
 
     
+
 
 
