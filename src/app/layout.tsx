@@ -36,7 +36,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/mt5.svg" />
       </head>
       <body className="font-body antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <DerivProvider>
             <TradeProvider>
               <main>{children}</main>
