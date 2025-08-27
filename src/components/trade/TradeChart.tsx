@@ -237,7 +237,7 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
 };
 CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
-const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice, tickStyle }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any }) => {
+const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice, tickStyle, gridColor }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
     const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
@@ -251,7 +251,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice, tickStyle }
                 <stop offset="95%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0}/>
                 </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={true} />
+            <CartesianGrid strokeDasharray="3 3" vertical={true} stroke={gridColor} />
             
             <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
             <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
@@ -305,7 +305,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice, tickStyle }
 };
 LiveAreaChart.displayName = 'LiveAreaChart';
 
-const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buyPrice, tickStyle }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any }) => {
+const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buyPrice, tickStyle, gridColor }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string }) => {
     const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
     const lastCandle = data.length > 0 ? data[data.length-1] : null;
@@ -313,7 +313,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 1 }} animationDuration={0}>
-                <CartesianGrid strokeDasharray="3 3" vertical={true} />
+                <CartesianGrid strokeDasharray="3 3" vertical={true} stroke={gridColor} />
                 
                 {/* Visible X-axis with labels every 6 mins */}
                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
@@ -446,6 +446,8 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
         fill: theme === 'dark' ? '#d3d9db' : 'hsl(var(--muted-foreground))'
     }), [theme]);
 
+    const gridColor = React.useMemo(() => theme === 'dark' ? '#232a34' : '#ccc', [theme]);
+
     return (
         <Card className="h-full flex flex-col border-0 shadow-none rounded-none">
             <CardContent className="flex-1 min-h-0 w-full relative p-0">
@@ -463,8 +465,8 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
                         </div>
                     ) : (
                         (chartType === 'area' || isTickChart)
-                        ? <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} />
-                        : <LiveCandlestickChart data={chartDataForCandle} isUp={isUp} lastPrice={lastPrice} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} />
+                        ? <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} gridColor={gridColor} />
+                        : <LiveCandlestickChart data={chartDataForCandle} isUp={isUp} lastPrice={lastPrice} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} gridColor={gridColor} />
                     )}
                 </div>
             </CardContent>
@@ -503,3 +505,6 @@ export function TradeChart(props: TradeChartProps) {
 
 
 
+
+
+    
