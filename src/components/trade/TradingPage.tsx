@@ -9,18 +9,21 @@ import InstallPrompt from './InstallPrompt';
 import { useTradeState } from '@/context/TradeContext';
 import { Bot, X, Play, Timer } from 'lucide-react';
 import { Button } from '../ui/button';
-import { tradeDecision } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import type { Position } from '@/lib/types';
 
 export default function TradingPage() {
-  const { positions, equity, balance, totalPnl, handleTrade, handleClosePosition } = useTradeState();
+  const { positions, equity, balance, handleTrade, handleClosePosition } = useTradeState();
   const [showFab, setShowFab] = useState(true);
   const [isBotRunning, setIsBotRunning] = useState(false);
   const [countdown, setCountdown] = useState(600);
   const { toast } = useToast();
 
   const hasOpenPositions = positions.length > 0;
+
+  const totalProfit = useMemo(() => {
+    return positions.reduce((acc, pos) => acc + pos.pnl, 0);
+  }, [positions]);
 
   const accountSummary = useMemo(() => {
     return {
@@ -33,15 +36,15 @@ export default function TradingPage() {
   }, [balance, equity]);
 
   const runBotCycle = useCallback(async () => {
-    console.log('Running AI Bot Cycle...');
+    console.log('Running Bot Cycle...');
     toast({
-      title: '🤖 AI Bot Analyzing...',
+      title: '🤖 Bot Analyzing...',
       description: 'The bot is checking for trade actions.',
     });
 
-    // Simplified rule check on the client-side for immediate action
     const positionsCopy: Position[] = JSON.parse(JSON.stringify(positions));
 
+    // Rule 1 & 2: Check for profit taking or loss cutting first
     for (const pos of positionsCopy) {
       if (pos.pnl >= 100) {
         toast({
@@ -61,68 +64,37 @@ export default function TradingPage() {
       }
     }
 
-    // If no positions were closed, let the AI decide on a new one
-    if (positions.length > 0) {
-        toast({ title: "🤖 AI Bot Holding", description: "Monitoring open positions." });
-        return;
-    }
-
-    try {
-      const result = await tradeDecision({
-        balance: balance,
-        equity: equity,
-        positions: positions.map(p => ({
-          id: p.id,
-          pair: p.pair,
-          type: p.type,
-          size: p.size,
-          entryPrice: p.entryPrice,
-          currentPrice: p.currentPrice,
-          pnl: p.pnl,
-          openTime: p.openTime,
-          stopLoss: p.stopLoss,
-          takeProfit: p.takeProfit,
-        })),
-      });
-
-      if (result.success && result.decision) {
-        const { action, pair, lotSize, stopLoss, takeProfit, reason } =
-          result.decision;
+    // Rule 3: If no positions were closed and no positions are open, open a new one
+    if (positionsCopy.length === 0) {
+        const action = Math.random() < 0.5 ? 'BUY' : 'SELL';
+        
+        // Simple risk management: 0.01 lots for every $1000 in equity.
+        const lotSize = Math.max(0.01, Math.floor(equity / 1000) * 0.01);
+        const pair = 'frxXAUUSD'; // Default to Gold
 
         toast({
-          title: `🤖 AI Bot Action: ${action}`,
-          description: reason,
+            title: `🤖 Placing New Trade!`,
+            description: `Action: ${action}, Size: ${lotSize}, Pair: ${pair}`
         });
 
-        if (action === 'BUY' || action === 'SELL') {
-          await handleTrade({
+        await handleTrade({
             pair: pair,
             type: action,
             size: lotSize,
-            stopLoss,
-            takeProfit,
-          });
-        }
-      } else {
-        toast({
-          title: '🤖 AI Bot Error',
-          description: result.error || 'Could not make a trade decision.',
-          variant: 'destructive',
         });
-      }
-    } catch (e) {
-      console.error('Bot cycle error:', e);
-      toast({
-        title: '🤖 AI Bot Crashed',
-        description: 'An unexpected error occurred during the bot cycle.',
-        variant: 'destructive',
-      });
+    } else {
+         toast({ title: "🤖 Bot Holding", description: "Monitoring open positions." });
     }
-  }, [equity, positions, balance, handleClosePosition, handleTrade, toast]);
+
+  }, [positions, equity, handleClosePosition, handleTrade, toast]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isBotRunning) {
+      // Run the first cycle immediately
+      runBotCycle();
+      setCountdown(600);
+      
       timer = setInterval(() => {
         setCountdown(prevCountdown => {
           if (prevCountdown <= 1) {
@@ -142,9 +114,6 @@ export default function TradingPage() {
       title: 'Bot Enabled',
       description: 'The AI bot will now trade automatically every 10 minutes.',
     });
-    // Immediately run the first cycle
-    runBotCycle();
-    setCountdown(600);
   };
   
   const handleDisableBot = () => {
@@ -152,7 +121,7 @@ export default function TradingPage() {
       setShowFab(false);
       toast({
         title: 'Bot Disabled',
-        description: 'The AI bot has been turned off and the button is hidden.',
+        description: 'The bot has been turned off and the button is hidden.',
       });
   }
   
@@ -165,7 +134,7 @@ export default function TradingPage() {
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
-      <Header totalProfit={totalPnl.toFixed(2)} hasOpenPositions={hasOpenPositions} />
+      <Header totalProfit={totalProfit.toFixed(2)} hasOpenPositions={hasOpenPositions} />
       <div className="flex-1 overflow-y-auto pb-24">
         <AccountSummary data={accountSummary} hasOpenPositions={hasOpenPositions} />
         {hasOpenPositions ? (
