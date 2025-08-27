@@ -32,7 +32,7 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f0f7fb" />
-        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111c29" />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101721" />
         <link rel="apple-touch-icon" href="/mt5.svg" />
       </head>
       <body className="font-body antialiased">
