@@ -12,6 +12,7 @@ import { ChevronUp, ChevronDown } from 'lucide-react';
 import type { Position } from '@/lib/types';
 import Image from 'next/image';
 import TradeNotification from './TradeNotification';
+import { useTheme } from 'next-themes';
 
 
 const formatPrice = (price: number | undefined) => {
@@ -33,6 +34,7 @@ interface TradeNotificationData {
 export default function ChartPage() {
   const { ticks, connectionState, latestPrice } = useDerivState();
   const { positions, handleTrade } = useTradeState();
+  const { theme } = useTheme();
   
   const [selectedAsset, setAsset] = useState('frxXAUUSD');
   const [chartInterval, setChartInterval] = useState('1m');
@@ -130,6 +132,11 @@ export default function ChartPage() {
       return parseFloat(newSize.toFixed(2));
     });
   };
+  
+  const chartSettingsImage = theme === 'dark'
+    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.19.12_c460d5de.jpg'
+    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg';
+
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
@@ -164,7 +171,7 @@ export default function ChartPage() {
         <div className="flex-1"></div>
         <div className="flex items-center space-x-4">
            <button onClick={() => setIsTimeframeWheelOpen(!isTimeframeWheelOpen)} style={{ height: '80px', width: '245px' }}>
-             <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg" alt="Chart settings" width={245} height={80} />
+             <Image src={chartSettingsImage} alt="Chart settings" width={245} height={80} />
            </button>
         </div>
       </div>
