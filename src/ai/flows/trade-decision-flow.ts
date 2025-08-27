@@ -23,14 +23,14 @@ const prompt = ai.definePrompt({
 1.  **Market Analysis:** Analyze the provided \`marketContext\` to understand the current trend, support/resistance levels, and overall market sentiment. Identify patterns like trend continuations, reversals, or breakouts.
 2.  **Position Management:**
     *   Review existing \`positions\`.
-    *   If a position has a reasonable profit and the market shows signs of reversal, consider closing it (by recommending the opposite trade or holding).
-    *   If a position is in a deep loss and the initial strategy is clearly failing, cut losses.
+    *   **Profit Taking:** If a position has a substantial profit (e.g., around 20% gain on its margin), strongly consider closing it to secure profits. Recommend the opposite trade or 'HOLD' to close.
+    *   **Loss Cutting:** If a position is in a deep loss and the initial strategy is clearly failing, cut losses.
     *   Avoid opening new positions if the market is too volatile or unclear.
 3.  **Risk Management (CRITICAL):**
     *   Your total exposure across all trades must NOT risk more than 80% of the account equity.
     *   For any new trade, calculate a \`lotSize\` that is sensible for the account size. A common starting point is 0.01 lots for every $1000 in equity, but you can adjust based on confidence.
     *   ALWAYS set a \`stopLoss\`. A good stop loss is typically placed just below a recent support level for a BUY, or just above a recent resistance level for a SELL.
-    *   Set a \`takeProfit\` at a logical level, like the next major resistance (for BUYs) or support (for SELLs). Aim for at least a 1:1.5 risk-to-reward ratio.
+    *   Set a \`takeProfit\` at a logical level, like the next major resistance (for BUYs) or support (for SELLs).
 4.  **Decision Output:**
     *   Your final decision MUST be one of 'BUY', 'SELL', or 'HOLD'.
     *   If you decide to 'HOLD', set \`lotSize\` to 0.
