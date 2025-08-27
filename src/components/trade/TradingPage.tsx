@@ -14,10 +14,11 @@ import { useToast } from '@/hooks/use-toast';
 import type { Position } from '@/lib/types';
 
 export default function TradingPage() {
-  const { positions, equity, balance, handleTrade, handleClosePosition } = useTradeState();
+  const { positions, equity, balance, handleTrade, handleClosePosition, handleBulkClosePositions } = useTradeState();
   const [isBotRunning, setIsBotRunning] = useState(false);
   const [countdown, setCountdown] = useState(600);
   const { toast } = useToast();
+  const [initialBalance] = useState(balance); // Store initial balance
 
   const hasOpenPositions = positions.length > 0;
 
@@ -43,17 +44,21 @@ export default function TradingPage() {
     });
 
     const positionsCopy: Position[] = JSON.parse(JSON.stringify(positions));
+    const currentTotalPnl = positionsCopy.reduce((acc, pos) => acc + pos.pnl, 0);
+    const profitTarget = initialBalance * 0.50; // 50% of initial balance
 
-    // Rule 1 & 2: Check for profit taking or loss cutting first
-    for (const pos of positionsCopy) {
-      if (pos.pnl >= 100) {
+    // Rule 1: Check for overall profit target first.
+    if (currentTotalPnl >= profitTarget) {
         toast({
-            title: `🤖 Taking Profit!`,
-            description: `Closing position #${pos.id.substring(0, 6)} with $${pos.pnl.toFixed(2)} profit.`
+            title: `🤖 Taking 50% Profit!`,
+            description: `Closing all positions with $${currentTotalPnl.toFixed(2)} total profit.`
         });
-        handleClosePosition(pos.id);
-        return; // Stop this cycle after taking an action
-      }
+        handleBulkClosePositions('all');
+        return; // Stop this cycle after taking action.
+    }
+    
+    // Rule 2: Check for individual loss cutting
+    for (const pos of positionsCopy) {
       if (pos.pnl <= -200) {
         toast({
             title: `🤖 Cutting Loss!`,
@@ -97,12 +102,12 @@ export default function TradingPage() {
             size: lotSize,
         });
     } else if (shouldOpenNewTrade) {
-         toast({ title: "🤖 Looking for another opportunity", description: "Risk limit reached. Monitoring open positions." });
+         toast({ title: "Looking for another opportunity", description: "Risk limit reached. Monitoring open positions." });
     } else {
-         toast({ title: "🤖 Looking for another opportunity", description: "No new trade opportunity identified this cycle." });
+         toast({ title: "Looking for another opportunity", description: "No new trade opportunity identified this cycle." });
     }
 
-  }, [positions, equity, handleClosePosition, handleTrade, toast]);
+  }, [positions, equity, handleClosePosition, handleTrade, toast, initialBalance, handleBulkClosePositions]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
