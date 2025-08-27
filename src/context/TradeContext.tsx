@@ -1,3 +1,4 @@
+
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode, useMemo } from 'react';
@@ -23,7 +24,7 @@ const TradeContext = createContext<TradeState | undefined>(undefined);
 export function TradeProvider({ children }: { children: ReactNode }) {
     const [positions, setPositions] = useState<Position[]>([]);
     const [closedPositions, setClosedPositions] = useState<ClosedPosition[]>([]);
-    const [balance, setBalance] = useState<number>(10000); // Start with a 10k funded account
+    const [balance, setBalance] = useState<number>(100); // Start with a 100 funded account
 
     const { latestPrice, getTicks } = useDerivState();
     const { toast } = useToast();

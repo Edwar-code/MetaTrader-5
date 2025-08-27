@@ -135,10 +135,9 @@ export default function TradingPage() {
   
   const handleDisableBot = () => {
       setIsBotRunning(false);
-      setShowFab(false);
       toast({
         title: 'Bot Disabled',
-        description: 'The bot has been turned off and the button is hidden.',
+        description: 'The bot has been turned off.',
       });
   }
   
@@ -169,6 +168,7 @@ export default function TradingPage() {
                 size="sm"
                 className="bg-red-600 hover:bg-red-700 text-white rounded-full w-28"
                 onClick={handleDisableBot}
+                disabled={!isBotRunning}
               >
                 <X className="mr-2 h-4 w-4" /> Disable
               </Button>
