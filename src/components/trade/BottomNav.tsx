@@ -6,6 +6,7 @@ import { TradeIcon, ChartIcon, MessagesIcon, HistoryIcon } from './icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTheme } from 'next-themes';
 
 const NavItem = ({
   icon,
@@ -34,6 +35,7 @@ const NavItem = ({
 export default function BottomNav() {
   const pathname = usePathname();
   const isMobile = useIsMobile();
+  const { theme } = useTheme();
   const chartHref = isMobile ? '/chart?mobile=true' : '/chart';
 
   return (
@@ -42,8 +44,8 @@ export default function BottomNav() {
         <NavItem href="#" icon={<ArrowUpDown size={20} />} label="Quotes" />
         <NavItem href={chartHref} icon={<ChartIcon />} label="Charts" isActive={pathname === '/chart'} />
         <NavItem href="/" icon={<TradeIcon />} label="Trade" isActive={pathname === '/'} />
-        <NavItem href="#" icon={<HistoryIcon />} label="History" />
-        <NavItem href="#" icon={<MessagesIcon />} label="Messages" />
+        <NavItem href="#" icon={<HistoryIcon theme={theme} />} label="History" />
+        <NavItem href="#" icon={<MessagesIcon theme={theme} />} label="Messages" />
       </div>
     </footer>
   );

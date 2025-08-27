@@ -22,13 +22,19 @@ export const ChartIcon = () => (
   </svg>
 );
 
-export const MessagesIcon = () => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.57_5a87660a.jpg" alt="Messages Icon" width={22} height={22} className="object-contain" />
-);
+export const MessagesIcon = ({ theme }: { theme?: string }) => {
+    const src = theme === 'dark'
+        ? "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.20.44_6e0f932e.jpg"
+        : "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.57_5a87660a.jpg";
+    return <Image src={src} alt="Messages Icon" width={22} height={22} className="object-contain" />;
+};
 
-export const HistoryIcon = () => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.56_253ecbbb.jpg" alt="History Icon" width={22} height={22} className="object-contain" />
-);
+export const HistoryIcon = ({ theme }: { theme?: string }) => {
+    const src = theme === 'dark'
+        ? "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.20.08_cb33e6bf.jpg"
+        : "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.56_253ecbbb.jpg";
+    return <Image src={src} alt="History Icon" width={22} height={22} className="object-contain" />;
+};
 
 export const NewCustomIcon = () => (
     <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.08.30_b5f774fc.jpg" alt="New Custom Icon" width={24} height={24} className="object-contain" />
