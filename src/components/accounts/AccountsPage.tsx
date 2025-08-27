@@ -10,6 +10,7 @@ import { BellIcon, InfoIcon } from './icons';
 import { useTradeState } from '@/context/TradeContext';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 
 const AccountCard = ({
   logo,
@@ -43,8 +44,8 @@ const AccountCard = ({
               <p className="text-sm text-primary">{broker}</p>
               <p className="text-sm mt-2 text-muted-foreground">{accountNumber}</p>
               <p className="invisible text-sm text-muted-foreground">{accountDetails}</p>
-              <p className="text-lg text-muted-foreground animate-pulse mt-px">Connecting...</p>
               <p className="invisible text-2xl font-light text-foreground mt-4">{balance} {currency}</p>
+              <p className="text-lg text-muted-foreground animate-pulse mt-px">Connecting...</p>
             </>
           ) : (
             <>
@@ -99,6 +100,7 @@ const DemoBadge = () => (
 export default function AccountsPage() {
   const { balance } = useTradeState();
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -123,7 +125,11 @@ export default function AccountsPage() {
               <Plus size={25.5} className="text-foreground/80" />
             </Button>
             <Button variant="ghost" className="h-auto w-auto p-0 [&_svg]:size-auto">
-              <MoreVertical size={25.5} className="text-foreground/80" />
+              {theme === 'dark' ? (
+                <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.19.37_df9b14de.jpg" alt="More options" width={25.5} height={25.5} />
+              ) : (
+                <MoreVertical size={25.5} className="text-foreground/80" />
+              )}
             </Button>
           </div>
         </div>
