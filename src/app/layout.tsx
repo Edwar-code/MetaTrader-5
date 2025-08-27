@@ -31,7 +31,8 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="MetaTrader 5" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="theme-color" content="#FFFFFF" />
+        <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f0f7fb" />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111c29" />
         <link rel="apple-touch-icon" href="/mt5.svg" />
       </head>
       <body className="font-body antialiased">
