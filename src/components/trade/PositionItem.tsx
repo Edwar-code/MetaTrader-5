@@ -1,9 +1,11 @@
+
 'use client';
 
 import { useState } from 'react';
 import type { Position } from '@/lib/types';
 import { format } from 'date-fns';
 import Image from 'next/image';
+import { useTheme } from 'next-themes';
 
 interface PositionItemProps {
   position: Position;
@@ -18,6 +20,7 @@ const DetailRow = ({ label, value }: { label: string; value: string | number }) 
 
 export default function PositionItem({ position }: PositionItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { theme } = useTheme();
 
   const profitValue = position.pnl;
   const isLoss = profitValue < 0;
@@ -30,6 +33,10 @@ export default function PositionItem({ position }: PositionItemProps) {
   
   const isGold = position.pair === 'frxXAUUSD';
 
+  const goldImageSrc = theme === 'dark' 
+    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.37.32_cdd3a05d.jpg'
+    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.33.35_e00bef8a.jpg';
+
 
   return (
     <div className="flex flex-col py-2 px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
@@ -39,7 +46,7 @@ export default function PositionItem({ position }: PositionItemProps) {
                   {isGold ? (
                     <div className="flex items-center">
                        <div className="relative top-[-1px]">
-                        <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.33.35_e00bef8a.jpg" alt="XAUUSD" width={50} height={9} className="object-contain" />
+                        <Image src={goldImageSrc} alt="XAUUSD" width={50} height={9} className="object-contain" />
                       </div>
                       <span className="text-sm font-bold text-card-foreground">.m,</span>
                     </div>
