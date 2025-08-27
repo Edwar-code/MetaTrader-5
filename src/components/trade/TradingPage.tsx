@@ -8,7 +8,7 @@ import Header from './Header';
 import PositionsList from './PositionsList';
 import InstallPrompt from './InstallPrompt';
 import { useTradeState } from '@/context/TradeContext';
-import { Bot, X, Play, Timer } from 'lucide-react';
+import { CircleDollarSign, X, Play, Timer } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useToast } from '@/hooks/use-toast';
 import type { Position } from '@/lib/types';
@@ -191,7 +191,7 @@ export default function TradingPage() {
                     <span className="text-xs font-bold">{formatCountdown(countdown)}</span>
                  </div>
               ) : (
-                <Bot className="h-7 w-7" />
+                <CircleDollarSign className="h-7 w-7" />
               )}
             </Button>
           </div>
