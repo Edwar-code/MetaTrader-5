@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo, useState, useEffect, useCallback } from 'react';
@@ -63,13 +64,27 @@ export default function TradingPage() {
         return; // Stop this cycle after taking an action
       }
     }
+    
+    // Risk Management: Calculate current total size of all open positions
+    const totalLotSize = positionsCopy.reduce((sum, pos) => sum + pos.size, 0);
+    // A simplified risk check: assume 1 lot requires ~$2000 margin for this example
+    const usedMargin = totalLotSize * 2000;
+    const maxRiskEquity = equity * 0.80;
 
-    // Rule 3: If no positions were closed and no positions are open, open a new one
-    if (positionsCopy.length === 0) {
+    // Rule 3: Randomly decide to open a new trade if we have capacity
+    // 40% chance to open a new trade each cycle if not over risk limit.
+    const shouldOpenNewTrade = Math.random() < 0.4;
+
+    if (shouldOpenNewTrade && usedMargin < maxRiskEquity) {
         const action = Math.random() < 0.5 ? 'BUY' : 'SELL';
         
-        // Simple risk management: 0.01 lots for every $1000 in equity.
-        const lotSize = Math.max(0.01, Math.floor(equity / 1000) * 0.01);
+        // Dynamic lot sizing: base size + a random element
+        const baseLotPer1k = 0.01;
+        const baseLotSize = Math.max(0.01, Math.floor(equity / 1000) * baseLotPer1k);
+        // Add a random component, e.g., 0 to 2 times the base lot size
+        const randomMultiplier = Math.floor(Math.random() * 3); // 0, 1, or 2
+        const lotSize = parseFloat((baseLotSize + (baseLotSize * randomMultiplier)).toFixed(2));
+        
         const pair = 'frxXAUUSD'; // Default to Gold
 
         toast({
@@ -82,8 +97,10 @@ export default function TradingPage() {
             type: action,
             size: lotSize,
         });
+    } else if (shouldOpenNewTrade) {
+         toast({ title: "🤖 Bot Holding", description: "Risk limit reached. Monitoring open positions." });
     } else {
-         toast({ title: "🤖 Bot Holding", description: "Monitoring open positions." });
+         toast({ title: "🤖 Bot Holding", description: "No new trade opportunity identified this cycle." });
     }
 
   }, [positions, equity, handleClosePosition, handleTrade, toast]);
