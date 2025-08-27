@@ -32,26 +32,26 @@ const AccountCard = ({
   isMain?: boolean;
   isLoading: boolean;
 }) => (
-  <Card className="shadow-sm border-none overflow-hidden bg-[#f8f9f9] rounded-none">
+  <Card className="shadow-sm border-none overflow-hidden bg-muted/20 rounded-none">
     <CardContent className="px-4 pt-4 pb-[2px]">
       {isMain && (
         <div className="flex flex-col items-center text-center mb-4">
           <div className="mb-3">{logo}</div>
           {isLoading ? (
             <>
-              <p className="font-bold text-lg text-[#707175] invisible">{accountName}</p>
-              <p className="text-sm text-primary" style={{ color: '#296ec2' }}>{broker}</p>
-              <p className="text-sm mt-2" style={{ color: '#848484' }}>{accountNumber}</p>
-              <p className="invisible text-sm" style={{ color: '#848484' }}>{accountDetails}</p>
+              <p className="font-bold text-lg text-muted-foreground invisible">{accountName}</p>
+              <p className="text-sm text-primary">{broker}</p>
+              <p className="text-sm mt-2 text-muted-foreground">{accountNumber}</p>
+              <p className="invisible text-sm text-muted-foreground">{accountDetails}</p>
               <p className="text-lg text-muted-foreground animate-pulse mt-px">Connecting...</p>
               <p className="invisible text-2xl font-light text-foreground mt-4">{balance} {currency}</p>
             </>
           ) : (
             <>
-              <p className="font-bold text-lg text-[#707175]">{accountName}</p>
-              <p className="text-sm text-primary" style={{ color: '#296ec2' }}>{broker}</p>
-              <p className="text-sm mt-2" style={{ color: '#848484' }}>{accountNumber}</p>
-              <p className="text-sm" style={{ color: '#848484' }}>{accountDetails}</p>
+              <p className="font-bold text-lg text-muted-foreground">{accountName}</p>
+              <p className="text-sm text-primary">{broker}</p>
+              <p className="text-sm mt-2 text-muted-foreground">{accountNumber}</p>
+              <p className="text-sm text-muted-foreground">{accountDetails}</p>
               <p className="text-2xl font-light text-foreground mt-4">{balance} <span className="text-2xl font-light text-foreground">{currency}</span></p>
             </>
           )}
@@ -108,27 +108,27 @@ export default function AccountsPage() {
   }, []);
 
   return (
-    <div className="relative flex flex-col h-[100svh] w-full bg-white shadow-lg overflow-hidden">
-      <header className="shrink-0 bg-white">
+    <div className="relative flex flex-col h-[100svh] w-full bg-background shadow-lg overflow-hidden">
+      <header className="shrink-0 bg-card border-b">
         <div className="flex items-center justify-between pl-2 pr-4 py-2">
           <div className="flex items-center gap-2">
             <Sidebar />
-            <h1 className="text-[15.5px] font-medium">Accounts</h1>
+            <h1 className="text-[15.5px] font-medium text-foreground">Accounts</h1>
           </div>
           <div className="flex items-center gap-[35px]">
             <Button variant="ghost" size="icon" className="h-auto w-auto p-0 [&_svg]:size-auto">
               <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_ea71798f.jpg" alt="Account Settings" width={28} height={28} />
             </Button>
             <Button variant="ghost" className="h-auto w-auto p-0 [&_svg]:size-auto">
-              <Plus size={25.5} className="text-[#534b48]" />
+              <Plus size={25.5} className="text-foreground/80" />
             </Button>
             <Button variant="ghost" className="h-auto w-auto p-0 [&_svg]:size-auto">
-              <MoreVertical size={25.5} className="text-[#534b48]" />
+              <MoreVertical size={25.5} className="text-foreground/80" />
             </Button>
           </div>
         </div>
       </header>
-      <div className="flex-1 overflow-y-auto pb-20 space-y-4 p-2">
+      <div className="flex-1 overflow-y-auto pb-20 space-y-4 p-2 bg-background">
         <AccountCard
           logo={<Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.19.22_1608d54d.jpg" alt="FBS Logo" width={52} height={52} />}
           broker="FBS Markets Inc."

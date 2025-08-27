@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -24,7 +25,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 
 const NavItem = ({ icon, label, badge, ad, active, href }: { icon: React.ReactNode, label: string, href: string, badge?: number, ad?: boolean, active?: boolean }) => (
-  <Link href={href} className={`flex items-center gap-6 px-[35px] py-[7.4px] text-sm font-medium ${active ? 'bg-[#f8f9f9] text-foreground' : 'text-foreground'}`}>
+  <Link href={href} className={`flex items-center gap-6 px-[35px] py-[7.4px] text-sm font-medium ${active ? 'bg-muted text-foreground' : 'text-foreground'}`}>
     {icon}
     <span className="flex-1">{label}</span>
     {badge && <span className="w-5 h-5 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">{badge}</span>}
