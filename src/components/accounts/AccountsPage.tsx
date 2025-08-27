@@ -135,11 +135,7 @@ export default function AccountsPage() {
               <Plus size={25.5} className="text-foreground/80" />
             </Button>
             <Button variant="ghost" className="h-auto w-auto p-0 [&_svg]:size-auto">
-              {theme === 'dark' ? (
-                <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.19.37_df9b14de.jpg" alt="More options" width={25.5} height={25.5} />
-              ) : (
                 <MoreVertical size={25.5} className="text-foreground/80" />
-              )}
             </Button>
           </div>
         </div>
