@@ -15,7 +15,6 @@ import type { Position } from '@/lib/types';
 
 export default function TradingPage() {
   const { positions, equity, balance, handleTrade, handleClosePosition } = useTradeState();
-  const [showFab, setShowFab] = useState(true);
   const [isBotRunning, setIsBotRunning] = useState(false);
   const [countdown, setCountdown] = useState(600);
   const { toast } = useToast();
@@ -98,9 +97,9 @@ export default function TradingPage() {
             size: lotSize,
         });
     } else if (shouldOpenNewTrade) {
-         toast({ title: "🤖 Bot Holding", description: "Risk limit reached. Monitoring open positions." });
+         toast({ title: "🤖 Looking for another opportunity", description: "Risk limit reached. Monitoring open positions." });
     } else {
-         toast({ title: "🤖 Bot Holding", description: "No new trade opportunity identified this cycle." });
+         toast({ title: "🤖 Looking for another opportunity", description: "No new trade opportunity identified this cycle." });
     }
 
   }, [positions, equity, handleClosePosition, handleTrade, toast]);
@@ -160,43 +159,41 @@ export default function TradingPage() {
         )}
         <InstallPrompt />
       </div>
-      {showFab && (
-        <div className="absolute bottom-20 right-4 z-20 group">
+      <div className="absolute bottom-20 right-4 z-20 group">
+        <div className="flex flex-col items-center gap-2">
           <div className="flex flex-col items-center gap-2">
-            <div className="flex flex-col items-center gap-2 transition-all duration-300 ease-in-out scale-0 group-hover:scale-100 origin-bottom">
-              <Button
-                size="sm"
-                className="bg-red-600 hover:bg-red-700 text-white rounded-full w-28"
-                onClick={handleDisableBot}
-                disabled={!isBotRunning}
-              >
-                <X className="mr-2 h-4 w-4" /> Disable
-              </Button>
-              <Button
-                size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white rounded-full w-28"
-                onClick={handleRunBot}
-                disabled={isBotRunning}
-              >
-                <Play className="mr-2 h-4 w-4" /> Run Bot
-              </Button>
-            </div>
             <Button
-              size="icon"
-              className="rounded-full w-14 h-14 bg-primary hover:bg-primary/90 shadow-lg"
+              size="sm"
+              className="bg-red-600 hover:bg-red-700 text-white rounded-full w-28"
+              onClick={handleDisableBot}
+              disabled={!isBotRunning}
             >
-              {isBotRunning ? (
-                 <div className="flex flex-col items-center justify-center">
-                    <Timer className="h-5 w-5" />
-                    <span className="text-xs font-bold">{formatCountdown(countdown)}</span>
-                 </div>
-              ) : (
-                <CircleDollarSign className="h-7 w-7" />
-              )}
+              <X className="mr-2 h-4 w-4" /> Disable
+            </Button>
+            <Button
+              size="sm"
+              className="bg-green-600 hover:bg-green-700 text-white rounded-full w-28"
+              onClick={handleRunBot}
+              disabled={isBotRunning}
+            >
+              <Play className="mr-2 h-4 w-4" /> Run Bot
             </Button>
           </div>
+          <Button
+            size="icon"
+            className="rounded-full w-14 h-14 bg-primary hover:bg-primary/90 shadow-lg"
+          >
+            {isBotRunning ? (
+                <div className="flex flex-col items-center justify-center">
+                  <Timer className="h-5 w-5" />
+                  <span className="text-xs font-bold">{formatCountdown(countdown)}</span>
+                </div>
+            ) : (
+              <CircleDollarSign className="h-7 w-7" />
+            )}
+          </Button>
         </div>
-      )}
+      </div>
       <BottomNav />
     </div>
   );
