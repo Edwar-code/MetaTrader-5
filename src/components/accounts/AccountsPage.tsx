@@ -119,6 +119,11 @@ export default function AccountsPage() {
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.52.36_6f401008.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_1a61dd2a.jpg';
 
+  const fbsLogoSrc = theme === 'dark'
+    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
+    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.19.22_1608d54d.jpg';
+
+
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-background shadow-lg overflow-hidden">
       <header className="shrink-0 bg-card border-b">
@@ -142,7 +147,7 @@ export default function AccountsPage() {
       </header>
       <div className="flex-1 overflow-y-auto pb-20 space-y-4 p-2 bg-background">
         <AccountCard
-          logo={<Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.19.22_1608d54d.jpg" alt="FBS Logo" width={52} height={52} />}
+          logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={52} height={52} />}
           broker="FBS Markets Inc."
           accountName="EDWARD KIBE MUNENE"
           accountNumber="40311301 — FBS-Real"
