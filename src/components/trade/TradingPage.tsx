@@ -18,7 +18,6 @@ export default function TradingPage() {
   const [isBotRunning, setIsBotRunning] = useState(false);
   const [countdown, setCountdown] = useState(600);
   const { toast } = useToast();
-  const [initialBalance] = useState(balance); // Store initial balance
 
   const hasOpenPositions = positions.length > 0;
 
@@ -45,12 +44,12 @@ export default function TradingPage() {
 
     const positionsCopy: Position[] = JSON.parse(JSON.stringify(positions));
     const currentTotalPnl = positionsCopy.reduce((acc, pos) => acc + pos.pnl, 0);
-    const profitTarget = initialBalance * 0.50; // 50% of initial balance
+    const profitTarget = 10; // $10 profit target
 
     // Rule 1: Check for overall profit target first.
     if (currentTotalPnl >= profitTarget) {
         toast({
-            title: `🤖 Taking 50% Profit!`,
+            title: `🤖 Taking Profit!`,
             description: `Closing all positions with $${currentTotalPnl.toFixed(2)} total profit.`
         });
         handleBulkClosePositions('all');
@@ -82,12 +81,8 @@ export default function TradingPage() {
     if (shouldOpenNewTrade && usedMargin < maxRiskEquity) {
         const action = Math.random() < 0.5 ? 'BUY' : 'SELL';
         
-        // Dynamic lot sizing: base size + a random element
-        const baseLotPer1k = 0.01;
-        const baseLotSize = Math.max(0.01, Math.floor(equity / 1000) * baseLotPer1k);
-        // Add a random component, e.g., 0 to 2 times the base lot size
-        const randomMultiplier = Math.floor(Math.random() * 3); // 0, 1, or 2
-        const lotSize = parseFloat((baseLotSize + (baseLotSize * randomMultiplier)).toFixed(2));
+        // Random lot size between 0.03 and 0.20
+        const lotSize = parseFloat((Math.random() * (0.20 - 0.03) + 0.03).toFixed(2));
         
         const pair = 'frxXAUUSD'; // Default to Gold
 
@@ -107,7 +102,7 @@ export default function TradingPage() {
          toast({ title: "Looking for another opportunity", description: "No new trade opportunity identified this cycle." });
     }
 
-  }, [positions, equity, handleClosePosition, handleTrade, toast, initialBalance, handleBulkClosePositions]);
+  }, [positions, equity, handleClosePosition, handleTrade, toast, handleBulkClosePositions]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
