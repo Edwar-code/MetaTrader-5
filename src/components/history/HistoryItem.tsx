@@ -19,7 +19,6 @@ const DetailRow = ({ label, value }: { label: string; value: string | number }) 
 );
 
 export default function HistoryItem({ position }: HistoryItemProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   
@@ -50,7 +49,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
   }
 
   return (
-    <div className="flex flex-col py-2 px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+    <div className="flex flex-col py-2 px-4">
         <div className="flex justify-between">
             <div className="flex-1">
                 <div className="flex items-center gap-1 leading-none mb-[-7px]">
@@ -78,26 +77,14 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                 </div>
             </div>
             <div className="text-right">
+                 <span className="text-sm text-muted-foreground">
+                    {format(new Date(position.closeTime * 1000), 'yyyy.MM.dd HH:mm:ss')}
+                </span>
                 <span className={`text-base font-bold`} style={{ color: profitColor }}>
                 {profitString}
                 </span>
             </div>
         </div>
-
-        {isExpanded && (
-            <div className="mt-2 pt-2">
-                <div className="text-sm text-muted-foreground mb-2">
-                    {format(new Date(position.closeTime * 1000), 'yyyy.MM.dd HH:mm:ss')}
-                </div>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-1">
-                    <DetailRow label="Open:" value={format(new Date(position.openTime * 1000), 'HH:mm:ss')} />
-                    <DetailRow label="Swap:" value={'0.00'} />
-                    <DetailRow label="S / L:" value={position.stopLoss?.toFixed(5) || '—'} />
-                    <DetailRow label="T / P:" value={position.takeProfit?.toFixed(5) || '—'} />
-                     <DetailRow label="ID:" value={`#${position.id.substring(0, 8)}`} />
-                </div>
-            </div>
-        )}
     </div>
   );
 }
