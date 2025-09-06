@@ -43,7 +43,7 @@ export default function BottomNav() {
         <NavItem href="#" icon={<ArrowUpDown size={20} />} label="Quotes" />
         <NavItem href={chartHref} icon={<ChartIcon />} label="Charts" isActive={pathname === '/chart'} />
         <NavItem href="/" icon={<TradeIcon />} label="Trade" isActive={pathname === '/'} />
-        <NavItem href="#" icon={<HistoryIcon />} label="History" />
+        <NavItem href="/history" icon={<HistoryIcon />} label="History" isActive={pathname === '/history'} />
         <NavItem href="#" icon={<MessagesIcon />} label="Messages" />
       </div>
     </footer>
