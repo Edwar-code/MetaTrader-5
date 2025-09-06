@@ -30,9 +30,9 @@ export default function HistoryPage() {
       <div className="flex-1 overflow-y-auto pb-24">
         <div className="border-b">
            <div className="flex items-center">
-             <span className="flex-1 text-center text-foreground border-b-2 border-primary py-3 font-semibold">POSITIONS</span>
-             <span className="flex-1 text-center text-muted-foreground py-3 font-semibold">ORDERS</span>
-             <span className="flex-1 text-center text-muted-foreground py-3 font-semibold">DEALS</span>
+             <span className="flex-1 text-center text-foreground border-b-2 border-primary py-3" style={{ fontSize: '13px' }}>POSITIONS</span>
+             <span className="flex-1 text-center text-muted-foreground py-3" style={{ fontSize: '13px' }}>ORDERS</span>
+             <span className="flex-1 text-center text-muted-foreground py-3" style={{ fontSize: '13px' }}>DEALS</span>
            </div>
         </div>
         <HistorySummary data={historySummary} />
