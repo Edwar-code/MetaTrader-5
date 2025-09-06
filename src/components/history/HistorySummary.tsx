@@ -10,6 +10,15 @@ interface HistorySummaryProps {
 
 const SummaryItem = ({ label, value }: { label: string; value: string }) => {
   const isLoss = parseFloat(value.replace(/ /g, '')) < 0;
+  const isBalance = label === 'Balance';
+  const isDefault = label === 'Deposit' || label === 'Swap' || label === 'Commission';
+
+  const valueColor = isLoss
+    ? 'text-destructive'
+    : isBalance || isDefault
+    ? 'text-card-foreground'
+    : 'text-primary';
+
   return (
     <div className="flex justify-between items-center text-[14.5px]">
       <span className="font-semibold text-card-foreground">{label}:</span>
@@ -22,7 +31,7 @@ const SummaryItem = ({ label, value }: { label: string; value: string }) => {
           backgroundPosition: 'center',
         }}
       ></div>
-      <span className={`font-semibold ${isLoss ? 'text-destructive' : 'text-card-foreground'}`}>{value}</span>
+      <span className={`font-semibold ${valueColor}`}>{value}</span>
     </div>
   );
 };

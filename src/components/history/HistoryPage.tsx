@@ -26,7 +26,8 @@ export default function HistoryPage() {
   
   const displayDate = '2025.09.06 14:56:57';
   const totalProfitFromHistory = closedPositions.reduce((acc, pos) => acc + pos.pnl, 0);
-
+  const isLoss = totalProfitFromHistory < 0;
+  const profitColor = isLoss ? 'text-destructive' : 'text-primary';
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
@@ -49,7 +50,7 @@ export default function HistoryPage() {
                </div>
             </div>
             <div className="text-right">
-                 <span className="text-[13.5px] font-bold text-foreground">
+                 <span className={`text-[13.5px] font-bold ${profitColor}`}>
                     {totalProfitFromHistory.toFixed(2)}
                 </span>
             </div>
