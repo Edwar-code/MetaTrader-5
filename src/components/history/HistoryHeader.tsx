@@ -4,8 +4,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sidebar } from '../trade/Sidebar';
-import { RefreshCw, ArrowUpDown, Calendar } from 'lucide-react';
+import { RefreshCw, Calendar } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { SortIcon } from '../trade/icons';
 
 export default function HistoryHeader() {
   const { resolvedTheme } = useTheme();
@@ -44,8 +45,8 @@ export default function HistoryHeader() {
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground">
             <RefreshCw size={22} />
           </Button>
-          <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground">
-            <ArrowUpDown size={22} />
+          <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
+            <SortIcon />
           </Button>
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground">
             <Calendar size={22} />
