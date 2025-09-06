@@ -23,6 +23,10 @@ export default function HistoryPage() {
       balance: balance.toFixed(2),
     };
   }, [closedPositions, balance]);
+  
+  const displayDate = '2025.09.06 14:56:57';
+  const totalProfitFromHistory = closedPositions.reduce((acc, pos) => acc + pos.pnl, 0);
+
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
@@ -36,10 +40,25 @@ export default function HistoryPage() {
            </div>
         </div>
         <HistorySummary data={historySummary} />
+        
+        <div className="px-4 py-[1.7px] border-t border-b bg-muted/50">
+            <div className="flex items-center justify-between">
+              <span className="text-[13.5px] text-muted-foreground font-semibold">Balance</span>
+               <div className="flex items-center text-[13.5px] text-muted-foreground font-semibold">
+                 <span>{displayDate}</span>
+               </div>
+            </div>
+            <div className="text-right">
+                 <span className="text-lg font-bold text-foreground">
+                    {totalProfitFromHistory.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                </span>
+            </div>
+        </div>
+
         {closedPositions.length > 0 ? (
           <HistoryList positions={closedPositions} />
         ) : (
-          <div className="border-t text-center p-8 text-muted-foreground">
+          <div className="text-center p-8 text-muted-foreground">
               No history yet. Closed trades will appear here.
           </div>
         )}
