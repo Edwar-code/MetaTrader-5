@@ -37,10 +37,6 @@ export default function TradingPage() {
 
   const runBotCycle = useCallback(async () => {
     console.log('Running Bot Cycle...');
-    toast({
-      title: '🤖 Bot Analyzing...',
-      description: 'The bot is checking for trade actions.',
-    });
 
     const positionsCopy: Position[] = JSON.parse(JSON.stringify(positions));
     const currentTotalPnl = positionsCopy.reduce((acc, pos) => acc + pos.pnl, 0);
@@ -48,10 +44,7 @@ export default function TradingPage() {
 
     // Rule 1: Check for overall profit target first.
     if (currentTotalPnl >= profitTarget) {
-        toast({
-            title: `🤖 Taking Profit!`,
-            description: `Closing all positions with $${currentTotalPnl.toFixed(2)} total profit.`
-        });
+        console.log(`Taking Profit! Closing all positions with $${currentTotalPnl.toFixed(2)} total profit.`);
         handleBulkClosePositions('all');
         return; // Stop this cycle after taking action.
     }
@@ -59,10 +52,7 @@ export default function TradingPage() {
     // Rule 2: Check for individual loss cutting
     for (const pos of positionsCopy) {
       if (pos.pnl <= -200) {
-        toast({
-            title: `🤖 Cutting Loss!`,
-            description: `Closing position #${pos.id.substring(0, 6)} at $${pos.pnl.toFixed(2)} loss.`
-        });
+        console.log(`Cutting Loss! Closing position #${pos.id.substring(0, 6)} at $${pos.pnl.toFixed(2)} loss.`);
         handleClosePosition(pos.id);
         return; // Stop this cycle after taking an action
       }
@@ -86,10 +76,7 @@ export default function TradingPage() {
         
         const pair = 'frxXAUUSD'; // Default to Gold
 
-        toast({
-            title: `🤖 Placing New Trade!`,
-            description: `Action: ${action}, Size: ${lotSize}, Pair: ${pair}`
-        });
+        console.log(`Placing New Trade! Action: ${action}, Size: ${lotSize}, Pair: ${pair}`);
 
         await handleTrade({
             pair: pair,
@@ -97,12 +84,12 @@ export default function TradingPage() {
             size: lotSize,
         });
     } else if (shouldOpenNewTrade) {
-         toast({ title: "Looking for another opportunity", description: "Risk limit reached. Monitoring open positions." });
+         console.log("Risk limit reached. Monitoring open positions.");
     } else {
-         toast({ title: "Looking for another opportunity", description: "No new trade opportunity identified this cycle." });
+         console.log("No new trade opportunity identified this cycle.");
     }
 
-  }, [positions, equity, handleClosePosition, handleTrade, toast, handleBulkClosePositions]);
+  }, [positions, equity, handleClosePosition, handleTrade, handleBulkClosePositions]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
