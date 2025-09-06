@@ -27,7 +27,7 @@ export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
 
   // Format profit string to always show two decimal places
   const profitString = profitValue.toFixed(2);
-  const profitColor = isLoss ? 'text-[#d36969]' : 'text-[#3082ff]';
+  const profitColor = isLoss ? 'text-[#70231f]' : 'text-[#3082ff]';
 
   if (!mounted) {
     return (
@@ -64,7 +64,7 @@ export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
             <NewCustomIcon theme={resolvedTheme} />
           </Button>
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
-            <SortIcon theme={resolvedTheme} />
+            <SortIcon />
           </Button>
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
             <AddOrderIcon theme={resolvedTheme} />
