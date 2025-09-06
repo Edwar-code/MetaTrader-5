@@ -13,11 +13,13 @@ const SummaryItem = ({ label, value }: { label: string; value: string }) => {
   const isBalance = label === 'Balance';
   const isDefault = label === 'Deposit' || label === 'Swap' || label === 'Commission';
 
-  const valueColor = isLoss
-    ? 'text-destructive'
+  const valueColorClass = isLoss
+    ? '' // Use inline style for the specific color
     : isBalance || isDefault
     ? 'text-card-foreground'
     : 'text-primary';
+
+  const valueStyle = isLoss ? { color: '#ad3434' } : {};
 
   return (
     <div className="flex justify-between items-center text-[14.5px]">
@@ -31,7 +33,7 @@ const SummaryItem = ({ label, value }: { label: string; value: string }) => {
           backgroundPosition: 'center',
         }}
       ></div>
-      <span className={`font-semibold ${valueColor}`}>{value}</span>
+      <span className={`font-semibold ${valueColorClass}`} style={valueStyle}>{value}</span>
     </div>
   );
 };
