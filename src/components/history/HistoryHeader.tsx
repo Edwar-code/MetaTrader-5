@@ -35,7 +35,7 @@ export default function HistoryHeader() {
           <Sidebar />
           <div>
             <div className="text-foreground text-[11px]">History</div>
-            <div className={`text-base text-foreground`}>
+            <div className="text-base" style={{ color: '#a0adbd' }}>
               All symbols
             </div>
           </div>

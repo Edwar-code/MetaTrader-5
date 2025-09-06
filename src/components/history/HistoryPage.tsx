@@ -31,8 +31,8 @@ export default function HistoryPage() {
         <div>
            <div className="flex items-center">
              <span className="flex-1 text-center text-foreground border-b-2 border-primary py-3" style={{ fontSize: '13px' }}>POSITIONS</span>
-             <span className="flex-1 text-center text-muted-foreground py-3" style={{ fontSize: '13px' }}>ORDERS</span>
-             <span className="flex-1 text-center text-muted-foreground py-3" style={{ fontSize: '13px' }}>DEALS</span>
+             <span className="flex-1 text-center py-3" style={{ fontSize: '13px', color: '#6a7684' }}>ORDERS</span>
+             <span className="flex-1 text-center py-3" style={{ fontSize: '13px', color: '#6a7684' }}>DEALS</span>
            </div>
         </div>
         <HistorySummary data={historySummary} />
