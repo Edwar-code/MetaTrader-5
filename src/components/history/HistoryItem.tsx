@@ -12,7 +12,7 @@ interface HistoryItemProps {
 }
 
 const DetailRow = ({ label, value }: { label: string; value: string | number }) => (
-    <div className="flex justify-between text-[11px] text-muted-foreground">
+    <div className="flex justify-between text-[11.5px] text-muted-foreground">
         <span>{label}</span>
         <span>{value}</span>
     </div>

@@ -12,7 +12,7 @@ interface PositionItemProps {
 }
 
 const DetailRow = ({ label, value }: { label: string; value: string | number }) => (
-    <div className="flex justify-between text-[11px] text-muted-foreground">
+    <div className="flex justify-between text-[11.5px] text-muted-foreground">
         <span>{label}</span>
         <span>{value}</span>
     </div>
@@ -86,7 +86,7 @@ export default function PositionItem({ position }: PositionItemProps) {
 
         {isExpanded && (
             <div className="mt-2 pt-2">
-                <div className="text-sm text-muted-foreground mb-2">
+                <div className="text-[11.5px] text-muted-foreground mb-2">
                     {format(new Date(position.openTime * 1000), 'yyyy.MM.dd HH:mm:ss')}
                 </div>
                 <div className="grid grid-cols-2 gap-x-8 gap-y-1">
