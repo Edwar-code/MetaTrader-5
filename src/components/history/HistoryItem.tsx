@@ -49,7 +49,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
   }
 
   return (
-    <div className="flex flex-col py-2 px-4">
+    <div className="flex flex-col py-[6px] px-4">
         <div className="flex justify-between">
             <div className="flex-1">
                 <div className="flex items-center gap-1 leading-none mb-[-7px]">
@@ -80,7 +80,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                  <span className="text-[13.5px] text-muted-foreground">
                     {format(new Date(position.closeTime * 1000), 'yyyy.MM.dd HH:mm:ss')}
                 </span>
-                <span className={`block text-[13.5px] font-bold`} style={{ color: profitColor, position: 'relative', top: '-6px' }}>
+                <span className={`block text-[13.5px] font-bold`} style={{ color: profitColor, position: 'relative', top: '-7px' }}>
                     {profitString}
                 </span>
             </div>
