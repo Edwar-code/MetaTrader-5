@@ -41,7 +41,7 @@ export default function HistoryPage() {
         </div>
         <HistorySummary data={historySummary} />
         
-        <div className="px-4 py-[1.7px] border-t border-b bg-muted/50">
+        <div className="px-4 py-[1.7px] border-t border-b bg-background">
             <div className="flex items-center justify-between">
               <span className="text-[13.5px] text-muted-foreground font-semibold">Balance</span>
                <div className="flex items-center text-[13.5px] text-muted-foreground font-semibold">
@@ -49,8 +49,8 @@ export default function HistoryPage() {
                </div>
             </div>
             <div className="text-right">
-                 <span className="text-lg font-bold text-foreground">
-                    {totalProfitFromHistory.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                 <span className="text-[9px] font-bold text-foreground">
+                    {totalProfitFromHistory.toFixed(2)}
                 </span>
             </div>
         </div>
