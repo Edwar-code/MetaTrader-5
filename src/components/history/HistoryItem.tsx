@@ -80,11 +80,9 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                  <span className="text-[13.5px] text-muted-foreground">
                     {format(new Date(position.closeTime * 1000), 'yyyy.MM.dd HH:mm:ss')}
                 </span>
-                <div className="text-right">
-                    <span className={`text-[13.5px] font-bold`} style={{ color: profitColor }}>
-                        {profitString}
-                    </span>
-                </div>
+                <span className={`block text-[13.5px] font-bold`} style={{ color: profitColor }}>
+                    {profitString}
+                </span>
             </div>
         </div>
     </div>
