@@ -73,7 +73,7 @@ export function Sidebar() {
             <div className="flex items-start gap-6 ml-2">
               <Image src={fbsLogoSrc} alt="FBS Logo" width={34} height={34} className="shrink-0" />
               <div>
-                <h2 className="text-card-foreground">GENT KINGSTON</h2>
+                <h2 className="text-card-foreground">GENT KINGSTON BUSI</h2>
                 <p className="text-sm text-muted-foreground">40311301 - FBS-Real</p>
                 <Link href="/accounts" className="text-primary text-sm font-medium mt-1 inline-block">Manage accounts</Link>
               </div>

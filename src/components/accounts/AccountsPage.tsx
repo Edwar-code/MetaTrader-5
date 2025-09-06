@@ -154,7 +154,7 @@ export default function AccountsPage() {
         <AccountCard
           logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={52} height={52} />}
           broker="FBS Markets Inc."
-          accountName="GENT KINGSTON"
+          accountName="GENT KINGSTON BUSI"
           accountNumber="40311301 — FBS-Real"
           accountDetails="DC-305-Johannesburg-5R1, Hedge"
           balance={balance.toFixed(2)}
