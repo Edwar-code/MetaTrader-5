@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -37,7 +38,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
   
   const isGold = position.pair === 'frxXAUUSD';
   let displayPair = position.pair;
-  if (position.pair === 'cryBTCUSD') displayPair = 'BTC/USD';
+  if (position.pair === 'cryBTCUSD') displayPair = 'BTCUSD';
 
   const goldImageSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.37.32_cdd3a05d.jpg'
