@@ -15,6 +15,9 @@ export function formatAssetDisplayName(displayName: string): string {
 export function calculatePnl(position: Position, currentPrice: number): number {
     if (!currentPrice || currentPrice <= 0) return position.pnl || 0;
     
+    // The fixed spread value to be applied
+    const spread = 0.20;
+
     // Using a standard contract size for forex as a baseline
     const contractSize = 100000;
     
@@ -30,5 +33,8 @@ export function calculatePnl(position: Position, currentPrice: number): number {
         pnl = priceDifference * position.size;
     }
     
-    return position.type === 'BUY' ? pnl : -pnl;
+    const finalPnl = position.type === 'BUY' ? pnl : -pnl;
+
+    // Apply the fixed spread to the calculated P/L
+    return finalPnl - spread;
 }
