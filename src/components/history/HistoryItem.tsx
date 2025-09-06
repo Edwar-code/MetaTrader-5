@@ -29,7 +29,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
   const profitValue = position.pnl;
   const isLoss = profitValue < 0;
 
-  const profitString = isLoss ? profitValue.toFixed(2) : `+${profitValue.toFixed(2)}`;
+  const profitString = profitValue.toFixed(2);
   const profitColor = isLoss ? '#70231f' : '#3082ff';
   const typeColor = position.type === 'BUY' ? '#337ad3' : '#70231f';
 
