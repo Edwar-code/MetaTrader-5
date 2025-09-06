@@ -25,11 +25,11 @@ export default function HistoryList({ positions }: HistoryListProps) {
              <span>{displayDate}</span>
            </div>
         </div>
-      </div>
-      <div className="px-4 py-2 text-right">
-        <span className="text-lg font-bold text-foreground">
-            {totalProfit.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
-        </span>
+        <div className="text-right">
+             <span className="text-lg font-bold text-foreground">
+                {totalProfit.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+            </span>
+        </div>
       </div>
       <div className="overflow-y-auto">
         {positions.map((position, index) => (
