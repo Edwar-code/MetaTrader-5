@@ -37,13 +37,15 @@ export default function BottomNav() {
   const isMobile = useIsMobile();
   const chartHref = isMobile ? '/chart?mobile=true' : '/chart';
 
+  const isHistoryActive = pathname === '/history';
+
   return (
     <footer className="absolute bottom-0 left-0 right-0 border-t bg-card">
       <div className="flex items-center justify-around px-2 py-1">
         <NavItem href="#" icon={<ArrowUpDown size={20} />} label="Quotes" />
         <NavItem href={chartHref} icon={<ChartIcon />} label="Charts" isActive={pathname === '/chart'} />
         <NavItem href="/" icon={<TradeIcon />} label="Trade" isActive={pathname === '/'} />
-        <NavItem href="/history" icon={<HistoryIcon />} label="History" isActive={pathname === '/history'} />
+        <NavItem href="/history" icon={<HistoryIcon isActive={isHistoryActive} />} label="History" isActive={isHistoryActive} />
         <NavItem href="#" icon={<MessagesIcon />} label="Messages" />
       </div>
     </footer>
