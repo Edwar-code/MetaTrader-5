@@ -44,12 +44,12 @@ export default function HistoryPage() {
         <div className="px-4 py-[1.7px] border-t border-b bg-background">
             <div className="flex items-center justify-between">
               <span className="text-[13.5px] text-muted-foreground font-semibold">Balance</span>
-               <div className="flex items-center text-[13.5px] text-muted-foreground font-semibold">
+               <div className="flex items-center text-[13.5px] text-muted-foreground">
                  <span>{displayDate}</span>
                </div>
             </div>
             <div className="text-right">
-                 <span className="text-[9px] font-bold text-foreground">
+                 <span className="text-[13.5px] font-bold text-foreground">
                     {totalProfitFromHistory.toFixed(2)}
                 </span>
             </div>
