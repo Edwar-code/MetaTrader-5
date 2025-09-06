@@ -49,7 +49,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
   }
 
   return (
-    <div className="flex flex-col py-[6px] px-4">
+    <div className="flex flex-col py-[4.5px] px-4">
         <div className="flex justify-between">
             <div className="flex-1">
                 <div className="flex items-center gap-1 leading-none mb-[-7px]">
