@@ -41,7 +41,10 @@ const TradeNotification = ({ tradeDetails, onClose }: TradeNotificationProps) =>
   }
 
   const { pair, type, size } = tradeDetails;
-  const displayAsset = pair === 'frxXAUUSD' ? 'XAUUSD' : pair;
+  let displayAsset = pair;
+    if (pair === 'frxXAUUSD') displayAsset = 'XAUUSD';
+    if (pair === 'cryBTCUSD') displayAsset = 'BTCUSD';
+
 
   return (
     <div 

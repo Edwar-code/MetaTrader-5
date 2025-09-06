@@ -135,3 +135,10 @@ export const TradeTitleIcon = () => (
         height={8.5}
     />
 );
+
+export const BtcIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-500">
+      <path d="M16.5 7.5h2.5V15H15v2H9v-2H7.5A2.5 2.5 0 0 1 5 12.5V10a2.5 2.5 0 0 1 2.5-2.5H9V5h6v2.5zM9 15v-5" />
+      <path d="M15 12.5a2.5 2.5 0 0 0 0-5H9" />
+    </svg>
+);

@@ -8,11 +8,18 @@ import { Sidebar } from '../trade/Sidebar';
 import { useDerivState } from '@/context/DerivContext';
 import { useTradeState } from '@/context/TradeContext';
 import { TimeframeWheel } from './TimeframeWheel';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import { ChevronUp, ChevronDown, ChevronRight, Check } from 'lucide-react';
 import type { Position } from '@/lib/types';
 import Image from 'next/image';
 import TradeNotification from './TradeNotification';
 import { useTheme } from 'next-themes';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { BtcIcon } from '../trade/icons';
 
 
 const formatPrice = (price: number | undefined) => {
@@ -30,6 +37,11 @@ interface TradeNotificationData {
   type: 'BUY' | 'SELL';
   size: number;
 }
+
+const assets = [
+    { symbol: 'frxXAUUSD', display: 'XAUUSD', description: 'Gold Spot' },
+    { symbol: 'cryBTCUSD', display: 'BTCUSD', description: 'Bitcoin' },
+];
 
 export default function ChartPage() {
   const { ticks, connectionState, latestPrice } = useDerivState();
@@ -69,7 +81,7 @@ export default function ChartPage() {
   // Use latestPrice for the most up-to-date quote, fallback to tick stream
   const sellPrice = latestPrice[selectedAsset] || lastTick?.quote;
   // A small, static spread for display purposes.
-  const spread = 0.20;
+  const spread = selectedAsset === 'cryBTCUSD' ? 30 : 0.20;
   const buyPrice = sellPrice !== undefined ? sellPrice + spread : undefined;
 
   useEffect(() => {
@@ -118,8 +130,10 @@ export default function ChartPage() {
     '1m': 'M1', '5m': 'M5', '15m': 'M15', '30m': 'M30', '1h': 'H1', '4h': 'H4', '1d': 'D1', '1W': 'W1', '1M': 'MN', 'tick': 'Tick'
   };
   
-  const displayAsset = 'XAUUSD';
-  const displayDescription = 'Gold Spot';
+  const currentAsset = assets.find(a => a.symbol === selectedAsset) || assets[0];
+  const displayAsset = currentAsset.display;
+  const displayDescription = currentAsset.description;
+
 
   const handleLotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -152,11 +166,31 @@ export default function ChartPage() {
       {/* Chart Container - Now takes full space and is behind other elements */}
       <div className="flex-1 bg-background relative min-h-0 pt-[48px] border pb-[1.6rem]">
          <div className="absolute top-[110px] left-3 z-10">
-          <div className="flex items-center gap-1">
-            <span className="font-normal text-primary text-[12.5px]">{displayAsset}</span>
-            <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-primary"></div>
-            <span className="font-normal text-muted-foreground text-[12.5px]">{intervalMap[chartInterval]}</span>
-          </div>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-1 focus:outline-none">
+                        <span className="font-normal text-primary text-[12.5px]">{displayAsset}</span>
+                        <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-primary"></div>
+                        <span className="font-normal text-muted-foreground text-[12.5px]">{intervalMap[chartInterval]}</span>
+                    </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                {assets.map(asset => (
+                    <DropdownMenuItem key={asset.symbol} onSelect={() => setAsset(asset.symbol)}>
+                    <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center gap-2">
+                           {asset.symbol === 'frxXAUUSD' ? 
+                                <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.33.35_e00bef8a.jpg" alt="XAUUSD" width={16} height={16} /> 
+                                : <BtcIcon />}
+                            <span>{asset.display}</span>
+                        </div>
+                        {selectedAsset === asset.symbol && <Check className="h-4 w-4" />}
+                    </div>
+                    </DropdownMenuItem>
+                ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
+
           <p className="text-[10.5px] text-muted-foreground">{displayDescription}</p>
         </div>
         <TradeChart

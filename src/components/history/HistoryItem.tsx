@@ -36,6 +36,8 @@ export default function HistoryItem({ position }: HistoryItemProps) {
   const formattedType = position.type.toLowerCase();
   
   const isGold = position.pair === 'frxXAUUSD';
+  let displayPair = position.pair;
+  if (position.pair === 'cryBTCUSD') displayPair = 'BTC/USD';
 
   const goldImageSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.37.32_cdd3a05d.jpg'
@@ -59,7 +61,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                       <span className="text-sm font-bold text-card-foreground">.m,</span>
                     </div>
                   ) : (
-                    <span className="text-sm font-bold text-card-foreground">{position.pair},</span>
+                    <span className="text-sm font-bold text-card-foreground">{displayPair},</span>
                   )}
                   <span className={`text-sm font-normal`} style={{ color: typeColor }}>
                       {formattedType}

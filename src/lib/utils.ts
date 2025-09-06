@@ -19,13 +19,15 @@ export function calculatePnl(position: Position, currentPrice: number): number {
     const contractSize = 100000;
     
     const priceDifference = currentPrice - position.entryPrice;
-    let pnl = priceDifference * contractSize * position.size;
+    let pnl = priceDifference * position.size;
     
     // For Gold (XAUUSD), the calculation might be different (e.g., 100 units per lot)
-    // This is a common source of discrepancy in real-world platforms.
     if (position.pair === 'frxXAUUSD') {
-       // Adjust for a different contract size if needed, e.g., 100 instead of 100000
        pnl = priceDifference * 100 * position.size;
+    }
+
+    if (position.pair === 'cryBTCUSD') {
+        pnl = priceDifference * position.size;
     }
     
     return position.type === 'BUY' ? pnl : -pnl;
