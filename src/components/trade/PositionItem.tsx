@@ -85,7 +85,7 @@ export default function PositionItem({ position }: PositionItemProps) {
         </div>
 
         {isExpanded && (
-            <div className="mt-2 pt-2">
+            <div className="mt-1 pt-1">
                 <div className="text-[13px] text-muted-foreground mb-2">
                     {format(new Date(position.openTime * 1000), 'yyyy.MM.dd HH:mm:ss')}
                 </div>

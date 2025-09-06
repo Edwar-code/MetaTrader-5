@@ -87,7 +87,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
             </div>
         </div>
         {isExpanded && (
-            <div className="mt-2 pt-2">
+            <div className="mt-1 pt-1">
                 <div className="grid grid-cols-2 gap-x-8 gap-y-1">
                     <DetailRow label="S / L:" value={position.stopLoss?.toFixed(5) || '—'} />
                     <DetailRow label="Swap:" value={'0.00'} />
