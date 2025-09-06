@@ -27,7 +27,7 @@ export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
 
   // Format profit string to always show two decimal places
   const profitString = profitValue.toFixed(2);
-  const profitColor = isLoss ? 'text-[#70231f]' : 'text-[#3082ff]';
+  const profitColor = isLoss ? 'text-[#ad3434]' : 'text-[#3082ff]';
 
   if (!mounted) {
     return (

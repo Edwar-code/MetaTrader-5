@@ -31,8 +31,8 @@ export default function PositionItem({ position }: PositionItemProps) {
   const isLoss = profitValue < 0;
 
   const profitString = isLoss ? profitValue.toFixed(2) : profitValue.toFixed(2);
-  const profitColor = isLoss ? '#70231f' : '#3082ff';
-  const typeColor = position.type === 'BUY' ? '#337ad3' : '#70231f';
+  const profitColor = isLoss ? '#ad3434' : '#3082ff';
+  const typeColor = position.type === 'BUY' ? '#337ad3' : '#ad3434';
 
   const formattedType = position.type.toLowerCase();
   
