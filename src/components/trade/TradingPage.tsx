@@ -39,12 +39,26 @@ export default function TradingPage() {
     console.log('Running Bot Cycle...');
 
     const positionsCopy: Position[] = JSON.parse(JSON.stringify(positions));
+    
+    // MASTER STOP LOSS: If equity drops to 5% of starting balance, close all trades.
+    const equityThreshold = 100 * 0.05; // 5% of $100
+    if (equity <= equityThreshold) {
+        console.log(`CRITICAL: Equity at $${equity.toFixed(2)}. Closing all positions to prevent further loss.`);
+        handleBulkClosePositions('all');
+        setIsBotRunning(false); // Stop the bot after this critical action
+        toast({
+          title: 'Bot Stopped: Critical Loss',
+          description: `All positions closed to protect remaining capital. Equity hit $${equity.toFixed(2)}.`,
+          variant: 'destructive',
+        });
+        return;
+    }
+
     const currentTotalPnl = positionsCopy.reduce((acc, pos) => acc + pos.pnl, 0);
     const profitTarget = 10; // $10 profit target
 
     // Rule 1: Check for overall profit target first.
     if (currentTotalPnl >= profitTarget) {
-        console.log(`Taking Profit! Closing all positions with $${currentTotalPnl.toFixed(2)} total profit.`);
         handleBulkClosePositions('all');
         return; // Stop this cycle after taking action.
     }
@@ -52,7 +66,6 @@ export default function TradingPage() {
     // Rule 2: Check for individual loss cutting
     for (const pos of positionsCopy) {
       if (pos.pnl <= -200) {
-        console.log(`Cutting Loss! Closing position #${pos.id.substring(0, 6)} at $${pos.pnl.toFixed(2)} loss.`);
         handleClosePosition(pos.id);
         return; // Stop this cycle after taking an action
       }
@@ -76,20 +89,14 @@ export default function TradingPage() {
         
         const pair = 'frxXAUUSD'; // Default to Gold
 
-        console.log(`Placing New Trade! Action: ${action}, Size: ${lotSize}, Pair: ${pair}`);
-
         await handleTrade({
             pair: pair,
             type: action,
             size: lotSize,
         });
-    } else if (shouldOpenNewTrade) {
-         console.log("Risk limit reached. Monitoring open positions.");
-    } else {
-         console.log("No new trade opportunity identified this cycle.");
     }
 
-  }, [positions, equity, handleClosePosition, handleTrade, handleBulkClosePositions]);
+  }, [positions, equity, handleClosePosition, handleTrade, handleBulkClosePositions, toast]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
