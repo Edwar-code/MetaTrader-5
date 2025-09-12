@@ -11,21 +11,23 @@ export function formatAssetDisplayName(displayName: string): string {
   return displayName.split(': ').pop() || displayName;
 }
 
-// A simple (and not 100% accurate) P/L calculation for demo purposes.
+// A more realistic P/L calculation for XAUUSD.
 export function calculatePnl(position: Position, currentPrice: number): number {
-    if (!currentPrice || currentPrice <= 0) return position.pnl || 0;
+    if (!currentPrice || currentPrice <= 0 || !position.entryPrice) {
+        return position.pnl || 0;
+    }
 
     const priceDifference = currentPrice - position.entryPrice;
     
-    // Simplified PnL calculation based on direction and size
-    let pnl = priceDifference * position.size;
+    // For XAUUSD, 1 standard lot = 100 ounces.
+    // A $1 price move on a 1.0 lot trade is a $100 change.
+    const contractSize = 100;
+    
+    let pnl = priceDifference * position.size * contractSize;
 
     if (position.type === 'SELL') {
       pnl = -pnl;
     }
     
-    // The fixed spread value to be applied, representing broker's cut on open
-    const spread = 0.20 * position.size;
-
-    return pnl - spread;
+    return pnl;
 }
