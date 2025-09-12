@@ -38,7 +38,7 @@ export default function TradingPage() {
   
   // MASTER STOP LOSS: This is now independent of the bot.
   useEffect(() => {
-    const equityThreshold = 5.00;
+    const equityThreshold = 7.00;
     if (equity <= equityThreshold && !isLiquidationActive && positions.length > 0) {
       setIsLiquidationActive(true); // Prevent this from running multiple times
       console.log(`CRITICAL: Equity at $${equity.toFixed(2)}. Closing all positions.`);
@@ -61,7 +61,7 @@ export default function TradingPage() {
 
   const runBotCycle = useCallback(async () => {
     // If the bot is told to run while in a critical state, prevent it.
-    if (equity <= 5.00) {
+    if (equity <= 7.00) {
         console.log("Bot run prevented due to low equity.");
         setIsBotRunning(false);
         return;
@@ -136,7 +136,7 @@ export default function TradingPage() {
   }, [isBotRunning, runBotCycle]);
 
   const handleRunBot = () => {
-    if (equity <= 5.00) {
+    if (equity <= 7.00) {
         toast({
             title: 'Cannot Start Bot',
             description: 'Your account equity is too low to run the bot.',
