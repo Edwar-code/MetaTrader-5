@@ -40,8 +40,8 @@ export default function TradingPage() {
 
     const positionsCopy: Position[] = JSON.parse(JSON.stringify(positions));
     
-    // MASTER STOP LOSS: If equity drops to 5% of starting balance, close all trades.
-    const equityThreshold = 100 * 0.05; // 5% of $100
+    // MASTER STOP LOSS: If equity drops to $5 (95% loss of $100), close all trades.
+    const equityThreshold = 5.00;
     if (equity <= equityThreshold) {
         console.log(`CRITICAL: Equity at $${equity.toFixed(2)}. Closing all positions to prevent further loss.`);
         handleBulkClosePositions('all');

@@ -14,27 +14,18 @@ export function formatAssetDisplayName(displayName: string): string {
 // A simple (and not 100% accurate) P/L calculation for demo purposes.
 export function calculatePnl(position: Position, currentPrice: number): number {
     if (!currentPrice || currentPrice <= 0) return position.pnl || 0;
-    
-    // The fixed spread value to be applied
-    const spread = 0.20;
 
-    // Using a standard contract size for forex as a baseline
-    const contractSize = 100000;
-    
     const priceDifference = currentPrice - position.entryPrice;
+    
+    // Simplified PnL calculation based on direction and size
     let pnl = priceDifference * position.size;
-    
-    // For Gold (XAUUSD), the calculation might be different (e.g., 100 units per lot)
-    if (position.pair === 'frxXAUUSD') {
-       pnl = priceDifference * 100 * position.size;
-    }
 
-    if (position.pair === 'cryBTCUSD') {
-        pnl = priceDifference * position.size;
+    if (position.type === 'SELL') {
+      pnl = -pnl;
     }
     
-    const finalPnl = position.type === 'BUY' ? pnl : -pnl;
+    // The fixed spread value to be applied, representing broker's cut on open
+    const spread = 0.20 * position.size;
 
-    // Apply the fixed spread to the calculated P/L
-    return finalPnl - spread;
+    return pnl - spread;
 }
