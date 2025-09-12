@@ -17,6 +17,7 @@ export default function TradingPage() {
   const { positions, equity, balance, handleTrade, handleClosePosition, handleBulkClosePositions } = useTradeState();
   const [isBotRunning, setIsBotRunning] = useState(false);
   const [countdown, setCountdown] = useState(600);
+  const [isLiquidationActive, setIsLiquidationActive] = useState(false);
   const { toast } = useToast();
 
   const hasOpenPositions = positions.length > 0;
@@ -34,25 +35,41 @@ export default function TradingPage() {
       marginLevel: '0.00',
     };
   }, [balance, equity]);
+  
+  // MASTER STOP LOSS: This is now independent of the bot.
+  useEffect(() => {
+    const equityThreshold = 5.00;
+    if (equity <= equityThreshold && !isLiquidationActive && positions.length > 0) {
+      setIsLiquidationActive(true); // Prevent this from running multiple times
+      console.log(`CRITICAL: Equity at $${equity.toFixed(2)}. Closing all positions.`);
+      handleBulkClosePositions('all');
+      
+      if (isBotRunning) {
+        setIsBotRunning(false);
+      }
+      
+      toast({
+        title: 'Account Protection Triggered',
+        description: `All positions closed to prevent further loss. Equity hit $${equity.toFixed(2)}.`,
+        variant: 'destructive',
+      });
+    } else if (equity > equityThreshold) {
+        setIsLiquidationActive(false); // Reset if equity recovers
+    }
+  }, [equity, handleBulkClosePositions, toast, isBotRunning, isLiquidationActive, positions.length]);
+
 
   const runBotCycle = useCallback(async () => {
+    // If the bot is told to run while in a critical state, prevent it.
+    if (equity <= 5.00) {
+        console.log("Bot run prevented due to low equity.");
+        setIsBotRunning(false);
+        return;
+    }
+      
     console.log('Running Bot Cycle...');
 
     const positionsCopy: Position[] = JSON.parse(JSON.stringify(positions));
-    
-    // MASTER STOP LOSS: If equity drops to $5 (95% loss of $100), close all trades.
-    const equityThreshold = 5.00;
-    if (equity <= equityThreshold) {
-        console.log(`CRITICAL: Equity at $${equity.toFixed(2)}. Closing all positions to prevent further loss.`);
-        handleBulkClosePositions('all');
-        setIsBotRunning(false); // Stop the bot after this critical action
-        toast({
-          title: 'Bot Stopped: Critical Loss',
-          description: `All positions closed to protect remaining capital. Equity hit $${equity.toFixed(2)}.`,
-          variant: 'destructive',
-        });
-        return;
-    }
 
     const currentTotalPnl = positionsCopy.reduce((acc, pos) => acc + pos.pnl, 0);
     const profitTarget = 10; // $10 profit target
@@ -96,7 +113,7 @@ export default function TradingPage() {
         });
     }
 
-  }, [positions, equity, handleClosePosition, handleTrade, handleBulkClosePositions, toast]);
+  }, [positions, equity, handleClosePosition, handleTrade, handleBulkClosePositions]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -119,6 +136,14 @@ export default function TradingPage() {
   }, [isBotRunning, runBotCycle]);
 
   const handleRunBot = () => {
+    if (equity <= 5.00) {
+        toast({
+            title: 'Cannot Start Bot',
+            description: 'Your account equity is too low to run the bot.',
+            variant: 'destructive',
+        });
+        return;
+    }
     setIsBotRunning(true);
     toast({
       title: 'Bot Enabled',
@@ -168,7 +193,7 @@ export default function TradingPage() {
               size="sm"
               className="bg-green-600 hover:bg-green-700 text-white rounded-full w-28"
               onClick={handleRunBot}
-              disabled={isBotRunning}
+              disabled={isBotRunning || isLiquidationActive}
             >
               <Play className="mr-2 h-4 w-4" /> Run Bot
             </Button>
