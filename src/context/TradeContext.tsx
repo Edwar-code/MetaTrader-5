@@ -68,7 +68,7 @@ const initialPositions: Position[] = [
 export function TradeProvider({ children }: { children: ReactNode }) {
     const [positions, setPositions] = useState<Position[]>(initialPositions);
     const [closedPositions, setClosedPositions] = useState<ClosedPosition[]>([]);
-    const [balance, setBalance] = useState<number>(100); // Start with a 100 funded account
+    const [balance, setBalance] = useState<number>(756.67); // Start with a 756.67 funded account
 
     const { latestPrice, getTicks } = useDerivState();
     const { toast } = useToast();
