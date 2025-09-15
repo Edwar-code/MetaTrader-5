@@ -34,8 +34,8 @@ export function BalanceSheet({ children, balance }: BalanceSheetProps) {
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent side="bottom" className="rounded-t-lg h-auto p-0 bg-card data-[state=open]:animate-none data-[state=closed]:animate-none">
-        <SheetHeader className="text-center pt-3 pb-2 px-4">
-          <SheetTitle className="text-sm font-normal text-muted-foreground">Balance: {balance} USD</SheetTitle>
+        <SheetHeader className="text-left pt-3 pb-2 px-4">
+          <SheetTitle className="text-sm font-normal text-muted-foreground">Balance</SheetTitle>
         </SheetHeader>
         <Separator />
         <div className="flex flex-col">
