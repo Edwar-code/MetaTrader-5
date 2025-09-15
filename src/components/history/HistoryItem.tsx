@@ -27,10 +27,15 @@ export default function HistoryItem({ position }: HistoryItemProps) {
     setMounted(true);
   }, []);
 
+  const formatNumberWithSpaces = (num: number) => {
+    const [integer, decimal] = num.toFixed(2).split('.');
+    return `${integer.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}.${decimal}`;
+  };
+  
   const profitValue = position.pnl;
   const isLoss = profitValue < 0;
 
-  const profitString = profitValue.toFixed(2);
+  const profitString = formatNumberWithSpaces(profitValue);
   const profitColor = isLoss ? '#ad3434' : '#3082ff';
   const typeColor = position.type === 'BUY' ? '#337ad3' : '#ad3434';
 

@@ -37,7 +37,7 @@ export default function TradingPage() {
       equity: formatNumberWithSpaces(equity),
       margin: formatNumberWithSpaces(margin),
       freeMargin: formatNumberWithSpaces(freeMargin),
-      marginLevel: marginLevel.toFixed(2), // Margin level is a percentage, so no change
+      marginLevel: formatNumberWithSpaces(marginLevel),
     };
   }, [balance, equity, margin, freeMargin, marginLevel]);
   
