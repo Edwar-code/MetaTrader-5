@@ -62,17 +62,17 @@ export default function Header({ totalProfit, hasOpenPositions, balance }: Heade
           </div>
         </div>
         <div className="flex items-center gap-[11px]">
-          <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
-            <NewCustomIcon theme={resolvedTheme} />
-          </Button>
+          <BalanceSheet balance={balance}>
+            <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
+              <NewCustomIcon theme={resolvedTheme} />
+            </Button>
+          </BalanceSheet>
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
             <SortIcon />
           </Button>
-          <BalanceSheet balance={balance}>
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
-              <AddOrderIcon theme={resolvedTheme} />
-            </Button>
-          </BalanceSheet>
+          <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
+            <AddOrderIcon theme={resolvedTheme} />
+          </Button>
         </div>
       </div>
     </header>
