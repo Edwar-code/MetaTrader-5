@@ -32,8 +32,41 @@ const getContractSize = (pair: string): number => {
     return 100; // Default for forex
 };
 
+const initialPositions: Position[] = [
+    {
+        id: 'preset_1',
+        pair: 'frxXAUUSD',
+        type: 'BUY',
+        size: 0.5,
+        entryPrice: 3370,
+        openTime: Date.now() / 1000 - 300, // 5 mins ago
+        currentPrice: 3370,
+        pnl: 0,
+    },
+    {
+        id: 'preset_2',
+        pair: 'frxXAUUSD',
+        type: 'BUY',
+        size: 1.0,
+        entryPrice: 3370,
+        openTime: Date.now() / 1000 - 600, // 10 mins ago
+        currentPrice: 3370,
+        pnl: 0,
+    },
+    {
+        id: 'preset_3',
+        pair: 'frxXAUUSD',
+        type: 'BUY',
+        size: 1.5,
+        entryPrice: 3370,
+        openTime: Date.now() / 1000 - 900, // 15 mins ago
+        currentPrice: 3370,
+        pnl: 0,
+    },
+];
+
 export function TradeProvider({ children }: { children: ReactNode }) {
-    const [positions, setPositions] = useState<Position[]>([]);
+    const [positions, setPositions] = useState<Position[]>(initialPositions);
     const [closedPositions, setClosedPositions] = useState<ClosedPosition[]>([]);
     const [balance, setBalance] = useState<number>(100); // Start with a 100 funded account
 
