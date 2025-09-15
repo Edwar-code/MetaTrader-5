@@ -26,13 +26,18 @@ export default function TradingPage() {
     return positions.reduce((acc, pos) => acc + pos.pnl, 0);
   }, [positions]);
 
+  const formatNumberWithSpaces = (num: number) => {
+    const [integer, decimal] = num.toFixed(2).split('.');
+    return `${integer.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}.${decimal}`;
+  };
+
   const accountSummary = useMemo(() => {
     return {
-      balance: balance.toFixed(2),
-      equity: equity.toFixed(2),
-      margin: margin.toFixed(2),
-      freeMargin: freeMargin.toFixed(2),
-      marginLevel: marginLevel.toFixed(2),
+      balance: formatNumberWithSpaces(balance),
+      equity: formatNumberWithSpaces(equity),
+      margin: formatNumberWithSpaces(margin),
+      freeMargin: formatNumberWithSpaces(freeMargin),
+      marginLevel: marginLevel.toFixed(2), // Margin level is a percentage, so no change
     };
   }, [balance, equity, margin, freeMargin, marginLevel]);
   
@@ -164,7 +169,7 @@ export default function TradingPage() {
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
-      <Header totalProfit={totalProfit.toFixed(2)} hasOpenPositions={hasOpenPositions} balance={accountSummary.balance} />
+      <Header totalProfit={formatNumberWithSpaces(totalProfit)} hasOpenPositions={hasOpenPositions} balance={accountSummary.balance} />
       <div className="flex-1 overflow-y-auto pb-24">
         <AccountSummary data={accountSummary} hasOpenPositions={hasOpenPositions} />
         {hasOpenPositions ? (
