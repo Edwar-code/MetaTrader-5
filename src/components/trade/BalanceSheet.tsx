@@ -9,7 +9,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Separator } from '../ui/separator';
 
 interface BalanceSheetProps {
   children: React.ReactNode;
@@ -37,7 +36,6 @@ export function BalanceSheet({ children, balance }: BalanceSheetProps) {
         <SheetHeader className="text-left pt-3 pb-2 px-4">
           <SheetTitle className="text-sm font-normal text-muted-foreground">Balance</SheetTitle>
         </SheetHeader>
-        <Separator />
         <div className="flex flex-col">
           <OptionButton label="Deposit" onClick={handleOptionClick} />
           <OptionButton label="Withdrawal" onClick={handleOptionClick} />
