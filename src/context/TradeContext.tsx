@@ -38,9 +38,9 @@ const initialPositions: Position[] = [
         pair: 'frxXAUUSD',
         type: 'BUY',
         size: 0.1,
-        entryPrice: 3372,
+        entryPrice: 3382,
         openTime: Date.now() / 1000 - 300, // 5 mins ago
-        currentPrice: 3372,
+        currentPrice: 3382,
         pnl: 0,
     },
     {
@@ -48,9 +48,9 @@ const initialPositions: Position[] = [
         pair: 'frxXAUUSD',
         type: 'BUY',
         size: 0.2,
-        entryPrice: 3378,
+        entryPrice: 3415,
         openTime: Date.now() / 1000 - 600, // 10 mins ago
-        currentPrice: 3378,
+        currentPrice: 3415,
         pnl: 0,
     },
     {
@@ -58,9 +58,9 @@ const initialPositions: Position[] = [
         pair: 'frxXAUUSD',
         type: 'BUY',
         size: 0.1,
-        entryPrice: 3381,
+        entryPrice: 3450,
         openTime: Date.now() / 1000 - 900, // 15 mins ago
-        currentPrice: 3381,
+        currentPrice: 3450,
         pnl: 0,
     },
 ];
