@@ -16,7 +16,6 @@ import type { Position } from '@/lib/types';
 export default function TradingPage() {
   const { positions, equity, balance, margin, freeMargin, marginLevel, handleTrade, handleClosePosition, handleBulkClosePositions } = useTradeState();
   const [isBotRunning, setIsBotRunning] = useState(false);
-  const [countdown, setCountdown] = useState(600);
   const [isLiquidationActive, setIsLiquidationActive] = useState(false);
   const { toast } = useToast();
 
@@ -64,60 +63,49 @@ export default function TradingPage() {
   }, [equity, handleBulkClosePositions, toast, isBotRunning, isLiquidationActive, positions.length]);
 
 
-  const runBotCycle = useCallback(async () => {
-    // If the bot is told to run while in a critical state, prevent it.
-    if (equity <= 7.00) {
-        console.log("Bot run prevented due to low equity.");
-        setIsBotRunning(false);
-        return;
-    }
-      
-    console.log('Running Bot Cycle...');
-    const botPositions = positions.filter(p => !p.id.startsWith('preset_'));
-    const botTotalPnl = botPositions.reduce((acc, pos) => acc + pos.pnl, 0);
-    const profitTarget = 10; // $10 profit target
-
-    // Rule 1: Check for bot's overall profit target. If met, close all bot positions.
-    if (botTotalPnl >= profitTarget) {
-        console.log(`Profit target of $${profitTarget} reached for bot trades. Closing bot positions.`);
-        handleBulkClosePositions('all', true); // true to exclude presets
-        return; // Stop this cycle. The next cycle will open a new trade.
-    }
-    
-    // Rule 2: If there are no open bot positions, open a single new one.
-    if (botPositions.length === 0) {
-        console.log("No open bot positions. Opening a new trade.");
-        await handleTrade({
-            pair: 'frxXAUUSD',
-            type: 'BUY',
-            size: 0.1,
-        });
-    }
-
-    // If bot positions are open but profit target is not met, do nothing and wait.
-    console.log("Bot positions are open, waiting for profit target.");
-
-  }, [positions, equity, handleTrade, handleBulkClosePositions]);
-
+  // Continuous bot cycle logic
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isBotRunning) {
-      // Run the first cycle immediately
-      runBotCycle();
-      setCountdown(600);
+    const runBotCycle = async () => {
+      // If the bot is told to run while in a critical state, prevent it.
+      if (equity <= 7.00) {
+          console.log("Bot run prevented due to low equity.");
+          if (isBotRunning) setIsBotRunning(false);
+          return;
+      }
       
-      timer = setInterval(() => {
-        setCountdown(prevCountdown => {
-          if (prevCountdown <= 1) {
-            runBotCycle();
-            return 600; // Reset countdown to 10 minutes
-          }
-          return prevCountdown - 1;
-        });
-      }, 1000);
+      console.log('Running Bot Cycle...');
+      const botPositions = positions.filter(p => !p.id.startsWith('preset_'));
+      const botTotalPnl = botPositions.reduce((acc, pos) => acc + pos.pnl, 0);
+      const profitTarget = 10; // $10 profit target
+
+      // Rule 1: Check for bot's overall profit target. If met, close all bot positions.
+      // This will cause the useEffect to run again, and the next condition will open a new trade.
+      if (botTotalPnl >= profitTarget) {
+          console.log(`Profit target of $${profitTarget} reached for bot trades. Closing bot positions.`);
+          handleBulkClosePositions('all', true); // true to exclude presets
+          return;
+      }
+      
+      // Rule 2: If there are no open bot positions, open a single new one.
+      if (botPositions.length === 0) {
+          console.log("No open bot positions. Opening a new trade.");
+          await handleTrade({
+              pair: 'frxXAUUSD',
+              type: 'BUY',
+              size: 0.1,
+          });
+      }
+      
+      // If bot positions are open but profit target is not met, do nothing and wait for next position change.
+      console.log("Bot positions are open, waiting for profit target.");
+    };
+
+    if (isBotRunning) {
+      runBotCycle();
     }
-    return () => clearInterval(timer);
-  }, [isBotRunning, runBotCycle]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isBotRunning, positions]);
+
 
   const handleRunBot = () => {
     if (equity <= 7.00) {
@@ -138,13 +126,6 @@ export default function TradingPage() {
         description: 'The bot has been turned off.',
       });
   }
-  
-  const formatCountdown = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-  }
-
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
@@ -183,9 +164,9 @@ export default function TradingPage() {
             className="rounded-full w-14 h-14 bg-primary hover:bg-primary/90 shadow-lg"
           >
             {isBotRunning ? (
-                <div className="flex flex-col items-center justify-center">
-                  <Timer className="h-5 w-5" />
-                  <span className="text-xs font-bold">{formatCountdown(countdown)}</span>
+              <div className="flex flex-col items-center justify-center">
+                  <Timer className="h-5 w-5 animate-spin" />
+                  <span className="text-xs font-bold">ON</span>
                 </div>
             ) : (
               <CircleDollarSign className="h-7 w-7" />
