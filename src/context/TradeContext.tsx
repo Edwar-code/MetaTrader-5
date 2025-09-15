@@ -18,7 +18,7 @@ interface TradeState {
     totalPnl: number;
     handleTrade: (trade: Omit<Position, 'id' | 'currentPrice' | 'pnl' | 'entryPrice' | 'openTime'>) => Promise<boolean>;
     handleClosePosition: (positionId: string, customClosePrice?: number) => void;
-    handleBulkClosePositions: (filter: 'all' | 'profitable' | 'losing') => void;
+    handleBulkClosePositions: (filter: 'all' | 'profitable' | 'losing', excludePresets?: boolean) => void;
     handleUpdatePosition: (positionId: string, updates: Partial<Pick<Position, 'stopLoss' | 'takeProfit'>>) => void;
 }
 
@@ -106,6 +106,9 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         
         const checkPositions = () => {
             positions.forEach(pos => {
+                // Ignore preset positions for SL/TP checks
+                if (pos.id.startsWith('preset_')) return;
+
                 const currentPrice = latestPrice[pos.pair];
                 if (!currentPrice) return;
 
@@ -197,7 +200,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         });
     }, [latestPrice]);
 
-    const handleBulkClosePositions = useCallback((filter: 'all' | 'profitable' | 'losing') => {
+    const handleBulkClosePositions = useCallback((filter: 'all' | 'profitable' | 'losing', excludePresets = false) => {
         let positionsToClose: Position[] = [];
         const currentPositions = positions.map(pos => {
             const currentPrice = latestPrice[pos.pair] || pos.currentPrice;
@@ -206,6 +209,10 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         });
         
         currentPositions.forEach(pos => {
+            if (excludePresets && pos.id.startsWith('preset_')) {
+                return; // Skip preset positions if flag is true
+            }
+
             if (filter === 'all') {
                 positionsToClose.push(pos);
             } else if (filter === 'profitable' && pos.pnl >= 0) {

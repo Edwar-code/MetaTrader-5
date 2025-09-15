@@ -73,19 +73,20 @@ export default function TradingPage() {
     }
       
     console.log('Running Bot Cycle...');
-    const currentTotalPnl = positions.reduce((acc, pos) => acc + pos.pnl, 0);
+    const botPositions = positions.filter(p => !p.id.startsWith('preset_'));
+    const botTotalPnl = botPositions.reduce((acc, pos) => acc + pos.pnl, 0);
     const profitTarget = 10; // $10 profit target
 
-    // Rule 1: Check for overall profit target. If met, close all positions.
-    if (currentTotalPnl >= profitTarget) {
-        console.log(`Profit target of $${profitTarget} reached. Closing all positions.`);
-        handleBulkClosePositions('all');
+    // Rule 1: Check for bot's overall profit target. If met, close all bot positions.
+    if (botTotalPnl >= profitTarget) {
+        console.log(`Profit target of $${profitTarget} reached for bot trades. Closing bot positions.`);
+        handleBulkClosePositions('all', true); // true to exclude presets
         return; // Stop this cycle. The next cycle will open a new trade.
     }
     
-    // Rule 2: If there are no open positions, open a single new one.
-    if (positions.length === 0) {
-        console.log("No open positions. Opening a new trade.");
+    // Rule 2: If there are no open bot positions, open a single new one.
+    if (botPositions.length === 0) {
+        console.log("No open bot positions. Opening a new trade.");
         await handleTrade({
             pair: 'frxXAUUSD',
             type: 'BUY',
@@ -93,8 +94,8 @@ export default function TradingPage() {
         });
     }
 
-    // If positions are open but profit target is not met, do nothing and wait.
-    console.log("Positions are open, waiting for profit target.");
+    // If bot positions are open but profit target is not met, do nothing and wait.
+    console.log("Bot positions are open, waiting for profit target.");
 
   }, [positions, equity, handleTrade, handleBulkClosePositions]);
 
