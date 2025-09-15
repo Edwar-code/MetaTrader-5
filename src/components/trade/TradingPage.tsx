@@ -73,52 +73,30 @@ export default function TradingPage() {
     }
       
     console.log('Running Bot Cycle...');
-
-    const positionsCopy: Position[] = JSON.parse(JSON.stringify(positions));
-
-    const currentTotalPnl = positionsCopy.reduce((acc, pos) => acc + pos.pnl, 0);
+    const currentTotalPnl = positions.reduce((acc, pos) => acc + pos.pnl, 0);
     const profitTarget = 10; // $10 profit target
 
-    // Rule 1: Check for overall profit target first.
+    // Rule 1: Check for overall profit target. If met, close all positions.
     if (currentTotalPnl >= profitTarget) {
+        console.log(`Profit target of $${profitTarget} reached. Closing all positions.`);
         handleBulkClosePositions('all');
-        return; // Stop this cycle after taking action.
+        return; // Stop this cycle. The next cycle will open a new trade.
     }
     
-    // Rule 2: Check for individual loss cutting
-    for (const pos of positionsCopy) {
-      if (pos.pnl <= -200) {
-        handleClosePosition(pos.id);
-        return; // Stop this cycle after taking an action
-      }
-    }
-    
-    // Risk Management: Calculate current total size of all open positions
-    const totalLotSize = positionsCopy.reduce((sum, pos) => sum + pos.size, 0);
-    // A simplified risk check: assume 1 lot requires ~$2000 margin for this example
-    const usedMargin = totalLotSize * 2000;
-    const maxRiskEquity = equity * 0.80;
-
-    // Rule 3: Randomly decide to open a new trade if we have capacity
-    // 40% chance to open a new trade each cycle if not over risk limit.
-    const shouldOpenNewTrade = Math.random() < 0.4;
-
-    if (shouldOpenNewTrade && usedMargin < maxRiskEquity) {
-        const action = Math.random() < 0.5 ? 'BUY' : 'SELL';
-        
-        // Random lot size between 0.03 and 0.20
-        const lotSize = parseFloat((Math.random() * (0.20 - 0.03) + 0.03).toFixed(2));
-        
-        const pair = 'frxXAUUSD'; // Default to Gold
-
+    // Rule 2: If there are no open positions, open a single new one.
+    if (positions.length === 0) {
+        console.log("No open positions. Opening a new trade.");
         await handleTrade({
-            pair: pair,
-            type: action,
-            size: lotSize,
+            pair: 'frxXAUUSD',
+            type: 'BUY',
+            size: 0.1,
         });
     }
 
-  }, [positions, equity, handleClosePosition, handleTrade, handleBulkClosePositions]);
+    // If positions are open but profit target is not met, do nothing and wait.
+    console.log("Positions are open, waiting for profit target.");
+
+  }, [positions, equity, handleTrade, handleBulkClosePositions]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
