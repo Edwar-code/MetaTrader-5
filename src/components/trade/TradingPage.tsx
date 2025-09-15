@@ -164,7 +164,7 @@ export default function TradingPage() {
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
-      <Header totalProfit={totalProfit.toFixed(2)} hasOpenPositions={hasOpenPositions} />
+      <Header totalProfit={totalProfit.toFixed(2)} hasOpenPositions={hasOpenPositions} balance={accountSummary.balance} />
       <div className="flex-1 overflow-y-auto pb-24">
         <AccountSummary data={accountSummary} hasOpenPositions={hasOpenPositions} />
         {hasOpenPositions ? (

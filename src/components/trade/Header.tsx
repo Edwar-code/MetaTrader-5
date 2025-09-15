@@ -7,13 +7,15 @@ import { Sidebar } from './Sidebar';
 import { SortIcon, AddOrderIcon, NewCustomIcon, TradeTitleIcon } from './icons';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
+import { BalanceSheet } from './BalanceSheet';
 
 interface HeaderProps {
   totalProfit: string;
   hasOpenPositions: boolean;
+  balance: string;
 }
 
-export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
+export default function Header({ totalProfit, hasOpenPositions, balance }: HeaderProps) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   
@@ -66,9 +68,11 @@ export default function Header({ totalProfit, hasOpenPositions }: HeaderProps) {
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
             <SortIcon />
           </Button>
-          <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
-            <AddOrderIcon theme={resolvedTheme} />
-          </Button>
+          <BalanceSheet balance={balance}>
+            <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
+              <AddOrderIcon theme={resolvedTheme} />
+            </Button>
+          </BalanceSheet>
         </div>
       </div>
     </header>
