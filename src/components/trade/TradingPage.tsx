@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { Position } from '@/lib/types';
 
 export default function TradingPage() {
-  const { positions, equity, balance, handleTrade, handleClosePosition, handleBulkClosePositions } = useTradeState();
+  const { positions, equity, balance, margin, freeMargin, marginLevel, handleTrade, handleClosePosition, handleBulkClosePositions } = useTradeState();
   const [isBotRunning, setIsBotRunning] = useState(false);
   const [countdown, setCountdown] = useState(600);
   const [isLiquidationActive, setIsLiquidationActive] = useState(false);
@@ -30,11 +30,11 @@ export default function TradingPage() {
     return {
       balance: balance.toFixed(2),
       equity: equity.toFixed(2),
-      margin: '0.00',
-      freeMargin: equity.toFixed(2),
-      marginLevel: '0.00',
+      margin: margin.toFixed(2),
+      freeMargin: freeMargin.toFixed(2),
+      marginLevel: marginLevel.toFixed(2),
     };
-  }, [balance, equity]);
+  }, [balance, equity, margin, freeMargin, marginLevel]);
   
   // MASTER STOP LOSS: This is now independent of the bot.
   useEffect(() => {
@@ -145,10 +145,6 @@ export default function TradingPage() {
         return;
     }
     setIsBotRunning(true);
-    toast({
-      title: 'Bot Enabled',
-      description: 'The AI bot will now trade automatically every 10 minutes.',
-    });
   };
   
   const handleDisableBot = () => {

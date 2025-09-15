@@ -12,6 +12,9 @@ interface TradeState {
     closedPositions: ClosedPosition[];
     balance: number;
     equity: number;
+    margin: number;
+    freeMargin: number;
+    marginLevel: number;
     totalPnl: number;
     handleTrade: (trade: Omit<Position, 'id' | 'currentPrice' | 'pnl' | 'entryPrice' | 'openTime'>) => Promise<boolean>;
     handleClosePosition: (positionId: string, customClosePrice?: number) => void;
@@ -20,6 +23,14 @@ interface TradeState {
 }
 
 const TradeContext = createContext<TradeState | undefined>(undefined);
+
+const LEVERAGE = 3000;
+
+const getContractSize = (pair: string): number => {
+    if (pair.includes('XAU')) return 100; // Gold
+    if (pair.includes('BTC')) return 1; // Bitcoin
+    return 100; // Default for forex
+};
 
 export function TradeProvider({ children }: { children: ReactNode }) {
     const [positions, setPositions] = useState<Position[]>([]);
@@ -42,6 +53,18 @@ export function TradeProvider({ children }: { children: ReactNode }) {
     }, [livePositions]);
 
     const equity = useMemo(() => balance + totalPnl, [balance, totalPnl]);
+
+    const margin = useMemo(() => {
+        return livePositions.reduce((acc, pos) => {
+            const contractSize = getContractSize(pos.pair);
+            const marketPrice = pos.entryPrice;
+            const positionMargin = (pos.size * contractSize * marketPrice) / LEVERAGE;
+            return acc + positionMargin;
+        }, 0);
+    }, [livePositions]);
+
+    const freeMargin = useMemo(() => equity - margin, [equity, margin]);
+    const marginLevel = useMemo(() => (margin > 0 ? (equity / margin) * 100 : 0), [equity, margin]);
 
 
     // Effect to check for SL/TP on price change
@@ -177,6 +200,9 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         closedPositions,
         balance,
         equity,
+        margin,
+        freeMargin,
+        marginLevel,
         totalPnl,
         handleTrade,
         handleClosePosition,
