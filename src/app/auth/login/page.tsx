@@ -82,12 +82,16 @@ export default function LoginPage() {
         </div>
       </main>
 
-      <footer className="absolute bottom-16 left-0 right-0 p-4 border-t bg-card z-10">
-        <Button className="w-full" onClick={() => {
-          if (typeof window !== 'undefined') {
-             window.location.href = '/chart';
-          }
-        }}>
+      <footer className="absolute bottom-16 left-0 right-0 p-4 bg-card z-10">
+        <Button 
+          className="w-full" 
+          style={{ borderRadius: '3px' }}
+          onClick={() => {
+            if (typeof window !== 'undefined') {
+              window.location.href = '/chart';
+            }
+          }}
+        >
           SIGN IN
         </Button>
       </footer>
