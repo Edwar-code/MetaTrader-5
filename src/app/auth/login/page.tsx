@@ -98,7 +98,7 @@ export default function LoginPage() {
               <Input id="password" type="password" defaultValue="••••••••" className="bg-transparent border-0 rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full"/>
             </div>
            </div>
-          <div className="px-4 space-y-4">
+          <div style={{ paddingLeft: '25px', paddingRight: '25px' }} className="space-y-4">
              <div className="flex items-center justify-between">
                 <Label htmlFor="save-password" style={{ color: '#838e9a' }}>Save password</Label>
                 <Checkbox id="save-password" defaultChecked/>
