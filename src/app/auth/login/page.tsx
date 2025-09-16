@@ -101,17 +101,18 @@ export default function LoginPage() {
             </Button>
           </div>
         </div>
-      </main>
 
-      <footer className="absolute bottom-16 left-0 right-0 p-4 bg-background z-10 border-t border-card">
-        <Button 
-          className="w-full" 
-          style={{ borderRadius: '3px' }}
-          onClick={handleSignIn}
-        >
-          SIGN IN
-        </Button>
-      </footer>
+        <div className="absolute bottom-16 left-0 right-0 p-4 bg-background z-10 border-t border-card">
+          <Button 
+            className="w-full" 
+            style={{ borderRadius: '3px' }}
+            onClick={handleSignIn}
+          >
+            SIGN IN
+          </Button>
+        </div>
+      </main>
+      
        <BottomNav />
     </div>
   );
