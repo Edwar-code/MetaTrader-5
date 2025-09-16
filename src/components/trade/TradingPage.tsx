@@ -89,10 +89,10 @@ export default function TradingPage() {
         description: 'Placing initial trades for GENT KINGSTON BUSI account.',
     });
 
-    // Place the three specific trades
-    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 });
-    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.2 });
-    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 });
+    // Place the three specific trades with custom entry prices
+    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 }, 3382);
+    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.2 }, 3415);
+    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 }, 3450);
   };
   
   const handleDisableBot = () => {

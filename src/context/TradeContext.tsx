@@ -16,7 +16,7 @@ interface TradeState {
     freeMargin: number;
     marginLevel: number;
     totalPnl: number;
-    handleTrade: (trade: Omit<Position, 'id' | 'currentPrice' | 'pnl' | 'entryPrice' | 'openTime'>) => Promise<boolean>;
+    handleTrade: (trade: Omit<Position, 'id' | 'currentPrice' | 'pnl' | 'entryPrice' | 'openTime'>, customEntryPrice?: number) => Promise<boolean>;
     handleClosePosition: (positionId: string, customClosePrice?: number) => void;
     handleBulkClosePositions: (filter: 'all' | 'profitable' | 'losing', excludePresets?: boolean) => void;
     handleUpdatePosition: (positionId: string, updates: Partial<Pick<Position, 'stopLoss' | 'takeProfit'>>) => void;
@@ -158,10 +158,15 @@ export function TradeProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [latestPrice]);
 
-    const handleTrade = useCallback(async (trade: Omit<Position, 'id' | 'currentPrice' | 'pnl' | 'entryPrice' | 'openTime'>): Promise<boolean> => {
+    const handleTrade = useCallback(async (trade: Omit<Position, 'id' | 'currentPrice' | 'pnl' | 'entryPrice' | 'openTime'>, customEntryPrice?: number): Promise<boolean> => {
         try {
-            const ticks = await getTicks(trade.pair, 1);
-            const entryPrice = ticks.length > 0 ? ticks[0].quote : latestPrice[trade.pair];
+            let entryPrice = customEntryPrice;
+
+            if (!entryPrice) {
+                const ticks = await getTicks(trade.pair, 1);
+                entryPrice = ticks.length > 0 ? ticks[0].quote : latestPrice[trade.pair];
+            }
+
 
             if (!entryPrice || entryPrice <= 0) {
                  toast({
