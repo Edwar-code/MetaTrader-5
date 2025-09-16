@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Sidebar } from '@/components/trade/Sidebar';
 import { MoreVertical, Plus } from 'lucide-react';
 import BottomNav from '@/components/trade/BottomNav';
-import { BellIcon, InfoIcon, MatchSecuritiesLogo, QrCodeIcon } from './icons';
+import { BellIcon, InfoIcon } from './icons';
 import { useTradeState } from '@/context/TradeContext';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
@@ -64,7 +64,7 @@ const AccountCard = ({
          <div className="grid grid-cols-[auto_1fr_auto] items-start gap-4">
             <div className="flex flex-col items-center gap-4 justify-between h-full">
                 {logo}
-                <QrCodeIcon />
+                {scannerIconSrc && <Image src={scannerIconSrc} alt="Scanner Icon" width={24} height={24} />}
             </div>
             <div>
                 <p className="font-semibold text-foreground">{accountName}</p>
@@ -181,17 +181,19 @@ export default function AccountsPage() {
                 currency="USD"
                 isMain={false}
                 isLoading={false}
+                scannerIconSrc={scannerIconSrc}
             />
             <div className="mt-4">
               <AccountCard
-                  logo={<MatchSecuritiesLogo />}
-                  broker="Match Securities"
+                  logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
+                  broker="FBS Markets Inc."
                   accountName="Demo Account"
                   accountNumber="MT5-1020304"
                   balance="10000.00"
                   currency="USD"
                   isMain={false}
                   isLoading={false}
+                  scannerIconSrc={scannerIconSrc}
               />
             </div>
         </div>
