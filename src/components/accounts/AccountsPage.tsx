@@ -62,9 +62,9 @@ const AccountCard = ({
       )}
       {!isMain && (
          <div className="relative flex justify-between items-end">
-            <div className="flex items-start" style={{ marginLeft: '10px' }}>
-                {logo}
-                <div style={{ marginLeft: '12px' }}>
+            <div className="flex items-start">
+                <div style={{ marginLeft: '15px' }}>{logo}</div>
+                <div style={{ marginLeft: '17px' }}>
                     <p className="font-semibold text-foreground">{accountName}</p>
                     <p className="text-sm text-primary">{broker}</p>
                     <p className="text-xs mt-1" style={{ color: '#93a1b0' }}>{accountNumber}</p>
