@@ -68,12 +68,12 @@ const AccountCard = ({
                     <div>
                         <p className="font-semibold text-foreground">{accountName}</p>
                         <p className="text-sm text-primary">{broker}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{accountNumber}</p>
+                        <p className="text-xs mt-1" style={{ color: '#93a1b0' }}>{accountNumber}</p>
                     </div>
                 </div>
                 <div className="mt-2">
-                    <p className="font-light text-xl text-foreground">{balance}</p>
-                    <p className="text-xs text-muted-foreground">{currency}, last known</p>
+                    <p className="font-light text-xl" style={{ color: '#93a1b0' }}>{balance}</p>
+                    <p className="text-xs" style={{ color: '#93a1b0' }}>{currency}, last known</p>
                 </div>
             </div>
             <div className="shrink-0">
