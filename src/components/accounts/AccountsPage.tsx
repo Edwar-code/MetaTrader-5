@@ -61,7 +61,7 @@ const AccountCard = ({
         </div>
       )}
       {!isMain && (
-         <div className="flex justify-between items-end">
+         <div className="relative flex justify-between items-end">
             <div className="flex-1" style={{ marginLeft: '45px' }}>
                 <div className="flex items-center gap-4">
                     {logo}
