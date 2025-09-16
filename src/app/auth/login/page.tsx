@@ -80,13 +80,12 @@ export default function LoginPage() {
             <p className="text-sm text-muted-foreground">{broker}</p>
           </div>
         </div>
-        <hr className="border-t border-border my-6" />
+        <hr className="border-t border-muted-foreground/30 my-6" />
 
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="account-number">Login</Label>
-            <span className="text-sm text-foreground">{accountNumber}</span>
-            <Input id="account-number" defaultValue={accountNumber} className="hidden" />
+          <div className="relative">
+            <Label htmlFor="account-number" className="absolute left-0 -top-2.5 text-xs text-muted-foreground">Login</Label>
+             <Input id="account-number" defaultValue={accountNumber} readOnly className="bg-transparent border-0 border-b rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground"/>
           </div>
            <div className="relative">
             <Label htmlFor="password" className="absolute left-0 -top-2.5 text-xs text-muted-foreground">Password</Label>
@@ -104,7 +103,7 @@ export default function LoginPage() {
         </div>
       </main>
 
-      <footer className="absolute bottom-16 left-0 right-0 p-4 bg-card z-10">
+      <footer className="absolute bottom-16 left-0 right-0 p-4 bg-background z-10 border-t border-card">
         <Button 
           className="w-full" 
           style={{ borderRadius: '3px' }}
