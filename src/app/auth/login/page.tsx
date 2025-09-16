@@ -54,7 +54,7 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-background shadow-lg overflow-hidden">
-      <header className="shrink-0 bg-card border-b">
+      <header className="shrink-0 bg-card">
         <div className="flex items-center justify-start pl-2 pr-4 py-2 gap-4">
           <Link href="/accounts" passHref>
             <Button variant="ghost" size="icon">
