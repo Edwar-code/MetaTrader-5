@@ -83,13 +83,13 @@ export default function LoginPage() {
         <hr className="border-t border-muted-foreground/30 my-6" />
 
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="account-number" className="text-muted-foreground">Login</Label>
-             <Input id="account-number" defaultValue={accountNumber} readOnly className="bg-transparent border-0 border-b rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground text-right w-3/4"/>
+          <div className="flex items-center justify-between gap-4">
+            <Label htmlFor="account-number" className="text-muted-foreground shrink-0">Login</Label>
+             <Input id="account-number" defaultValue={accountNumber} readOnly className="bg-transparent border-0 border-b rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground text-right w-full"/>
           </div>
-           <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-muted-foreground">Password</Label>
-            <Input id="password" type="password" defaultValue="••••••••" className="bg-transparent border-0 border-b rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-3/4"/>
+           <div className="flex items-center justify-between gap-4">
+            <Label htmlFor="password" className="text-muted-foreground shrink-0">Password</Label>
+            <Input id="password" type="password" defaultValue="••••••••" className="bg-transparent border-0 border-b rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full"/>
           </div>
           <div className="flex items-center justify-between">
              <div className="flex items-center gap-2">
