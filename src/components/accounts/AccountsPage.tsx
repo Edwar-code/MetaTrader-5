@@ -179,9 +179,9 @@ export default function AccountsPage() {
              <AccountCard
                 logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
                 broker="FBS Markets Inc."
-                accountName="EDWARD KIBE MUNENE"
-                accountNumber="40311301 — FBS-Real"
-                balance="0.08"
+                accountName="MARY KARANJA KIMEU"
+                accountNumber="40776538 — FBS-Real"
+                balance="240.45"
                 currency="USD"
                 isMain={false}
                 isLoading={false}
@@ -191,9 +191,9 @@ export default function AccountsPage() {
               <AccountCard
                   logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
                   broker="FBS Markets Inc."
-                  accountName="Demo Account"
-                  accountNumber="MT5-1020304"
-                  balance="10000.00"
+                  accountName="DENNIS WAITHERA"
+                  accountNumber="40256784 — FBS-Real"
+                  balance="456.46"
                   currency="USD"
                   isMain={false}
                   isLoading={false}
