@@ -12,33 +12,33 @@ import { useTheme } from 'next-themes';
 import { Checkbox } from '@/components/ui/checkbox';
 import BottomNav from '@/components/trade/BottomNav';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense } from 'react'; // Import Suspense here for the wrapper
+import { Suspense } from 'react';
 
-// This is your LoginPage content component
 function LoginPageContent() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Initialize account details with fallback values
-  const accountName = searchParams.get('name') || 'FBS-Real';
+  // Get the actual account name from search params or fallback
+  const actualAccountName = searchParams.get('name') || 'FBS-Real';
   const fullAccountNumber = searchParams.get('number') || 'Unknown';
   const accountNumber = fullAccountNumber.split('—')[0].trim();
   const broker = searchParams.get('broker') || 'FBS Markets Inc.';
 
-  // State for the logo source
+  // Display name on login page (always FBS-Real as per your request)
+  const displayAccountName = 'FBS-Real';
+
   const [fbsLogoSrc, setFbsLogoSrc] = useState(
-    'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg' // Default to light theme logo
+    'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg'
   );
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Effect to update the logo source when theme changes or mounted state is confirmed
   useEffect(() => {
-    if (mounted) { // Ensure useTheme has had a chance to hydrate
+    if (mounted) {
       if (resolvedTheme === 'dark') {
         setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg');
       } else {
@@ -47,11 +47,10 @@ function LoginPageContent() {
     }
   }, [mounted, resolvedTheme]);
 
-
   const handleSignIn = () => {
     if (typeof window !== 'undefined') {
         const activeAccount = {
-            name: accountName, // This will now correctly use the URL param or fallback
+            name: actualAccountName, // Pass the actual name to localStorage
             number: fullAccountNumber,
             broker: broker,
         };
@@ -62,8 +61,6 @@ function LoginPageContent() {
   };
 
   if (!mounted) {
-    // Return null while the component is mounting to avoid flickering,
-    // as the Suspense boundary handles the initial loading.
     return null;
   }
 
@@ -85,14 +82,14 @@ function LoginPageContent() {
       <main className="flex-1 overflow-y-auto bg-background pt-6 pb-28">
         <div className="flex items-center gap-4 mb-4 px-4">
           <Image
-            src={fbsLogoSrc} // Now uses state variable
+            src={fbsLogoSrc}
             alt="FBS Logo"
             width={40}
             height={40}
             className="shrink-0 rounded-md"
           />
           <div>
-            <p className="font-normal" style={{ color: '#c7ccd4' }}>{accountName}</p>
+            <p className="font-normal" style={{ color: '#c7ccd4' }}>{displayAccountName}</p> {/* Display placeholder name */}
             <p className="text-sm" style={{ color: '#a1a5aa' }}>{broker}</p>
           </div>
         </div>
@@ -142,7 +139,6 @@ function LoginPageContent() {
   );
 }
 
-// Wrapper component for Suspense
 export default function LoginPage() {
   return (
     <Suspense fallback={
