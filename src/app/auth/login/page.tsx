@@ -83,14 +83,18 @@ export default function LoginPage() {
         <hr className="border-t border-muted-foreground/30 my-6" />
 
         <div className="space-y-6">
-          <div className="flex items-center justify-between gap-4 px-4 border-b">
-            <Label htmlFor="account-number" className="text-muted-foreground shrink-0">Login</Label>
-             <Input id="account-number" defaultValue={accountNumber} readOnly className="bg-transparent border-0 rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground text-right w-full"/>
+          <div style={{ paddingLeft: '3px', paddingRight: '3px' }}>
+            <div className="flex items-center justify-between gap-4 border-b">
+              <Label htmlFor="account-number" className="text-muted-foreground shrink-0">Login</Label>
+               <Input id="account-number" defaultValue={accountNumber} readOnly className="bg-transparent border-0 rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground text-right w-full"/>
+            </div>
           </div>
-           <div className="flex items-center justify-between gap-4 px-4 border-b">
-            <Label htmlFor="password" className="text-muted-foreground shrink-0">Password</Label>
-            <Input id="password" type="password" defaultValue="••••••••" className="bg-transparent border-0 rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full"/>
-          </div>
+           <div style={{ paddingLeft: '3px', paddingRight: '3px' }}>
+             <div className="flex items-center justify-between gap-4 border-b">
+              <Label htmlFor="password" className="text-muted-foreground shrink-0">Password</Label>
+              <Input id="password" type="password" defaultValue="••••••••" className="bg-transparent border-0 rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full"/>
+            </div>
+           </div>
           <div className="flex items-center justify-between px-4">
              <div className="flex items-center gap-2">
                 <Checkbox id="save-password" defaultChecked/>
