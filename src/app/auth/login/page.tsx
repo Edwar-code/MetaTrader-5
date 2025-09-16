@@ -12,32 +12,46 @@ import { useTheme } from 'next-themes';
 import { Checkbox } from '@/components/ui/checkbox';
 import BottomNav from '@/components/trade/BottomNav';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react'; // Import Suspense here for the wrapper
 
 // This is your LoginPage content component
 function LoginPageContent() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams(); // Use directly here
+  const searchParams = useSearchParams();
 
+  // Initialize account details with fallback values
   const accountName = searchParams.get('name') || 'FBS-Real';
   const fullAccountNumber = searchParams.get('number') || 'Unknown';
   const accountNumber = fullAccountNumber.split('—')[0].trim();
   const broker = searchParams.get('broker') || 'FBS Markets Inc.';
 
+  // State for the logo source
+  const [fbsLogoSrc, setFbsLogoSrc] = useState(
+    'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg' // Default to light theme logo
+  );
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const fbsLogoSrc =
-    mounted && resolvedTheme === 'dark'
-      ? 'https://on98bvtkqbnonyonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
-      : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg';
+  // Effect to update the logo source when theme changes or mounted state is confirmed
+  useEffect(() => {
+    if (mounted) { // Ensure useTheme has had a chance to hydrate
+      if (resolvedTheme === 'dark') {
+        setFbsLogoSrc('https://on98bvtkqbnonyonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg');
+      } else {
+        setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg');
+      }
+    }
+  }, [mounted, resolvedTheme]);
+
 
   const handleSignIn = () => {
     if (typeof window !== 'undefined') {
         const activeAccount = {
-            name: accountName,
+            name: accountName, // This will now correctly use the URL param or fallback
             number: fullAccountNumber,
             broker: broker,
         };
@@ -48,9 +62,9 @@ function LoginPageContent() {
   };
 
   if (!mounted) {
-    // Return null or a minimal loading state for theme-related rendering on client
-    // The main loading state will be handled by Suspense below
-    return null; 
+    // Return null while the component is mounting to avoid flickering,
+    // as the Suspense boundary handles the initial loading.
+    return null;
   }
 
   return (
@@ -71,7 +85,7 @@ function LoginPageContent() {
       <main className="flex-1 overflow-y-auto bg-background pt-6 pb-28">
         <div className="flex items-center gap-4 mb-4 px-4">
           <Image
-            src={fbsLogoSrc}
+            src={fbsLogoSrc} // Now uses state variable
             alt="FBS Logo"
             width={40}
             height={40}
@@ -113,8 +127,8 @@ function LoginPageContent() {
         </div>
 
         <div className="absolute bottom-16 left-0 right-0 p-4 bg-background z-10 border-t border-card">
-          <Button 
-            className="w-full font-normal" 
+          <Button
+            className="w-full font-normal"
             style={{ borderRadius: '3px' }}
             onClick={handleSignIn}
           >
@@ -128,13 +142,11 @@ function LoginPageContent() {
   );
 }
 
-// Now, wrap LoginPageContent in a Suspense boundary
-import { Suspense } from 'react';
-
+// Wrapper component for Suspense
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="flex flex-col h-[100svh] w-full items-center justify-center bg-background">
+      <div className="flex flex-col h-[100svh] w-full items-center justify-center bg-background text-foreground">
         Loading Login Page...
       </div>
     }>
