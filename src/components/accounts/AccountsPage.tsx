@@ -36,7 +36,7 @@ const AccountCard = ({
   scannerIconSrc?: string;
 }) => (
   <Card className="shadow-sm border-none overflow-hidden bg-muted/20 rounded-none">
-    <CardContent className={`px-4 pt-4 ${isMain ? 'pb-[2px]' : 'pb-4'}`}>
+    <CardContent className={`relative px-4 pt-4 ${isMain ? 'pb-[2px]' : 'pb-4'}`}>
       {isMain && (
         <div className="flex flex-col items-center text-center mb-4">
           <div className="mb-3">{logo}</div>
@@ -61,27 +61,30 @@ const AccountCard = ({
         </div>
       )}
       {!isMain && (
-         <div className="grid grid-cols-[auto_1fr_auto] items-start gap-x-4" style={{ marginLeft: '25px' }}>
-            {/* Column 1: Logo and Scanner */}
-            <div className="flex flex-col justify-between h-full">
-                {logo}
-                {scannerIconSrc && <Image src={scannerIconSrc} alt="Scanner Icon" width={24} height={24} />}
-            </div>
-            {/* Column 2: Details and Balance */}
-            <div>
-                <p className="font-semibold text-foreground">{accountName}</p>
-                <p className="text-sm text-primary">{broker}</p>
-                <p className="text-xs text-muted-foreground mt-1">{accountNumber}</p>
+         <div className="flex justify-between items-end">
+            <div className="flex-1" style={{ marginLeft: '45px' }}>
+                <div className="flex items-center gap-4">
+                    {logo}
+                    <div>
+                        <p className="font-semibold text-foreground">{accountName}</p>
+                        <p className="text-sm text-primary">{broker}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{accountNumber}</p>
+                    </div>
+                </div>
                 <div className="mt-2">
                     <p className="font-light text-xl text-foreground">{balance}</p>
                     <p className="text-xs text-muted-foreground">{currency}, last known</p>
                 </div>
             </div>
-             {/* Column 3: Info Icon */}
-            <div className="flex items-end h-full">
+            <div className="shrink-0">
                  <InfoIcon />
             </div>
          </div>
+      )}
+      {scannerIconSrc && !isMain && (
+        <div className="absolute left-4 bottom-4">
+            <Image src={scannerIconSrc} alt="Scanner Icon" width={24} height={24} />
+        </div>
       )}
     </CardContent>
      {!isLoading && isMain && scannerIconSrc && (
