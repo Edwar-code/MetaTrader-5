@@ -81,24 +81,24 @@ export default function LoginPage() {
             <p className="text-sm" style={{ color: '#a1a5aa' }}>{broker}</p>
           </div>
         </div>
-        <div style={{ paddingLeft: '25px', paddingRight: '25px' }}>
+        <div style={{ paddingLeft: '22px', paddingRight: '22px' }}>
             <hr className="border-t border-muted-foreground/30 my-6" />
         </div>
 
         <div className="space-y-6">
-          <div style={{ paddingLeft: '25px', paddingRight: '25px' }}>
+          <div style={{ paddingLeft: '22px', paddingRight: '22px' }}>
             <div className="flex items-center justify-between gap-4 border-b">
               <Label htmlFor="account-number" className="shrink-0" style={{ color: '#87929e' }}>Login</Label>
                <Input id="account-number" defaultValue={accountNumber} readOnly className="bg-transparent border-0 rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground text-right w-full"/>
             </div>
           </div>
-           <div style={{ paddingLeft: '25px', paddingRight: '25px' }}>
+           <div style={{ paddingLeft: '22px', paddingRight: '22px' }}>
              <div className="flex items-center justify-between gap-4 border-b">
               <Label htmlFor="password" className="shrink-0" style={{ color: '#87929e' }}>Password</Label>
               <Input id="password" type="password" defaultValue="••••••••" className="bg-transparent border-0 rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full"/>
             </div>
            </div>
-          <div style={{ paddingLeft: '25px', paddingRight: '25px' }} className="space-y-4">
+          <div style={{ paddingLeft: '22px', paddingRight: '22px' }} className="space-y-4">
              <div className="flex items-center justify-between">
                 <Label htmlFor="save-password" style={{ color: '#838e9a' }}>Save password</Label>
                 <Checkbox id="save-password" defaultChecked/>
