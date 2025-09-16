@@ -61,7 +61,7 @@ export default function LoginPage() {
               <ArrowLeft />
             </Button>
           </Link>
-          <h1 className="text-lg font-medium text-foreground">
+          <h1 className="text-[15px] font-medium text-foreground">
             Login to an account
           </h1>
         </div>
@@ -77,7 +77,7 @@ export default function LoginPage() {
             className="shrink-0 rounded-md"
           />
           <div>
-            <p className="font-semibold text-foreground">{accountName}</p>
+            <p className="font-normal text-foreground">{accountName}</p>
             <p className="text-sm text-muted-foreground">{broker}</p>
           </div>
         </div>
