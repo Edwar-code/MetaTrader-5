@@ -44,7 +44,7 @@ export default function LoginPage() {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto bg-background p-4 pt-6">
+      <main className="flex-1 overflow-y-auto bg-background p-4 pt-6 pb-28">
         <div className="flex items-center gap-4 mb-4">
           <Image
             src={fbsLogoSrc}
@@ -82,7 +82,7 @@ export default function LoginPage() {
         </div>
       </main>
 
-      <footer className="p-4 border-t bg-card">
+      <footer className="absolute bottom-16 left-0 right-0 p-4 border-t bg-card z-10">
         <Button className="w-full" onClick={() => {
           if (typeof window !== 'undefined') {
              window.location.href = '/chart';
