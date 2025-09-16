@@ -39,11 +39,9 @@ function LoginPageContent() {
   // Effect to update the logo source when theme changes or mounted state is confirmed
   useEffect(() => {
     if (mounted) { // Ensure useTheme has had a chance to hydrate
-      if (resolvedTheme === 'dark') {
-        setFbsLogoSrc('https://on98bvtkqbnonyonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg');
-      } else {
-        setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg');
-      }
+      // If you have a dark theme specific logo, set it here.
+      // For now, it uses the same logo for both themes as per your initial request.
+      setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg');
     }
   }, [mounted, resolvedTheme]);
 
