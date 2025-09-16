@@ -175,7 +175,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                 
                 const hasHitTakeProfit = pos.takeProfit && (
                     (pos.type === 'BUY' && currentPrice >= pos.takeProfit) || 
-                    (pos.type === 'SELL' && currentPrice <= pos.takeProfit)
+                    (pos.type === 'SELL' && currentPrice >= pos.takeProfit)
                 );
 
                 if (hasHitTakeProfit) {
@@ -310,3 +310,5 @@ export function useTradeState() {
     }
     return context;
 }
+
+    
