@@ -42,12 +42,7 @@ export const InfoIcon = () => (
 );
 
 export const FbsLogo = ({ size = 40 }: { size?: number }) => (
-    <div
-      className="bg-green-600 flex items-center justify-center rounded-md shrink-0"
-      style={{ width: `${size}px`, height: `${size}px` }}
-    >
-      <span className="text-white font-bold text-sm">FBS</span>
-    </div>
+    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.19.22_1608d54d.jpg" alt="FBS Logo" width={size} height={size} />
 );
 
 export const MatchSecuritiesLogo = () => (
