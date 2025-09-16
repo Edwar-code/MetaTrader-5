@@ -71,28 +71,36 @@ export default function TradingPage() {
             activeAccountName = JSON.parse(storedAccount).name;
         }
     }
+    
+    setIsBotRunning(true);
 
-    if (activeAccountName !== 'GENT KINGSTON BUSI') {
+    if (activeAccountName === 'GENT KINGSTON BUSI') {
+        toast({
+            title: 'Bot Activated',
+            description: 'Placing initial trades for GENT KINGSTON BUSI account.',
+        });
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 }, 3382);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.2 }, 3415);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 }, 3450);
+
+    } else if (activeAccountName === 'MARY KARANJA KIMEU') {
+        toast({
+            title: 'Bot Activated',
+            description: 'Placing initial trades for MARY KARANJA KIMEU account.',
+        });
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 3679);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 3680);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 3680.5);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 3681);
+
+    } else {
         toast({
             title: 'Bot Not Configured',
-            description: 'This automated strategy is only available for the GENT KINGSTON BUSI account.',
+            description: 'This automated strategy is only available for specific accounts.',
             variant: 'destructive',
         });
         setIsBotRunning(false);
-        return;
     }
-
-    // If it is the correct account, run the bot.
-    setIsBotRunning(true);
-    toast({
-        title: 'Bot Activated',
-        description: 'Placing initial trades for GENT KINGSTON BUSI account.',
-    });
-
-    // Place the three specific trades with custom entry prices
-    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 }, 3382);
-    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.2 }, 3415);
-    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 }, 3450);
   };
   
   const handleDisableBot = () => {
