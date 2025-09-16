@@ -1,3 +1,4 @@
+// app/auth/login/page.js
 'use client';
 
 import { ArrowLeft } from 'lucide-react';
@@ -12,15 +13,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import BottomNav from '@/components/trade/BottomNav';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function LoginPage() {
+// This is your LoginPage content component
+function LoginPageContent() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
-  
-  // Conditionally initialize useSearchParams only when mounted
-  const searchParams = mounted ? useSearchParams() : new URLSearchParams();
+  const searchParams = useSearchParams(); // Use directly here
 
-  // Initialize account details with fallback values
   const accountName = searchParams.get('name') || 'FBS-Real';
   const fullAccountNumber = searchParams.get('number') || 'Unknown';
   const accountNumber = fullAccountNumber.split('—')[0].trim();
@@ -43,19 +42,15 @@ export default function LoginPage() {
             broker: broker,
         };
         localStorage.setItem('active_account', JSON.stringify(activeAccount));
-        // Dispatch a custom event to notify components in the same tab about the change
         window.dispatchEvent(new CustomEvent('local-storage'));
         router.push('/accounts');
     }
   };
 
   if (!mounted) {
-    // Return a loading state or null while the component is not yet mounted on the client
-    return (
-      <div className="flex flex-col h-[100svh] w-full items-center justify-center bg-background">
-        Loading...
-      </div>
-    ); 
+    // Return null or a minimal loading state for theme-related rendering on client
+    // The main loading state will be handled by Suspense below
+    return null; 
   }
 
   return (
@@ -130,5 +125,20 @@ export default function LoginPage() {
       
        <BottomNav />
     </div>
+  );
+}
+
+// Now, wrap LoginPageContent in a Suspense boundary
+import { Suspense } from 'react';
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col h-[100svh] w-full items-center justify-center bg-background">
+        Loading Login Page...
+      </div>
+    }>
+      <LoginPageContent />
+    </Suspense>
   );
 }
