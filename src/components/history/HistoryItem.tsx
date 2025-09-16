@@ -70,8 +70,8 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                     </div>
                   ) : isEurAud ? (
                     <div className="flex items-center gap-1">
-                        <EurAudIcon />
-                        <span className="text-sm font-bold text-card-foreground">EURAUD,</span>
+                        <EurAudIcon width={40} height={9} />
+                        <span className="text-sm font-bold text-card-foreground">,</span>
                     </div>
                   ) : (
                     <span className="text-sm font-bold text-card-foreground">{displayPair},</span>

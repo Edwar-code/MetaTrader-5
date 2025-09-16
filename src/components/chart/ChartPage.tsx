@@ -190,9 +190,9 @@ export default function ChartPage() {
                             ) : asset.symbol === 'cryBTCUSD' ? (
                                 <BtcIcon />
                             ) : (
-                                <EurAudIcon />
+                                <EurAudIcon width={40} height={8} />
                             )}
-                            <span>{asset.display}</span>
+                            {asset.symbol !== 'frxEURAUD' && <span>{asset.display}</span>}
                         </div>
                         {selectedAsset === asset.symbol && <Check className="h-4 w-4" />}
                     </div>

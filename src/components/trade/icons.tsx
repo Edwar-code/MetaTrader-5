@@ -143,9 +143,12 @@ export const BtcIcon = () => (
     </svg>
 );
 
-export const EurAudIcon = () => (
-    <div className="relative w-4 h-4">
-        <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/eur_a524a259.png" alt="EUR" layout="fill" className="absolute top-0 left-0" style={{ clipPath: 'inset(0 50% 0 0)' }}/>
-        <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/aud_b8a39626.png" alt="AUD" layout="fill" className="absolute top-0 left-0" style={{ clipPath: 'inset(0 0 0 50%)' }}/>
-    </div>
+export const EurAudIcon = ({ width, height }: { width: number; height: number }) => (
+    <ThemedIcon
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-16%20at%2016.37.30_6ecf88b5.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-16%20at%2016.43.22_b21f9b63.jpg"
+        alt="EURAUD"
+        width={width}
+        height={height}
+    />
 );
