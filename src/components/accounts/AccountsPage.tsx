@@ -62,18 +62,16 @@ const AccountCard = ({
       )}
       {!isMain && (
          <div className="relative flex justify-between items-end">
-            <div className="flex-1" style={{ marginLeft: '32px' }}>
-                <div className="flex items-center gap-4">
-                    {logo}
-                    <div>
-                        <p className="font-semibold text-foreground">{accountName}</p>
-                        <p className="text-sm text-primary">{broker}</p>
-                        <p className="text-xs mt-1" style={{ color: '#93a1b0' }}>{accountNumber}</p>
+            <div className="flex items-start" style={{ marginLeft: '10px' }}>
+                {logo}
+                <div style={{ marginLeft: '12px' }}>
+                    <p className="font-semibold text-foreground">{accountName}</p>
+                    <p className="text-sm text-primary">{broker}</p>
+                    <p className="text-xs mt-1" style={{ color: '#93a1b0' }}>{accountNumber}</p>
+                     <div className="mt-2">
+                        <p className="font-light text-xl" style={{ color: '#93a1b0' }}>{balance}</p>
+                        <p className="text-xs" style={{ color: '#93a1b0' }}>{currency}, last known</p>
                     </div>
-                </div>
-                <div className="mt-2">
-                    <p className="font-light text-xl" style={{ color: '#93a1b0' }}>{balance}</p>
-                    <p className="text-xs" style={{ color: '#93a1b0' }}>{currency}, last known</p>
                 </div>
             </div>
             <div className="shrink-0">
