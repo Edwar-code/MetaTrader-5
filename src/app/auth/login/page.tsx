@@ -1,4 +1,4 @@
-
+// app/auth/login/page.js
 'use client';
 
 import { ArrowLeft } from 'lucide-react';
@@ -12,44 +12,56 @@ import { useTheme } from 'next-themes';
 import { Checkbox } from '@/components/ui/checkbox';
 import BottomNav from '@/components/trade/BottomNav';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function LoginPage() {
+function LoginPageContent() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const accountName = searchParams.get('name') || 'FBS-Real';
+  // Get the actual account name from search params or fallback
+  const actualAccountName = searchParams.get('name') || 'FBS-Real';
   const fullAccountNumber = searchParams.get('number') || 'Unknown';
   const accountNumber = fullAccountNumber.split('—')[0].trim();
   const broker = searchParams.get('broker') || 'FBS Markets Inc.';
 
+  // Display name on login page (always FBS-Real as per your request)
+  const displayAccountName = 'FBS-Real';
+
+  const [fbsLogoSrc, setFbsLogoSrc] = useState(
+    'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg'
+  );
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const fbsLogoSrc =
-    mounted && resolvedTheme === 'dark'
-      ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
-      : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg';
+  useEffect(() => {
+    if (mounted) {
+      if (resolvedTheme === 'dark') {
+        setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg');
+      } else {
+        setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg');
+      }
+    }
+  }, [mounted, resolvedTheme]);
 
   const handleSignIn = () => {
     if (typeof window !== 'undefined') {
         const activeAccount = {
-            name: accountName,
+            name: actualAccountName, // Pass the actual name to localStorage
             number: fullAccountNumber,
             broker: broker,
         };
         localStorage.setItem('active_account', JSON.stringify(activeAccount));
-        // Dispatch a custom event to notify components in the same tab about the change
         window.dispatchEvent(new CustomEvent('local-storage'));
         router.push('/accounts');
     }
   };
 
   if (!mounted) {
-    return null; // or a loading skeleton
+    return null;
   }
 
   return (
@@ -77,7 +89,7 @@ export default function LoginPage() {
             className="shrink-0 rounded-md"
           />
           <div>
-            <p className="font-normal" style={{ color: '#c7ccd4' }}>{accountName}</p>
+            <p className="font-normal" style={{ color: '#c7ccd4' }}>{displayAccountName}</p> {/* Display placeholder name */}
             <p className="text-sm" style={{ color: '#a1a5aa' }}>{broker}</p>
           </div>
         </div>
@@ -112,8 +124,8 @@ export default function LoginPage() {
         </div>
 
         <div className="absolute bottom-16 left-0 right-0 p-4 bg-background z-10 border-t border-card">
-          <Button 
-            className="w-full font-normal" 
+          <Button
+            className="w-full font-normal"
             style={{ borderRadius: '3px' }}
             onClick={handleSignIn}
           >
@@ -124,5 +136,17 @@ export default function LoginPage() {
       
        <BottomNav />
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col h-[100svh] w-full items-center justify-center bg-background text-foreground">
+        Loading Login Page...
+      </div>
+    }>
+      <LoginPageContent />
+    </Suspense>
   );
 }

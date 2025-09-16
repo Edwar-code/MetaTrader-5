@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -114,7 +113,7 @@ const AccountCard = ({
 const DemoBadge = () => (
   <div className="absolute top-0 right-0">
     <div className="relative w-16 h-16">
-      <div 
+      <div
         className="absolute top-0 right-0 w-0 h-0 border-t-[40px] border-t-green-500 border-l-[40px] border-l-transparent"
       >
       </div>
@@ -133,21 +132,52 @@ export default function AccountsPage() {
   const [activeAccount, setActiveAccount] = useState<Account>(defaultAccount);
   const [otherAccounts, setOtherAccounts] = useState<Account[]>([]);
 
+  // State for the FBS logo source in AccountsPage
+  const [fbsLogoSrc, setFbsLogoSrc] = useState(
+    'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg' // Default to light theme logo
+  );
+
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined') {
+
+    const handleStorageChange = () => {
+      if (typeof window !== 'undefined') {
         const storedAccountJson = localStorage.getItem('active_account');
         const currentActiveAccount = storedAccountJson ? JSON.parse(storedAccountJson) : defaultAccount;
         setActiveAccount(currentActiveAccount);
         
         const inactive = allAccounts.filter(acc => acc.number !== currentActiveAccount.number);
         setOtherAccounts(inactive);
-    }
+      }
+    };
+
+    // Initial load
+    handleStorageChange();
+
+    // Listen for custom event from LoginPage
+    window.addEventListener('local-storage', handleStorageChange);
+
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
-    return () => clearTimeout(timer);
-  }, []);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('local-storage', handleStorageChange);
+    };
+  }, []); // Empty dependency array means this runs once on mount
+
+  // Effect to update the FBS logo source when theme changes or mounted state is confirmed
+  useEffect(() => {
+    if (mounted) { // Ensure useTheme has had a chance to hydrate
+      if (resolvedTheme === 'dark') {
+        setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg');
+      } else {
+        setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg');
+      }
+    }
+  }, [mounted, resolvedTheme]); // Dependencies: mounted state and resolvedTheme
+
 
   const headerIconSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.52.07_eff7dc80.jpg'
@@ -157,10 +187,7 @@ export default function AccountsPage() {
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.52.36_6f401008.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_1a61dd2a.jpg';
 
-  const fbsLogoSrc = mounted && resolvedTheme === 'dark'
-    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
-    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg';
-
+  // This `if (!mounted)` needs to be after all initial state/hook calls
   if (!mounted) {
     return null; // or a loading skeleton
   }
@@ -188,7 +215,7 @@ export default function AccountsPage() {
       </header>
       <div className="flex-1 overflow-y-auto pb-20 space-y-4 p-2 bg-background">
         <AccountCard
-          logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
+          logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />} // Uses state fbsLogoSrc
           broker={activeAccount.broker}
           accountName={activeAccount.name}
           accountNumber={activeAccount.number}
@@ -203,12 +230,12 @@ export default function AccountsPage() {
         <div className="px-2 pt-2">
             <h2 className="text-sm font-semibold text-muted-foreground mb-2">Connect to:</h2>
             {otherAccounts.map((account, index) => {
-                 const loginUrl = `/auth/login?name=FBS-Real&number=${encodeURIComponent(account.number)}&broker=${encodeURIComponent(account.broker)}`;
+                 const loginUrl = `/auth/login?name=${encodeURIComponent(account.name)}&number=${encodeURIComponent(account.number)}&broker=${encodeURIComponent(account.broker)}`;
                  return (
                     <Link href={loginUrl} key={index} className="block mt-4 first:mt-0">
                       <div className="cursor-pointer">
                         <AccountCard
-                            logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
+                            logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />} // Uses state fbsLogoSrc
                             broker={account.broker}
                             accountName={account.name}
                             accountNumber={account.number}
