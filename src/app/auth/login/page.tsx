@@ -61,7 +61,7 @@ export default function LoginPage() {
               <ArrowLeft />
             </Button>
           </Link>
-          <h1 className="text-[15px] font-medium text-foreground">
+          <h1 className="font-medium text-foreground" style={{ fontSize: '15px' }}>
             Login to an account
           </h1>
         </div>
@@ -98,14 +98,16 @@ export default function LoginPage() {
               <Input id="password" type="password" defaultValue="••••••••" className="bg-transparent border-0 rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full"/>
             </div>
            </div>
-          <div className="flex items-center justify-between px-4">
+          <div className="px-4 space-y-4">
              <div className="flex items-center gap-2">
                 <Checkbox id="save-password" defaultChecked/>
                 <Label htmlFor="save-password">Save password</Label>
              </div>
-             <Button variant="link" className="text-primary p-0 h-auto">
-              Forgot password?
-            </Button>
+             <div className="text-center">
+                <Button variant="link" className="text-primary p-0 h-auto">
+                  Forgot password?
+                </Button>
+             </div>
           </div>
         </div>
 
