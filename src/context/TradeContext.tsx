@@ -32,14 +32,15 @@ const getContractSize = (pair: string): number => {
     return 100; // Default for forex
 };
 
-const initialPositions: Position[] = [
+const gentKingstonAccountId = '40311301 — FBS-Real';
+const gentKingstonPresetTrades: Position[] = [
     {
         id: 'preset_1',
         pair: 'frxXAUUSD',
         type: 'BUY',
         size: 0.1,
         entryPrice: 3382,
-        openTime: Date.now() / 1000 - 300, // 5 mins ago
+        openTime: Date.now() / 1000 - 300,
         currentPrice: 3382,
         pnl: 0,
     },
@@ -49,7 +50,7 @@ const initialPositions: Position[] = [
         type: 'BUY',
         size: 0.2,
         entryPrice: 3415,
-        openTime: Date.now() / 1000 - 600, // 10 mins ago
+        openTime: Date.now() / 1000 - 600,
         currentPrice: 3415,
         pnl: 0,
     },
@@ -59,19 +60,71 @@ const initialPositions: Position[] = [
         type: 'BUY',
         size: 0.1,
         entryPrice: 3450,
-        openTime: Date.now() / 1000 - 900, // 15 mins ago
+        openTime: Date.now() / 1000 - 900,
         currentPrice: 3450,
         pnl: 0,
     },
 ];
 
+const accountInitialData: { [key: string]: { balance: number, positions: Position[] } } = {
+    [gentKingstonAccountId]: { balance: 756.67, positions: gentKingstonPresetTrades },
+    '40776538 — FBS-Real': { balance: 240.45, positions: [] },
+    '40256784 — FBS-Real': { balance: 456.46, positions: [] },
+};
+
 export function TradeProvider({ children }: { children: ReactNode }) {
-    const [positions, setPositions] = useState<Position[]>(initialPositions);
+    const [positions, setPositions] = useState<Position[]>([]);
     const [closedPositions, setClosedPositions] = useState<ClosedPosition[]>([]);
-    const [balance, setBalance] = useState<number>(756.67); // Start with a 756.67 funded account
+    const [balance, setBalance] = useState<number>(accountInitialData[gentKingstonAccountId].balance);
+    const [activeAccountId, setActiveAccountId] = useState<string>(gentKingstonAccountId);
 
     const { latestPrice, getTicks } = useDerivState();
     const { toast } = useToast();
+
+    useEffect(() => {
+        const handleStorageChange = () => {
+            const storedAccountJson = localStorage.getItem('active_account');
+            const newAccountId = storedAccountJson ? JSON.parse(storedAccountJson).number : gentKingstonAccountId;
+            
+            if (newAccountId !== activeAccountId) {
+                // Save current state before switching
+                const currentState = {
+                    balance,
+                    positions,
+                    closedPositions
+                };
+                localStorage.setItem(`account_state_${activeAccountId}`, JSON.stringify(currentState));
+
+                // Load new account state
+                const newStateJson = localStorage.getItem(`account_state_${newAccountId}`);
+                if (newStateJson) {
+                    const newState = JSON.parse(newStateJson);
+                    setBalance(newState.balance);
+                    setPositions(newState.positions);
+                    setClosedPositions(newState.closedPositions);
+                } else {
+                    // First time loading this account
+                    const initialData = accountInitialData[newAccountId] || { balance: 100, positions: [] };
+                    setBalance(initialData.balance);
+                    setPositions(initialData.positions);
+                    setClosedPositions([]);
+                }
+                setActiveAccountId(newAccountId);
+            }
+        };
+
+        // Initial load
+        handleStorageChange();
+
+        window.addEventListener('storage', handleStorageChange);
+        // Custom event to handle changes within the same tab
+        window.addEventListener('local-storage', handleStorageChange);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('local-storage', handleStorageChange);
+        };
+    }, [activeAccountId, balance, positions, closedPositions]);
 
      const livePositions = useMemo(() => {
         return positions.map(pos => {
@@ -100,13 +153,11 @@ export function TradeProvider({ children }: { children: ReactNode }) {
     const marginLevel = useMemo(() => (margin > 0 ? (equity / margin) * 100 : 0), [equity, margin]);
 
 
-    // Effect to check for SL/TP on price change
     useEffect(() => {
         if (Object.keys(latestPrice).length === 0 || positions.length === 0) return;
         
         const checkPositions = () => {
             positions.forEach(pos => {
-                // Ignore preset positions for SL/TP checks
                 if (pos.id.startsWith('preset_')) return;
 
                 const currentPrice = latestPrice[pos.pair];
@@ -179,7 +230,6 @@ export function TradeProvider({ children }: { children: ReactNode }) {
             const closePrice = customClosePrice || latestPrice[positionToClose.pair] || positionToClose.currentPrice;
 
             if (!closePrice || closePrice <= 0) {
-                // Don't close if we can't get a valid price
                 return prev;
             }
 
@@ -210,7 +260,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         
         currentPositions.forEach(pos => {
             if (excludePresets && pos.id.startsWith('preset_')) {
-                return; // Skip preset positions if flag is true
+                return;
             }
 
             if (filter === 'all') {

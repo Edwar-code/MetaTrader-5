@@ -41,6 +41,8 @@ export default function LoginPage() {
             broker: broker,
         };
         localStorage.setItem('active_account', JSON.stringify(activeAccount));
+        // Dispatch a custom event to notify components in the same tab about the change
+        window.dispatchEvent(new CustomEvent('local-storage'));
         router.push('/chart');
     }
   };

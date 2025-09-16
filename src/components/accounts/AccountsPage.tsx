@@ -21,6 +21,14 @@ interface Account {
   currency?: string;
 }
 
+const allAccounts: Account[] = [
+    { name: 'GENT KINGSTON BUSI', number: '40311301 — FBS-Real', broker: 'FBS Markets Inc.', balance: '756.67', currency: 'USD' },
+    { name: 'MARY KARANJA KIMEU', number: '40776538 — FBS-Real', broker: 'FBS Markets Inc.', balance: '240.45', currency: 'USD' },
+    { name: 'DENNIS WAITHERA', number: '40256784 — FBS-Real', broker: 'FBS Markets Inc.', balance: '456.46', currency: 'USD' },
+];
+
+const defaultAccount: Account = allAccounts[0];
+
 const AccountCard = ({
   logo,
   broker,
@@ -72,8 +80,8 @@ const AccountCard = ({
       {!isMain && (
          <div className="relative flex justify-between items-end">
             <div className="flex items-start">
-                <div style={{ marginLeft: '15px' }}>{logo}</div>
-                <div style={{ marginLeft: '17px' }}>
+                <div style={{ marginLeft: '10px' }}>{logo}</div>
+                <div style={{ marginLeft: '12px' }}>
                     <p className="font-semibold text-foreground">{accountName}</p>
                     <p className="text-sm text-primary">{broker}</p>
                     <p className="text-xs mt-1" style={{ color: '#93a1b0' }}>{accountNumber}</p>
@@ -117,31 +125,23 @@ const DemoBadge = () => (
   </div>
 );
 
-const otherAccounts: Account[] = [
-    { name: 'MARY KARANJA KIMEU', number: '40776538 — FBS-Real', broker: 'FBS Markets Inc.', balance: '240.45', currency: 'USD' },
-    { name: 'DENNIS WAITHERA', number: '40256784 — FBS-Real', broker: 'FBS Markets Inc.', balance: '456.46', currency: 'USD' },
-];
-
-const defaultAccount: Account = {
-    name: 'GENT KINGSTON BUSI',
-    number: '40311301 — FBS-Real',
-    broker: 'FBS Markets Inc.'
-};
-
 export default function AccountsPage() {
   const { balance } = useTradeState();
   const [loading, setLoading] = useState(true);
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [activeAccount, setActiveAccount] = useState<Account>(defaultAccount);
+  const [otherAccounts, setOtherAccounts] = useState<Account[]>([]);
 
   useEffect(() => {
     setMounted(true);
     if (typeof window !== 'undefined') {
-        const storedAccount = localStorage.getItem('active_account');
-        if (storedAccount) {
-            setActiveAccount(JSON.parse(storedAccount));
-        }
+        const storedAccountJson = localStorage.getItem('active_account');
+        const currentActiveAccount = storedAccountJson ? JSON.parse(storedAccountJson) : defaultAccount;
+        setActiveAccount(currentActiveAccount);
+        
+        const inactive = allAccounts.filter(acc => acc.number !== currentActiveAccount.number);
+        setOtherAccounts(inactive);
     }
     const timer = setTimeout(() => {
       setLoading(false);
@@ -158,7 +158,7 @@ export default function AccountsPage() {
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_1a61dd2a.jpg';
 
   const fbsLogoSrc = mounted && resolvedTheme === 'dark'
-    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
+    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%-2011.57.04_18cd5e88.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg';
 
   if (!mounted) {
