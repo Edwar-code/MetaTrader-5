@@ -41,10 +41,6 @@ export const InfoIcon = () => (
     </svg>
 );
 
-export const FbsLogo = ({ size = 40 }: { size?: number }) => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/fbs-logo.png" alt="FBS Logo" width={size} height={size} />
-);
-
 export const MatchSecuritiesLogo = () => (
     <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/match-securities-logo.png" alt="Match Securities" width={40} height={40} />
 );

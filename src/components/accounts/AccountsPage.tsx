@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Sidebar } from '@/components/trade/Sidebar';
 import { MoreVertical, Plus } from 'lucide-react';
 import BottomNav from '@/components/trade/BottomNav';
-import { BellIcon, InfoIcon, FbsLogo, MatchSecuritiesLogo, QrCodeIcon } from './icons';
+import { BellIcon, InfoIcon, MatchSecuritiesLogo, QrCodeIcon } from './icons';
 import { useTradeState } from '@/context/TradeContext';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
@@ -127,6 +127,10 @@ export default function AccountsPage() {
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.52.36_6f401008.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_1a61dd2a.jpg';
 
+  const fbsLogoSrc = mounted && resolvedTheme === 'dark'
+    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
+    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg';
+
   if (!mounted) {
     return null; // or a loading skeleton
   }
@@ -154,7 +158,7 @@ export default function AccountsPage() {
       </header>
       <div className="flex-1 overflow-y-auto pb-20 space-y-4 p-2 bg-background">
         <AccountCard
-          logo={<FbsLogo />}
+          logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
           broker="FBS Markets Inc."
           accountName="GENT KINGSTON BUSI"
           accountNumber="40311301 — FBS-Real"
@@ -169,7 +173,7 @@ export default function AccountsPage() {
         <div className="px-2 pt-2">
             <h2 className="text-sm font-semibold text-muted-foreground mb-2">Connect to:</h2>
              <AccountCard
-                logo={<FbsLogo />}
+                logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
                 broker="FBS Markets Inc."
                 accountName="EDWARD KIBE MUNENE"
                 accountNumber="40311301 — FBS-Real"
