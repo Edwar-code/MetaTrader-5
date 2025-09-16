@@ -99,9 +99,9 @@ export default function LoginPage() {
             </div>
            </div>
           <div className="px-4 space-y-4">
-             <div className="flex items-center justify-end gap-2">
-                <Checkbox id="save-password" defaultChecked/>
+             <div className="flex items-center justify-between">
                 <Label htmlFor="save-password">Save password</Label>
+                <Checkbox id="save-password" defaultChecked/>
              </div>
              <div className="text-center">
                 <Button variant="link" className="text-primary p-0 h-auto">
