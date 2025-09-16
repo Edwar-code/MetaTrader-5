@@ -43,7 +43,7 @@ export default function LoginPage() {
         localStorage.setItem('active_account', JSON.stringify(activeAccount));
         // Dispatch a custom event to notify components in the same tab about the change
         window.dispatchEvent(new CustomEvent('local-storage'));
-        router.push('/chart');
+        router.push('/accounts');
     }
   };
 
@@ -66,8 +66,8 @@ export default function LoginPage() {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto bg-background p-4 pt-6 pb-28">
-        <div className="flex items-center gap-4 mb-4">
+      <main className="flex-1 overflow-y-auto bg-background pt-6 pb-28">
+        <div className="flex items-center gap-4 mb-4 px-4">
           <Image
             src={fbsLogoSrc}
             alt="FBS Logo"
@@ -83,15 +83,15 @@ export default function LoginPage() {
         <hr className="border-t border-muted-foreground/30 my-6" />
 
         <div className="space-y-6">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-4 px-4 border-b">
             <Label htmlFor="account-number" className="text-muted-foreground shrink-0">Login</Label>
-             <Input id="account-number" defaultValue={accountNumber} readOnly className="bg-transparent border-0 border-b rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground text-right w-full"/>
+             <Input id="account-number" defaultValue={accountNumber} readOnly className="bg-transparent border-0 rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground text-right w-full"/>
           </div>
-           <div className="flex items-center justify-between gap-4">
+           <div className="flex items-center justify-between gap-4 px-4 border-b">
             <Label htmlFor="password" className="text-muted-foreground shrink-0">Password</Label>
-            <Input id="password" type="password" defaultValue="••••••••" className="bg-transparent border-0 border-b rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full"/>
+            <Input id="password" type="password" defaultValue="••••••••" className="bg-transparent border-0 rounded-none px-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-right w-full"/>
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between px-4">
              <div className="flex items-center gap-2">
                 <Checkbox id="save-password" defaultChecked/>
                 <Label htmlFor="save-password">Save password</Label>
