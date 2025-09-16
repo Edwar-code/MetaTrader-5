@@ -80,7 +80,9 @@ export default function LoginPage() {
             <p className="text-sm text-muted-foreground">{broker}</p>
           </div>
         </div>
-        <hr className="border-t border-muted-foreground/30 my-6" />
+        <div style={{ paddingLeft: '25px', paddingRight: '25px' }}>
+            <hr className="border-t border-muted-foreground/30 my-6" />
+        </div>
 
         <div className="space-y-6">
           <div style={{ paddingLeft: '25px', paddingRight: '25px' }}>
