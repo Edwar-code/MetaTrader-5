@@ -158,7 +158,7 @@ export default function AccountsPage() {
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2000.14.33_1a61dd2a.jpg';
 
   const fbsLogoSrc = mounted && resolvedTheme === 'dark'
-    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%-2011.57.04_18cd5e88.jpg'
+    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg';
 
   if (!mounted) {
