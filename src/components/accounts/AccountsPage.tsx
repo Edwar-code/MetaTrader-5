@@ -62,7 +62,7 @@ const AccountCard = ({
       )}
       {!isMain && (
          <div className="grid grid-cols-[auto_1fr] items-start gap-4">
-            <div className="flex flex-col items-center gap-4 h-full">
+            <div className="flex flex-col items-center gap-4 h-full" style={{ marginLeft: '10px' }}>
                 {logo}
             </div>
             <div>
