@@ -20,7 +20,8 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
 
   const accountName = searchParams.get('name') || 'FBS-Real';
-  const accountNumber = searchParams.get('number') || 'Unknown';
+  const fullAccountNumber = searchParams.get('number') || 'Unknown';
+  const accountNumber = fullAccountNumber.split('—')[0].trim();
   const broker = searchParams.get('broker') || 'FBS Markets Inc.';
 
 
@@ -37,7 +38,7 @@ export default function LoginPage() {
     if (typeof window !== 'undefined') {
         const activeAccount = {
             name: accountName,
-            number: accountNumber,
+            number: fullAccountNumber,
             broker: broker,
         };
         localStorage.setItem('active_account', JSON.stringify(activeAccount));

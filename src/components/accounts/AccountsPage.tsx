@@ -203,7 +203,7 @@ export default function AccountsPage() {
         <div className="px-2 pt-2">
             <h2 className="text-sm font-semibold text-muted-foreground mb-2">Connect to:</h2>
             {otherAccounts.map((account, index) => {
-                 const loginUrl = `/auth/login?name=${encodeURIComponent(account.name)}&number=${encodeURIComponent(account.number)}&broker=${encodeURIComponent(account.broker)}`;
+                 const loginUrl = `/auth/login?name=FBS-Real&number=${encodeURIComponent(account.number)}&broker=${encodeURIComponent(account.broker)}`;
                  return (
                     <Link href={loginUrl} key={index} className="block mt-4 first:mt-0">
                       <div className="cursor-pointer">
