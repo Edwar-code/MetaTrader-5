@@ -74,7 +74,7 @@ const AccountCard = ({
                     <p className="text-xs text-muted-foreground">{currency}, last known</p>
                 </div>
             </div>
-            <div className="col-start-2 flex justify-end items-end gap-3">
+            <div className="col-start-2 flex justify-between items-end w-full">
                  {scannerIconSrc && <Image src={scannerIconSrc} alt="Scanner Icon" width={24} height={24} />}
                  <InfoIcon />
             </div>
