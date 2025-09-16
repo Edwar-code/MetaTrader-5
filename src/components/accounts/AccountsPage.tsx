@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -114,7 +113,7 @@ const AccountCard = ({
 const DemoBadge = () => (
   <div className="absolute top-0 right-0">
     <div className="relative w-16 h-16">
-      <div 
+      <div
         className="absolute top-0 right-0 w-0 h-0 border-t-[40px] border-t-green-500 border-l-[40px] border-l-transparent"
       >
       </div>
@@ -135,19 +134,33 @@ export default function AccountsPage() {
 
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined') {
+
+    const handleStorageChange = () => {
+      if (typeof window !== 'undefined') {
         const storedAccountJson = localStorage.getItem('active_account');
         const currentActiveAccount = storedAccountJson ? JSON.parse(storedAccountJson) : defaultAccount;
         setActiveAccount(currentActiveAccount);
         
         const inactive = allAccounts.filter(acc => acc.number !== currentActiveAccount.number);
         setOtherAccounts(inactive);
-    }
+      }
+    };
+
+    // Initial load
+    handleStorageChange();
+
+    // Listen for custom event from LoginPage
+    window.addEventListener('local-storage', handleStorageChange);
+
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
-    return () => clearTimeout(timer);
-  }, []);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('local-storage', handleStorageChange);
+    };
+  }, []); // Empty dependency array means this runs once on mount
 
   const headerIconSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.52.07_eff7dc80.jpg'
@@ -203,7 +216,8 @@ export default function AccountsPage() {
         <div className="px-2 pt-2">
             <h2 className="text-sm font-semibold text-muted-foreground mb-2">Connect to:</h2>
             {otherAccounts.map((account, index) => {
-                 const loginUrl = `/auth/login?name=FBS-Real&number=${encodeURIComponent(account.number)}&broker=${encodeURIComponent(account.broker)}`;
+                 // FIX: Pass account.name instead of hardcoded 'FBS-Real'
+                 const loginUrl = `/auth/login?name=${encodeURIComponent(account.name)}&number=${encodeURIComponent(account.number)}&broker=${encodeURIComponent(account.broker)}`;
                  return (
                     <Link href={loginUrl} key={index} className="block mt-4 first:mt-0">
                       <div className="cursor-pointer">
