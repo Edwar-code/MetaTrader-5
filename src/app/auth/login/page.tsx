@@ -11,10 +11,18 @@ import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { Checkbox } from '@/components/ui/checkbox';
 import BottomNav from '@/components/trade/BottomNav';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function LoginPage() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const accountName = searchParams.get('name') || 'FBS-Real';
+  const accountNumber = searchParams.get('number') || 'Unknown';
+  const broker = searchParams.get('broker') || 'FBS Markets Inc.';
+
 
   useEffect(() => {
     setMounted(true);
@@ -24,6 +32,18 @@ export default function LoginPage() {
     mounted && resolvedTheme === 'dark'
       ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
       : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg';
+
+  const handleSignIn = () => {
+    if (typeof window !== 'undefined') {
+        const activeAccount = {
+            name: accountName,
+            number: accountNumber,
+            broker: broker,
+        };
+        localStorage.setItem('active_account', JSON.stringify(activeAccount));
+        router.push('/chart');
+    }
+  };
 
   if (!mounted) {
     return null; // or a loading skeleton
@@ -54,8 +74,8 @@ export default function LoginPage() {
             className="shrink-0 rounded-md"
           />
           <div>
-            <p className="font-semibold text-foreground">FBS-Real</p>
-            <p className="text-sm text-muted-foreground">FBS Markets Inc.</p>
+            <p className="font-semibold text-foreground">{accountName}</p>
+            <p className="text-sm text-muted-foreground">{broker}</p>
           </div>
         </div>
         <hr className="border-t border-border my-6" />
@@ -63,8 +83,8 @@ export default function LoginPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <Label htmlFor="account-number">Login</Label>
-            <span className="text-sm text-foreground">40311301</span>
-            <Input id="account-number" defaultValue="40311301" className="hidden" />
+            <span className="text-sm text-foreground">{accountNumber}</span>
+            <Input id="account-number" defaultValue={accountNumber} className="hidden" />
           </div>
            <div className="relative">
             <Label htmlFor="password" className="absolute left-0 -top-2.5 text-xs text-muted-foreground">Password</Label>
@@ -86,11 +106,7 @@ export default function LoginPage() {
         <Button 
           className="w-full" 
           style={{ borderRadius: '3px' }}
-          onClick={() => {
-            if (typeof window !== 'undefined') {
-              window.location.href = '/chart';
-            }
-          }}
+          onClick={handleSignIn}
         >
           SIGN IN
         </Button>

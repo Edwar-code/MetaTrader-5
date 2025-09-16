@@ -13,6 +13,14 @@ import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 
+interface Account {
+  name: string;
+  number: string;
+  broker: string;
+  balance?: string;
+  currency?: string;
+}
+
 const AccountCard = ({
   logo,
   broker,
@@ -109,15 +117,32 @@ const DemoBadge = () => (
   </div>
 );
 
+const otherAccounts: Account[] = [
+    { name: 'MARY KARANJA KIMEU', number: '40776538 — FBS-Real', broker: 'FBS Markets Inc.', balance: '240.45', currency: 'USD' },
+    { name: 'DENNIS WAITHERA', number: '40256784 — FBS-Real', broker: 'FBS Markets Inc.', balance: '456.46', currency: 'USD' },
+];
+
+const defaultAccount: Account = {
+    name: 'GENT KINGSTON BUSI',
+    number: '40311301 — FBS-Real',
+    broker: 'FBS Markets Inc.'
+};
 
 export default function AccountsPage() {
   const { balance } = useTradeState();
   const [loading, setLoading] = useState(true);
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [activeAccount, setActiveAccount] = useState<Account>(defaultAccount);
 
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== 'undefined') {
+        const storedAccount = localStorage.getItem('active_account');
+        if (storedAccount) {
+            setActiveAccount(JSON.parse(storedAccount));
+        }
+    }
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
@@ -164,9 +189,9 @@ export default function AccountsPage() {
       <div className="flex-1 overflow-y-auto pb-20 space-y-4 p-2 bg-background">
         <AccountCard
           logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
-          broker="FBS Markets Inc."
-          accountName="GENT KINGSTON BUSI"
-          accountNumber="40311301 — FBS-Real"
+          broker={activeAccount.broker}
+          accountName={activeAccount.name}
+          accountNumber={activeAccount.number}
           accountDetails="DC-305-Johannesburg-5R1, Hedge"
           balance={balance.toFixed(2)}
           currency="USD"
@@ -177,38 +202,26 @@ export default function AccountsPage() {
 
         <div className="px-2 pt-2">
             <h2 className="text-sm font-semibold text-muted-foreground mb-2">Connect to:</h2>
-            <Link href="/auth/login">
-              <div className="cursor-pointer">
-                <AccountCard
-                    logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
-                    broker="FBS Markets Inc."
-                    accountName="MARY KARANJA KIMEU"
-                    accountNumber="40776538 — FBS-Real"
-                    balance="240.45"
-                    currency="USD"
-                    isMain={false}
-                    isLoading={false}
-                    scannerIconSrc={scannerIconSrc}
-                />
-              </div>
-            </Link>
-            <div className="mt-4">
-              <Link href="/auth/login">
-                <div className="cursor-pointer">
-                  <AccountCard
-                      logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
-                      broker="FBS Markets Inc."
-                      accountName="DENNIS WAITHERA"
-                      accountNumber="40256784 — FBS-Real"
-                      balance="456.46"
-                      currency="USD"
-                      isMain={false}
-                      isLoading={false}
-                      scannerIconSrc={scannerIconSrc}
-                  />
-                </div>
-              </Link>
-            </div>
+            {otherAccounts.map((account, index) => {
+                 const loginUrl = `/auth/login?name=${encodeURIComponent(account.name)}&number=${encodeURIComponent(account.number)}&broker=${encodeURIComponent(account.broker)}`;
+                 return (
+                    <Link href={loginUrl} key={index} className="block mt-4 first:mt-0">
+                      <div className="cursor-pointer">
+                        <AccountCard
+                            logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
+                            broker={account.broker}
+                            accountName={account.name}
+                            accountNumber={account.number}
+                            balance={account.balance!}
+                            currency={account.currency!}
+                            isMain={false}
+                            isLoading={false}
+                            scannerIconSrc={scannerIconSrc}
+                        />
+                      </div>
+                    </Link>
+                 )
+            })}
         </div>
       </div>
       <BottomNav />

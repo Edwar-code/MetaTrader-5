@@ -35,13 +35,32 @@ const NavItem = ({ icon, label, badge, ad, active, href }: { icon: React.ReactNo
   </Link>
 );
 
+interface Account {
+  name: string;
+  number: string;
+  broker: string;
+}
+
+const defaultAccount: Account = {
+    name: 'GENT KINGSTON BUSI',
+    number: '40311301 - FBS-Real',
+    broker: 'FBS Markets Inc.'
+};
+
 export function Sidebar() {
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [activeAccount, setActiveAccount] = useState<Account>(defaultAccount);
 
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== 'undefined') {
+        const storedAccount = localStorage.getItem('active_account');
+        if (storedAccount) {
+            setActiveAccount(JSON.parse(storedAccount));
+        }
+    }
   }, []);
 
   const menuIconSrc = mounted && resolvedTheme === 'dark'
@@ -73,8 +92,8 @@ export function Sidebar() {
             <div className="flex items-start gap-6 ml-2">
               <Image src={fbsLogoSrc} alt="FBS Logo" width={34} height={34} className="shrink-0" />
               <div>
-                <h2 className="text-card-foreground">GENT KINGSTON BUSI</h2>
-                <p className="text-sm text-muted-foreground">40311301 - FBS-Real</p>
+                <h2 className="text-card-foreground">{activeAccount.name}</h2>
+                <p className="text-sm text-muted-foreground">{activeAccount.number}</p>
                 <Link href="/accounts" className="text-primary text-sm font-medium mt-1 inline-block">Manage accounts</Link>
               </div>
             </div>
