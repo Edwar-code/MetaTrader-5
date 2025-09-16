@@ -75,8 +75,8 @@ const accountInitialData: { [key: string]: { balance: number, positions: Positio
 export function TradeProvider({ children }: { children: ReactNode }) {
     const [positions, setPositions] = useState<Position[]>([]);
     const [closedPositions, setClosedPositions] = useState<ClosedPosition[]>([]);
-    const [balance, setBalance] = useState<number>(accountInitialData[gentKingstonAccountId].balance);
-    const [activeAccountId, setActiveAccountId] = useState<string>(gentKingstonAccountId);
+    const [balance, setBalance] = useState<number>(0);
+    const [activeAccountId, setActiveAccountId] = useState<string>('');
 
     const { latestPrice, getTicks } = useDerivState();
     const { toast } = useToast();
@@ -87,13 +87,15 @@ export function TradeProvider({ children }: { children: ReactNode }) {
             const newAccountId = storedAccountJson ? JSON.parse(storedAccountJson).number : gentKingstonAccountId;
             
             if (newAccountId !== activeAccountId) {
-                // Save current state before switching
-                const currentState = {
-                    balance,
-                    positions,
-                    closedPositions
-                };
-                localStorage.setItem(`account_state_${activeAccountId}`, JSON.stringify(currentState));
+                // Save current state before switching if there's an old account ID
+                if (activeAccountId) {
+                    const currentState = {
+                        balance,
+                        positions,
+                        closedPositions
+                    };
+                    localStorage.setItem(`account_state_${activeAccountId}`, JSON.stringify(currentState));
+                }
 
                 // Load new account state
                 const newStateJson = localStorage.getItem(`account_state_${newAccountId}`);
@@ -103,7 +105,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                     setPositions(newState.positions);
                     setClosedPositions(newState.closedPositions);
                 } else {
-                    // First time loading this account
+                    // First time loading this account, use initial data
                     const initialData = accountInitialData[newAccountId] || { balance: 100, positions: [] };
                     setBalance(initialData.balance);
                     setPositions(initialData.positions);
@@ -117,14 +119,14 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         handleStorageChange();
 
         window.addEventListener('storage', handleStorageChange);
-        // Custom event to handle changes within the same tab
         window.addEventListener('local-storage', handleStorageChange);
 
         return () => {
             window.removeEventListener('storage', handleStorageChange);
             window.removeEventListener('local-storage', handleStorageChange);
         };
-    }, [activeAccountId, balance, positions, closedPositions]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeAccountId]);
 
      const livePositions = useMemo(() => {
         return positions.map(pos => {
@@ -310,5 +312,3 @@ export function useTradeState() {
     }
     return context;
 }
-
-    
