@@ -113,7 +113,7 @@ export default function LoginPage() {
 
         <div className="absolute bottom-16 left-0 right-0 p-4 bg-background z-10 border-t border-card">
           <Button 
-            className="w-full" 
+            className="w-full font-normal" 
             style={{ borderRadius: '3px' }}
             onClick={handleSignIn}
           >
