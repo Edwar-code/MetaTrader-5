@@ -11,6 +11,7 @@ import { useTradeState } from '@/context/TradeContext';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
+import Link from 'next/link';
 
 const AccountCard = ({
   logo,
@@ -176,29 +177,37 @@ export default function AccountsPage() {
 
         <div className="px-2 pt-2">
             <h2 className="text-sm font-semibold text-muted-foreground mb-2">Connect to:</h2>
-             <AccountCard
-                logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
-                broker="FBS Markets Inc."
-                accountName="MARY KARANJA KIMEU"
-                accountNumber="40776538 — FBS-Real"
-                balance="240.45"
-                currency="USD"
-                isMain={false}
-                isLoading={false}
-                scannerIconSrc={scannerIconSrc}
-            />
+            <Link href="/auth/login">
+              <div className="cursor-pointer">
+                <AccountCard
+                    logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
+                    broker="FBS Markets Inc."
+                    accountName="MARY KARANJA KIMEU"
+                    accountNumber="40776538 — FBS-Real"
+                    balance="240.45"
+                    currency="USD"
+                    isMain={false}
+                    isLoading={false}
+                    scannerIconSrc={scannerIconSrc}
+                />
+              </div>
+            </Link>
             <div className="mt-4">
-              <AccountCard
-                  logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
-                  broker="FBS Markets Inc."
-                  accountName="DENNIS WAITHERA"
-                  accountNumber="40256784 — FBS-Real"
-                  balance="456.46"
-                  currency="USD"
-                  isMain={false}
-                  isLoading={false}
-                  scannerIconSrc={scannerIconSrc}
-              />
+              <Link href="/auth/login">
+                <div className="cursor-pointer">
+                  <AccountCard
+                      logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
+                      broker="FBS Markets Inc."
+                      accountName="DENNIS WAITHERA"
+                      accountNumber="40256784 — FBS-Real"
+                      balance="456.46"
+                      currency="USD"
+                      isMain={false}
+                      isLoading={false}
+                      scannerIconSrc={scannerIconSrc}
+                  />
+                </div>
+              </Link>
             </div>
         </div>
       </div>
