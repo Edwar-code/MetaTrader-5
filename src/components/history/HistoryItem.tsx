@@ -6,6 +6,7 @@ import type { ClosedPosition } from '@/lib/types';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
+import { EurAudIcon } from '../trade/icons';
 
 interface HistoryItemProps {
   position: ClosedPosition;
@@ -42,6 +43,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
   const formattedType = position.type.toLowerCase();
   
   const isGold = position.pair === 'frxXAUUSD';
+  const isEurAud = position.pair === 'frxEURAUD';
   let displayPair = position.pair;
   if (position.pair === 'cryBTCUSD') displayPair = 'BTCUSD';
 
@@ -66,6 +68,11 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                       </div>
                       <span className="text-sm font-bold text-card-foreground">.m,</span>
                     </div>
+                  ) : isEurAud ? (
+                    <div className="flex items-center gap-1">
+                        <EurAudIcon />
+                        <span className="text-sm font-bold text-card-foreground">EURAUD,</span>
+                    </div>
                   ) : (
                     <span className="text-sm font-bold text-card-foreground">{displayPair},</span>
                   )}
@@ -77,9 +84,9 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 leading-none mt-px">
-                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.entryPrice.toFixed(2)}</span>
+                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.entryPrice.toFixed(5)}</span>
                 <span className="text-base font-light" style={{ color: '#838282' }}>→</span>
-                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.closePrice.toFixed(2)}</span>
+                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.closePrice.toFixed(5)}</span>
                 </div>
             </div>
             <div className="text-right">

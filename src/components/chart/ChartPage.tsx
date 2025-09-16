@@ -19,14 +19,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { BtcIcon } from '../trade/icons';
+import { BtcIcon, EurAudIcon } from '../trade/icons';
 
 
 const formatPrice = (price: number | undefined) => {
   if (typeof price !== 'number' || isNaN(price)) {
     return { integer: '-', fractional: '--' };
   }
-  const priceString = price.toFixed(2);
+  const priceString = price.toFixed(5);
   const parts = priceString.split('.');
   return { integer: parts[0], fractional: parts[1] };
 };
@@ -41,6 +41,7 @@ interface TradeNotificationData {
 const assets = [
     { symbol: 'frxXAUUSD', display: 'XAUUSD', description: 'Gold Spot' },
     { symbol: 'cryBTCUSD', display: 'BTCUSD', description: 'Bitcoin' },
+    { symbol: 'frxEURAUD', display: 'EURAUD', description: 'Euro vs Australian Dollar' },
 ];
 
 export default function ChartPage() {
@@ -81,7 +82,10 @@ export default function ChartPage() {
   // Use latestPrice for the most up-to-date quote, fallback to tick stream
   const sellPrice = latestPrice[selectedAsset] || lastTick?.quote;
   // A small, static spread for display purposes.
-  const spread = selectedAsset === 'cryBTCUSD' ? 30 : 0.20;
+  let spread = 0.00015; // Default for forex
+  if (selectedAsset === 'cryBTCUSD') spread = 30;
+  if (selectedAsset === 'frxXAUUSD') spread = 0.20;
+
   const buyPrice = sellPrice !== undefined ? sellPrice + spread : undefined;
 
   useEffect(() => {
@@ -156,6 +160,8 @@ export default function ChartPage() {
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.19.12_c460d5de.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg';
 
+  const priceFraction = selectedAsset === 'frxXAUUSD' || selectedAsset === 'cryBTCUSD' ? '22' : '28';
+
   if (!mounted) {
     return null; // or a loading skeleton
   }
@@ -179,9 +185,13 @@ export default function ChartPage() {
                     <DropdownMenuItem key={asset.symbol} onSelect={() => setAsset(asset.symbol)}>
                     <div className="flex items-center justify-between w-full">
                         <div className="flex items-center gap-2">
-                           {asset.symbol === 'frxXAUUSD' ? 
+                           {asset.symbol === 'frxXAUUSD' ? (
                                 <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.33.35_e00bef8a.jpg" alt="XAUUSD" width={16} height={16} /> 
-                                : <BtcIcon />}
+                            ) : asset.symbol === 'cryBTCUSD' ? (
+                                <BtcIcon />
+                            ) : (
+                                <EurAudIcon />
+                            )}
                             <span>{asset.display}</span>
                         </div>
                         {selectedAsset === asset.symbol && <Check className="h-4 w-4" />}
@@ -228,7 +238,7 @@ export default function ChartPage() {
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedSellPrice.integer}</span>
-            <span className="text-[22px] font-bold">.{formattedSellPrice.fractional}</span>
+            <span className={`font-bold`} style={{ fontSize: `${priceFraction}px` }}>.{formattedSellPrice.fractional}</span>
           </div>
         </div>
         <div className="bg-background px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4] border-b">
@@ -255,7 +265,7 @@ export default function ChartPage() {
           <div className="font-normal opacity-90 text-[10px] leading-none">BUY</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedBuyPrice.integer}</span>
-            <span className="text-[22px] font-bold">.{formattedBuyPrice.fractional}</span>
+            <span className={`font-bold`} style={{ fontSize: `${priceFraction}px` }}>.{formattedBuyPrice.fractional}</span>
           </div>
         </div>
       </div>

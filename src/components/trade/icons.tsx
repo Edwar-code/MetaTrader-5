@@ -142,3 +142,10 @@ export const BtcIcon = () => (
       <path d="M15 12.5a2.5 2.5 0 0 0 0-5H9" />
     </svg>
 );
+
+export const EurAudIcon = () => (
+    <div className="relative w-4 h-4">
+        <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/eur_a524a259.png" alt="EUR" layout="fill" className="absolute top-0 left-0" style={{ clipPath: 'inset(0 50% 0 0)' }}/>
+        <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/aud_b8a39626.png" alt="AUD" layout="fill" className="absolute top-0 left-0" style={{ clipPath: 'inset(0 0 0 50%)' }}/>
+    </div>
+);

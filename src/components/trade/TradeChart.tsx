@@ -107,18 +107,19 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     const time = format(fromUnixTime(data.epoch), 'PPpp');
+    const priceDecimalPoints = data.symbol === 'frxXAUUSD' || data.symbol === 'cryBTCUSD' ? 2 : 5;
 
     return (
       <div className="p-2 bg-background/80 backdrop-blur-sm border rounded-md shadow-lg text-xs">
         <p>{time}</p>
         {data.quote !== undefined ? (
-          <p>Price: <span className="font-bold">{data.quote.toFixed(2)}</span></p>
+          <p>Price: <span className="font-bold">{data.quote.toFixed(priceDecimalPoints)}</span></p>
         ) : (
           <>
-            <p>O: <span className="font-bold">{data.open.toFixed(2)}</span></p>
-            <p>H: <span className="font-bold">{data.high.toFixed(2)}</span></p>
-            <p>L: <span className="font-bold">{data.low.toFixed(2)}</span></p>
-            <p>C: <span className="font-bold">{data.close.toFixed(2)}</span></p>
+            <p>O: <span className="font-bold">{data.open.toFixed(priceDecimalPoints)}</span></p>
+            <p>H: <span className="font-bold">{data.high.toFixed(priceDecimalPoints)}</span></p>
+            <p>L: <span className="font-bold">{data.low.toFixed(priceDecimalPoints)}</span></p>
+            <p>C: <span className="font-bold">{data.close.toFixed(priceDecimalPoints)}</span></p>
           </>
         )}
       </div>
@@ -166,20 +167,21 @@ const MarkerLabel = ({ viewBox, value, tradeType, lotSize }: any) => {
 };
 MarkerLabel.displayName = 'MarkerLabel';
 
-const OrderPriceLabel = ({ viewBox, value, tradeType }: any) => {
+const OrderPriceLabel = ({ viewBox, value, tradeType, asset }: any) => {
     if (!viewBox || value === undefined) return null;
     const { y, width } = viewBox;
     const color = tradeType === 'BUY' ? '#007AFF' : '#FF3B30';
+    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 2 : 5;
   
     return (
       <g>
-        <foreignObject x={width + 7} y={y - 10} width="45" height="20" className="overflow-visible">
+        <foreignObject x={width + 7} y={y - 10} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center bg-white/90 border px-1"
             style={{ borderColor: color, color: color }}
           >
-            {value.toFixed(2)}
+            {value.toFixed(priceDecimalPoints)}
           </div>
         </foreignObject>
       </g>
@@ -188,17 +190,18 @@ const OrderPriceLabel = ({ viewBox, value, tradeType }: any) => {
 OrderPriceLabel.displayName = 'OrderPriceLabel';
 
 
-const YAxisLabel = ({ viewBox, value }: any) => {
+const YAxisLabel = ({ viewBox, value, asset }: any) => {
     if (!viewBox || value === undefined) return null;
     const { y, width } = viewBox;
+    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 2 : 5;
     return (
       <g>
-        <foreignObject x={width + 7} y={y - 10} width="45" height="20" className="overflow-visible">
+        <foreignObject x={width + 7} y={y - 10} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center text-white bg-[#16A085] px-1"
           >
-            {value.toFixed(2)}
+            {value.toFixed(priceDecimalPoints)}
           </div>
         </foreignObject>
       </g>
@@ -206,17 +209,18 @@ const YAxisLabel = ({ viewBox, value }: any) => {
 };
 YAxisLabel.displayName = 'YAxisLabel';
 
-const BuyPriceLabel = ({ viewBox, value }: any) => {
+const BuyPriceLabel = ({ viewBox, value, asset }: any) => {
     if (!viewBox || value === undefined) return null;
     const { y, width } = viewBox;
+    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 2 : 5;
     return (
       <g>
-        <foreignObject x={width + 7} y={y - 10} width="45" height="20" className="overflow-visible">
+        <foreignObject x={width + 7} y={y - 10} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center text-white bg-[#E74C3C] px-1"
           >
-            {value.toFixed(2)}
+            {value.toFixed(priceDecimalPoints)}
           </div>
         </foreignObject>
       </g>
@@ -237,10 +241,11 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
 };
 CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
-const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice, tickStyle, gridColor }: { data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string }) => {
+const LiveAreaChart = ({ asset, data, isUp, yAxisDomain, markers, buyPrice, tickStyle, gridColor }: { asset: string, data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
     const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
+    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 2 : 5;
     
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -256,7 +261,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice, tickStyle, 
             <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
             <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
 
-            <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1} />
+            <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(priceDecimalPoints) : ''} tickCount={18} tickMargin={1} />
             
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
@@ -276,7 +281,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice, tickStyle, 
                     stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'}
                     strokeDasharray="3 3"
                     strokeWidth={1}
-                    label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} />}
+                    label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} asset={asset} />}
                     ifOverflow="visible"
                 />
             ))}
@@ -285,7 +290,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice, tickStyle, 
                     y={lastTick.quote} 
                     stroke="#16A085" 
                     strokeWidth={1} 
-                    label={<YAxisLabel value={lastTick.quote} />}
+                    label={<YAxisLabel value={lastTick.quote} asset={asset}/>}
                 />
             )}
              {buyPrice && (
@@ -293,7 +298,7 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice, tickStyle, 
                     y={buyPrice} 
                     stroke="#E74C3C" 
                     strokeWidth={1} 
-                    label={<BuyPriceLabel value={buyPrice} />}
+                    label={<BuyPriceLabel value={buyPrice} asset={asset}/>}
                 />
             )}
             {lastTick && (
@@ -305,10 +310,11 @@ const LiveAreaChart = ({ data, isUp, yAxisDomain, markers, buyPrice, tickStyle, 
 };
 LiveAreaChart.displayName = 'LiveAreaChart';
 
-const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buyPrice, tickStyle, gridColor }: { data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string }) => {
+const LiveCandlestickChart = ({ asset, data, isUp, lastPrice, yAxisDomain, markers, buyPrice, tickStyle, gridColor }: { asset: string, data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string }) => {
     const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
     const lastCandle = data.length > 0 ? data[data.length-1] : null;
+    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 2 : 5;
 
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -320,7 +326,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
                 {/* Hidden X-axis for per-minute grid lines */}
                 <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
 
-                <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(2) : ''} tickCount={18} tickMargin={1}/>
+                <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(priceDecimalPoints) : ''} tickCount={18} tickMargin={1}/>
                 
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="body" shape={<HeikinAshiCandleStick />} isAnimationActive={false} barSize={6} />
@@ -344,7 +350,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
                         stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'}
                         strokeDasharray="3 3"
                         strokeWidth={1}
-                        label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} />}
+                        label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} asset={asset} />}
                         ifOverflow="visible"
                     />
                 ))}
@@ -354,7 +360,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
                         y={lastPrice} 
                         stroke="#16A085" 
                         strokeWidth={1}
-                        label={<YAxisLabel value={lastPrice}/>}
+                        label={<YAxisLabel value={lastPrice} asset={asset}/>}
                     />
                 )}
                 {buyPrice && (
@@ -362,7 +368,7 @@ const LiveCandlestickChart = ({ data, isUp, lastPrice, yAxisDomain, markers, buy
                         y={buyPrice} 
                         stroke="#E74C3C" 
                         strokeWidth={1} 
-                        label={<BuyPriceLabel value={buyPrice} />}
+                        label={<BuyPriceLabel value={buyPrice} asset={asset}/>}
                     />
                 )}
                 {lastCandle && (
@@ -427,10 +433,10 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
         
         const min = Math.min(...finitePrices);
         const max = Math.max(...finitePrices);
-        const padding = (max - min) * 0.1 || 0.0001; 
+        const padding = (max - min) * 0.1 || (asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 0.01 : 0.0001); 
 
         return [min - padding, max + padding];
-    }, [ticks, heikinAshiCandles, chartInterval]);
+    }, [ticks, heikinAshiCandles, chartInterval, asset]);
 
     const chartDataForCandle = React.useMemo(() => (
         heikinAshiCandles.map(c => ({...c, body: [c.low, c.high]}))
@@ -465,8 +471,8 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
                         </div>
                     ) : (
                         (chartType === 'area' || isTickChart)
-                        ? <LiveAreaChart data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} gridColor={gridColor} />
-                        : <LiveCandlestickChart data={chartDataForCandle} isUp={isUp} lastPrice={lastPrice} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} gridColor={gridColor} />
+                        ? <LiveAreaChart asset={asset} data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} gridColor={gridColor} />
+                        : <LiveCandlestickChart asset={asset} data={chartDataForCandle} isUp={isUp} lastPrice={lastPrice} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} gridColor={gridColor} />
                     )}
                 </div>
             </CardContent>

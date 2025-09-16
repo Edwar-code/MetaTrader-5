@@ -11,7 +11,7 @@ export function formatAssetDisplayName(displayName: string): string {
   return displayName.split(': ').pop() || displayName;
 }
 
-// A more realistic P/L calculation for XAUUSD.
+// A more realistic P/L calculation.
 export function calculatePnl(position: Position, currentPrice: number): number {
     if (!currentPrice || currentPrice <= 0 || !position.entryPrice) {
         return position.pnl || 0;
@@ -21,9 +21,18 @@ export function calculatePnl(position: Position, currentPrice: number): number {
     
     // For XAUUSD, 1 standard lot = 100 ounces.
     // A $1 price move on a 1.0 lot trade is a $100 change.
-    const contractSize = 100;
+    // For Forex, 1 standard lot = 100,000 units.
+    // The value of a pip move is what varies.
     
-    let pnl = priceDifference * position.size * contractSize;
+    let pnl;
+    if (position.pair === 'frxXAUUSD') {
+        const contractSize = 100; // 100 ounces per lot
+        pnl = priceDifference * position.size * contractSize;
+    } else { // Forex
+        const contractSize = 100000; // 100,000 units per lot
+        pnl = priceDifference * position.size * contractSize;
+    }
+
 
     if (position.type === 'SELL') {
       pnl = -pnl;

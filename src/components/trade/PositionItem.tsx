@@ -6,6 +6,7 @@ import type { Position } from '@/lib/types';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
+import { EurAudIcon } from './icons';
 
 interface PositionItemProps {
   position: Position;
@@ -42,6 +43,7 @@ export default function PositionItem({ position }: PositionItemProps) {
   const formattedType = position.type.toLowerCase();
   
   const isGold = position.pair === 'frxXAUUSD';
+  const isEurAud = position.pair === 'frxEURAUD';
   let displayPair = position.pair;
   if (position.pair === 'cryBTCUSD') displayPair = 'BTCUSD';
 
@@ -53,6 +55,8 @@ export default function PositionItem({ position }: PositionItemProps) {
     // Render a skeleton or null during SSR and initial client render
     return <div className="h-[48px] py-2 px-4" />;
   }
+  
+  const priceDecimalPoints = position.pair === 'frxXAUUSD' || position.pair === 'cryBTCUSD' ? 2 : 5;
 
   return (
     <div className="flex flex-col py-2 px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
@@ -66,6 +70,11 @@ export default function PositionItem({ position }: PositionItemProps) {
                       </div>
                       <span className="text-sm font-bold text-card-foreground">.m,</span>
                     </div>
+                  ) : isEurAud ? (
+                    <div className="flex items-center gap-1">
+                        <EurAudIcon />
+                        <span className="text-sm font-bold text-card-foreground">EURAUD,</span>
+                    </div>
                   ) : (
                     <span className="text-sm font-bold text-card-foreground">{displayPair},</span>
                   )}
@@ -77,9 +86,9 @@ export default function PositionItem({ position }: PositionItemProps) {
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 leading-none mt-px">
-                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.entryPrice.toFixed(2)}</span>
+                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.entryPrice.toFixed(priceDecimalPoints)}</span>
                 <span className="text-base font-light" style={{ color: '#838282' }}>→</span>
-                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.currentPrice.toFixed(2)}</span>
+                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.currentPrice.toFixed(priceDecimalPoints)}</span>
                 </div>
             </div>
             <div className="text-right">
