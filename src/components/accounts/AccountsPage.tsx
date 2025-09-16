@@ -62,9 +62,8 @@ const AccountCard = ({
       )}
       {!isMain && (
          <div className="grid grid-cols-[auto_1fr] items-start gap-4">
-            <div className="flex flex-col items-center gap-4 justify-between h-full">
+            <div className="flex flex-col items-center gap-4 h-full">
                 {logo}
-                {scannerIconSrc && <Image src={scannerIconSrc} alt="Scanner Icon" width={24} height={24} />}
             </div>
             <div>
                 <p className="font-semibold text-foreground">{accountName}</p>
@@ -75,7 +74,8 @@ const AccountCard = ({
                     <p className="text-xs text-muted-foreground">{currency}, last known</p>
                 </div>
             </div>
-            <div className="col-start-2 flex justify-end">
+            <div className="col-start-2 flex justify-end items-end gap-3">
+                 {scannerIconSrc && <Image src={scannerIconSrc} alt="Scanner Icon" width={24} height={24} />}
                  <InfoIcon />
             </div>
          </div>
