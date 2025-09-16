@@ -33,41 +33,9 @@ const getContractSize = (pair: string): number => {
 };
 
 const gentKingstonAccountId = '40311301 — FBS-Real';
-const gentKingstonPresetTrades: Position[] = [
-    {
-        id: 'preset_1',
-        pair: 'frxXAUUSD',
-        type: 'BUY',
-        size: 0.1,
-        entryPrice: 3382,
-        openTime: Date.now() / 1000 - 300,
-        currentPrice: 3382,
-        pnl: 0,
-    },
-    {
-        id: 'preset_2',
-        pair: 'frxXAUUSD',
-        type: 'BUY',
-        size: 0.2,
-        entryPrice: 3415,
-        openTime: Date.now() / 1000 - 600,
-        currentPrice: 3415,
-        pnl: 0,
-    },
-    {
-        id: 'preset_3',
-        pair: 'frxXAUUSD',
-        type: 'BUY',
-        size: 0.1,
-        entryPrice: 3450,
-        openTime: Date.now() / 1000 - 900,
-        currentPrice: 3450,
-        pnl: 0,
-    },
-];
 
 const accountInitialData: { [key: string]: { balance: number, positions: Position[] } } = {
-    [gentKingstonAccountId]: { balance: 756.67, positions: gentKingstonPresetTrades },
+    [gentKingstonAccountId]: { balance: 756.67, positions: [] },
     '40776538 — FBS-Real': { balance: 240.45, positions: [] },
     '40256784 — FBS-Real': { balance: 456.46, positions: [] },
 };

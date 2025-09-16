@@ -63,9 +63,53 @@ export default function TradingPage() {
   }, [equity, handleBulkClosePositions, toast, isBotRunning, isLiquidationActive, positions.length]);
 
 
+  const handleRunBot = async () => {
+    let activeAccountName = 'GENT KINGSTON BUSI'; // Default
+    if (typeof window !== 'undefined') {
+        const storedAccount = localStorage.getItem('active_account');
+        if (storedAccount) {
+            activeAccountName = JSON.parse(storedAccount).name;
+        }
+    }
+
+    if (activeAccountName !== 'GENT KINGSTON BUSI') {
+        toast({
+            title: 'Bot Not Configured',
+            description: 'This automated strategy is only available for the GENT KINGSTON BUSI account.',
+            variant: 'destructive',
+        });
+        setIsBotRunning(false);
+        return;
+    }
+
+    // If it is the correct account, run the bot.
+    setIsBotRunning(true);
+    toast({
+        title: 'Bot Activated',
+        description: 'Placing initial trades for GENT KINGSTON BUSI account.',
+    });
+
+    // Place the three specific trades
+    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 });
+    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.2 });
+    await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 });
+  };
+  
+  const handleDisableBot = () => {
+      setIsBotRunning(false);
+      // Logic to close bot-opened trades if desired
+      handleBulkClosePositions('all'); 
+      toast({
+        title: 'Bot Disabled',
+        description: 'The bot has been turned off and all its trades have been closed.',
+      });
+  }
+
   // Continuous bot cycle logic
   useEffect(() => {
     const runBotCycle = async () => {
+      if (!isBotRunning) return;
+      
       // If the bot is told to run while in a critical state, prevent it.
       if (equity <= 7.00) {
           console.log("Bot run prevented due to low equity.");
@@ -73,59 +117,24 @@ export default function TradingPage() {
           return;
       }
       
-      console.log('Running Bot Cycle...');
-      const botPositions = positions.filter(p => !p.id.startsWith('preset_'));
-      const botTotalPnl = botPositions.reduce((acc, pos) => acc + pos.pnl, 0);
       const profitTarget = 10; // $10 profit target
 
-      // Rule 1: Check for bot's overall profit target. If met, close all bot positions.
-      // This will cause the useEffect to run again, and the next condition will open a new trade.
-      if (botTotalPnl >= profitTarget) {
-          console.log(`Profit target of $${profitTarget} reached for bot trades. Closing bot positions.`);
-          handleBulkClosePositions('all', true); // true to exclude presets
-          return;
+      if (totalProfit >= profitTarget) {
+          console.log(`Profit target of $${profitTarget} reached. Closing all positions.`);
+          handleBulkClosePositions('all');
+          // The bot will stop and can be run again to restart the cycle.
+          setIsBotRunning(false); 
+          toast({
+            title: "Profit Target Reached!",
+            description: `Bot has closed all positions with a profit of $${totalProfit.toFixed(2)} and is now disabled.`
+          })
       }
-      
-      // Rule 2: If there are no open bot positions, open a single new one.
-      if (botPositions.length === 0) {
-          console.log("No open bot positions. Opening a new trade.");
-          await handleTrade({
-              pair: 'frxXAUUSD',
-              type: 'BUY',
-              size: 0.1,
-          });
-      }
-      
-      // If bot positions are open but profit target is not met, do nothing and wait for next position change.
-      console.log("Bot positions are open, waiting for profit target.");
     };
 
-    if (isBotRunning) {
-      runBotCycle();
-    }
+    runBotCycle();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBotRunning, positions]);
+  }, [isBotRunning, positions, totalProfit]); // Reruns when positions change
 
-
-  const handleRunBot = () => {
-    if (equity <= 7.00) {
-        toast({
-            title: 'Cannot Start Bot',
-            description: 'Your account equity is too low to run the bot.',
-            variant: 'destructive',
-        });
-        return;
-    }
-    setIsBotRunning(true);
-  };
-  
-  const handleDisableBot = () => {
-      setIsBotRunning(false);
-      toast({
-        title: 'Bot Disabled',
-        description: 'The bot has been turned off.',
-      });
-  }
 
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
