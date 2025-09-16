@@ -1,4 +1,3 @@
-
 'use client';
 
 import { ArrowLeft } from 'lucide-react';
@@ -17,13 +16,15 @@ export default function LoginPage() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
+  
+  // Conditionally initialize useSearchParams only when mounted
+  const searchParams = mounted ? useSearchParams() : new URLSearchParams();
 
+  // Initialize account details with fallback values
   const accountName = searchParams.get('name') || 'FBS-Real';
   const fullAccountNumber = searchParams.get('number') || 'Unknown';
   const accountNumber = fullAccountNumber.split('—')[0].trim();
   const broker = searchParams.get('broker') || 'FBS Markets Inc.';
-
 
   useEffect(() => {
     setMounted(true);
@@ -31,7 +32,7 @@ export default function LoginPage() {
 
   const fbsLogoSrc =
     mounted && resolvedTheme === 'dark'
-      ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
+      ? 'https://on98bvtkqbnonyonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
       : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg';
 
   const handleSignIn = () => {
@@ -49,7 +50,12 @@ export default function LoginPage() {
   };
 
   if (!mounted) {
-    return null; // or a loading skeleton
+    // Return a loading state or null while the component is not yet mounted on the client
+    return (
+      <div className="flex flex-col h-[100svh] w-full items-center justify-center bg-background">
+        Loading...
+      </div>
+    ); 
   }
 
   return (
