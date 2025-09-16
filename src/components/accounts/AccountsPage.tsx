@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Sidebar } from '@/components/trade/Sidebar';
 import { MoreVertical, Plus } from 'lucide-react';
 import BottomNav from '@/components/trade/BottomNav';
-import { BellIcon, InfoIcon, FbsLogo, MatchSecuritiesLogo } from './icons';
+import { BellIcon, InfoIcon, FbsLogo, MatchSecuritiesLogo, QrCodeIcon } from './icons';
 import { useTradeState } from '@/context/TradeContext';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
@@ -61,16 +61,22 @@ const AccountCard = ({
         </div>
       )}
       {!isMain && (
-         <div className="flex items-center gap-4">
-            {logo}
-            <div className="flex-1">
-                <p className="font-semibold text-foreground">{broker}</p>
-                <p className="text-sm text-primary">{accountName}</p>
-                <p className="text-xs text-muted-foreground">{accountNumber}</p>
+         <div className="grid grid-cols-[auto_1fr_auto] items-start gap-4">
+            <div className="flex flex-col items-center gap-4 justify-between h-full">
+                {logo}
+                <QrCodeIcon />
             </div>
-            <div className="text-right">
-                <p className="font-light text-xl text-foreground">{balance}</p>
-                <p className="text-xs text-muted-foreground">{currency}, last known</p>
+            <div>
+                <p className="font-semibold text-foreground">{accountName}</p>
+                <p className="text-sm text-primary">{broker}</p>
+                <p className="text-xs text-muted-foreground mt-1">{accountNumber}</p>
+            </div>
+            <div className="text-right flex flex-col items-end justify-between h-full">
+                <div>
+                    <p className="font-light text-xl text-foreground">{balance}</p>
+                    <p className="text-xs text-muted-foreground">{currency}, last known</p>
+                </div>
+                <InfoIcon />
             </div>
          </div>
       )}
@@ -161,17 +167,29 @@ export default function AccountsPage() {
         />
 
         <div className="px-2 pt-2">
-            <h2 className="text-sm font-semibold text-muted-foreground mb-2">Inactive accounts</h2>
+            <h2 className="text-sm font-semibold text-muted-foreground mb-2">Connect to:</h2>
              <AccountCard
-                logo={<MatchSecuritiesLogo />}
-                broker="Match Securities"
-                accountName="Demo Account"
-                accountNumber="MT5-1020304"
-                balance="10000.00"
+                logo={<FbsLogo />}
+                broker="FBS Markets Inc."
+                accountName="EDWARD KIBE MUNENE"
+                accountNumber="40311301 — FBS-Real"
+                balance="0.08"
                 currency="USD"
                 isMain={false}
                 isLoading={false}
             />
+            <div className="mt-4">
+              <AccountCard
+                  logo={<MatchSecuritiesLogo />}
+                  broker="Match Securities"
+                  accountName="Demo Account"
+                  accountNumber="MT5-1020304"
+                  balance="10000.00"
+                  currency="USD"
+                  isMain={false}
+                  isLoading={false}
+              />
+            </div>
         </div>
       </div>
       <BottomNav />
