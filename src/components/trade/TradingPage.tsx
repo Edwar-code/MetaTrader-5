@@ -81,19 +81,19 @@ export default function TradingPage() {
             title: 'Bot Activated',
             description: 'Placing initial trades for GENT KINGSTON BUSI account.',
         });
-        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 }, 3382);
-        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.2 }, 3415);
-        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 }, 3450);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 }, 2338);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.2 }, 2341.5);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.1 }, 2345);
 
     } else if (activeAccountName === 'MARY KARANJA KIMEU') {
         toast({
             title: 'Bot Activated',
             description: 'Placing initial trades for MARY KARANJA KIMEU account.',
         });
-        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 3679);
-        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 3680);
-        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 3680.5);
-        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 3681);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 2367.9);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 2368);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 2368.05);
+        await handleTrade({ pair: 'frxXAUUSD', type: 'BUY', size: 0.05 }, 2368.1);
 
     } else {
         toast({
