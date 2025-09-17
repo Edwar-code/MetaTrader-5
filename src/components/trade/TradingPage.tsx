@@ -18,6 +18,7 @@ export default function TradingPage() {
   const { positions, equity, balance, margin, freeMargin, marginLevel, handleTrade, handleClosePosition, handleBulkClosePositions } = useTradeState();
   const [isBotRunning, setIsBotRunning] = useState(false);
   const [isLiquidationActive, setIsLiquidationActive] = useState(false);
+  const [showTradeControls, setShowTradeControls] = useState(false);
   const { toast } = useToast();
 
   const hasOpenPositions = positions.length > 0;
@@ -159,36 +160,39 @@ export default function TradingPage() {
       </div>
       <div className="absolute bottom-20 right-4 z-20 group">
         <div className="flex flex-col items-center gap-2">
-          <div className="flex flex-col items-center gap-2">
-            <PresetTradeDialog>
+           {showTradeControls && (
+            <div className="flex flex-col items-center gap-2">
+                <PresetTradeDialog>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="rounded-full w-28"
+                    >
+                        <Timer className="mr-2 h-4 w-4" /> Add Trade
+                    </Button>
+                </PresetTradeDialog>
                 <Button
-                    size="sm"
-                    variant="outline"
-                    className="rounded-full w-28"
+                size="sm"
+                className="bg-red-600 hover:bg-red-700 text-white rounded-full w-28"
+                onClick={handleDisableBot}
+                disabled={!isBotRunning}
                 >
-                    <Timer className="mr-2 h-4 w-4" /> Add Trade
+                <X className="mr-2 h-4 w-4" /> Disable
                 </Button>
-            </PresetTradeDialog>
-            <Button
-              size="sm"
-              className="bg-red-600 hover:bg-red-700 text-white rounded-full w-28"
-              onClick={handleDisableBot}
-              disabled={!isBotRunning}
-            >
-              <X className="mr-2 h-4 w-4" /> Disable
-            </Button>
-            <Button
-              size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white rounded-full w-28"
-              onClick={handleRunBot}
-              disabled={isBotRunning || isLiquidationActive}
-            >
-              <Play className="mr-2 h-4 w-4" /> Run Bot
-            </Button>
-          </div>
+                <Button
+                size="sm"
+                className="bg-green-600 hover:bg-green-700 text-white rounded-full w-28"
+                onClick={handleRunBot}
+                disabled={isBotRunning || isLiquidationActive}
+                >
+                <Play className="mr-2 h-4 w-4" /> Run Bot
+                </Button>
+            </div>
+           )}
           <Button
             size="icon"
-            className="rounded-full w-14 h-14 bg-primary hover:bg-primary/90 shadow-lg"
+            className="rounded-full w-14 h-14 bg-primary hover:bg-primary/90 shadow-lg mt-2"
+            onClick={() => setShowTradeControls(prev => !prev)}
           >
             {isBotRunning ? (
               <div className="flex flex-col items-center justify-center">
