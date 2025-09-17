@@ -23,7 +23,7 @@ import { useTheme } from 'next-themes';
 import { SidebarTradeIcon, SidebarNewsIcon, SidebarJournalIcon, SidebarCommunityIcon, SidebarMQL5Icon } from './icons';
 
 const NavItem = ({ icon, label, badge, ad, href }: { icon: React.ReactNode, label: string, href: string, badge?: number, ad?: boolean, active?: boolean }) => (
-  <Link href={href} className="flex items-center gap-6 px-[35px] py-[7.4px] text-sm font-medium text-foreground">
+  <Link href={href} className="flex items-center gap-6 px-[23px] py-[7.4px] text-sm font-medium text-foreground">
     {icon}
     <span className="flex-1">{label}</span>
     {badge && <span className="w-5 h-5 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">{badge}</span>}
@@ -96,11 +96,11 @@ export function Sidebar() {
           </div>
           <Separator className="my-2" />
           <nav className="flex-1 flex flex-col">
-            <NavItem href="/" icon={<SidebarTradeIcon />} label="Trade" active={pathname === '/' || pathname.startsWith('/chart')} />
+            <NavItem href="/" icon={<SidebarTradeIcon />} label="Trade" />
             <NavItem href="#" icon={<SidebarNewsIcon />} label="News" />
             <NavItem href="#" icon={<Mail size={24} />} label="Mailbox" badge={8} />
             <NavItem href="#" icon={<SidebarJournalIcon />} label="Journal" />
-            <NavItem href="/settings" icon={<Settings size={24} />} label="Settings" active={pathname === '/settings'}/>
+            <NavItem href="/settings" icon={<Settings size={24} />} label="Settings" />
             <NavItem href="#" icon={<Calendar size={24} />} label="Economic calendar" ad/>
             <NavItem href="#" icon={<SidebarCommunityIcon />} label="Traders Community" />
             <NavItem href="#" icon={<SidebarMQL5Icon />} label="MQL5 Algo Trading" />
