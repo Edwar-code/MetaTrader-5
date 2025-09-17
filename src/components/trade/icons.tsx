@@ -182,3 +182,23 @@ export const SidebarJournalIcon = () => (
         height={24}
     />
 );
+
+export const SidebarCommunityIcon = () => (
+    <ThemedIcon
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.57.55_0e74f729.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.13.41_3c03b318.jpg"
+        alt="Traders Community Icon"
+        width={24}
+        height={24}
+    />
+);
+
+export const SidebarMQL5Icon = () => (
+    <ThemedIcon
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.58.19_98cc4359.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.14.41_0df22509.jpg"
+        alt="MQL5 Icon"
+        width={24}
+        height={24}
+    />
+);

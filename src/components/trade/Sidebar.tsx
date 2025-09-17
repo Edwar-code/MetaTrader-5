@@ -12,8 +12,6 @@ import {
   Mail,
   Settings,
   Calendar,
-  Users,
-  Send,
   HelpCircle,
   Info,
 } from 'lucide-react';
@@ -22,7 +20,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
-import { SidebarTradeIcon, SidebarNewsIcon, SidebarJournalIcon } from './icons';
+import { SidebarTradeIcon, SidebarNewsIcon, SidebarJournalIcon, SidebarCommunityIcon, SidebarMQL5Icon } from './icons';
 
 const NavItem = ({ icon, label, badge, ad, active, href }: { icon: React.ReactNode, label: string, href: string, badge?: number, ad?: boolean, active?: boolean }) => (
   <Link href={href} className={`flex items-center gap-6 px-[35px] py-[7.4px] text-sm font-medium ${active ? 'bg-muted text-foreground' : 'text-foreground'}`}>
@@ -104,8 +102,8 @@ export function Sidebar() {
             <NavItem href="#" icon={<SidebarJournalIcon />} label="Journal" />
             <NavItem href="/settings" icon={<Settings size={24} />} label="Settings" active={pathname === '/settings'}/>
             <NavItem href="#" icon={<Calendar size={24} />} label="Economic calendar" ad/>
-            <NavItem href="#" icon={<Users size={24} />} label="Traders Community" />
-            <NavItem href="#" icon={<Send size={24} />} label="MQL5 Algo Trading" />
+            <NavItem href="#" icon={<SidebarCommunityIcon />} label="Traders Community" />
+            <NavItem href="#" icon={<SidebarMQL5Icon />} label="MQL5 Algo Trading" />
             <NavItem href="#" icon={<HelpCircle size={24} />} label="User guide" />
             <NavItem href="#" icon={<Info size={24} />} label="About" />
           </nav>
