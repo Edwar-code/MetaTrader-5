@@ -25,9 +25,11 @@ import { SidebarTradeIcon, SidebarNewsIcon, SidebarJournalIcon, SidebarCommunity
 const NavItem = ({ icon, label, badge, ad, href }: { icon: React.ReactNode, label: string, href: string, badge?: number, ad?: boolean, active?: boolean }) => (
   <Link href={href} className="flex items-center gap-6 px-[23px] py-[7.4px] text-sm font-medium text-foreground">
     {icon}
-    <span className="flex-1">{label}</span>
-    {badge && <span className="w-5 h-5 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">{badge}</span>}
-    {ad && <span className="text-xs border border-blue-500 text-blue-500 rounded-full px-2 py-0.5">Ads</span>}
+    <div className="flex flex-1 justify-between items-center">
+      <span>{label}</span>
+      {badge && <span className="w-5 h-5 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">{badge}</span>}
+      {ad && <span className="text-xs border border-blue-500 text-blue-500 rounded-full px-2 py-0.5">Ads</span>}
+    </div>
   </Link>
 );
 
