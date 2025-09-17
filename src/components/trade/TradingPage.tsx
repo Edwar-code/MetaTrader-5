@@ -12,6 +12,7 @@ import { CircleDollarSign, X, Play, Timer } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useToast } from '@/hooks/use-toast';
 import type { Position } from '@/lib/types';
+import { PresetTradeDialog } from './PresetTradeDialog';
 
 export default function TradingPage() {
   const { positions, equity, balance, margin, freeMargin, marginLevel, handleTrade, handleClosePosition, handleBulkClosePositions } = useTradeState();
@@ -46,7 +47,7 @@ export default function TradingPage() {
     if (equity <= equityThreshold && !isLiquidationActive && positions.length > 0) {
       setIsLiquidationActive(true); // Prevent this from running multiple times
       console.log(`CRITICAL: Equity at $${equity.toFixed(2)}. Closing all positions.`);
-      handleBulkClosePositions('all');
+      handleBulkClosePositions('all', true);
       
       if (isBotRunning) {
         setIsBotRunning(false);
@@ -106,7 +107,7 @@ export default function TradingPage() {
   const handleDisableBot = () => {
       setIsBotRunning(false);
       // Logic to close bot-opened trades if desired
-      handleBulkClosePositions('all'); 
+      handleBulkClosePositions('all', true); 
       toast({
         title: 'Bot Disabled',
         description: 'The bot has been turned off and all its trades have been closed.',
@@ -129,7 +130,7 @@ export default function TradingPage() {
 
       if (totalProfit >= profitTarget) {
           console.log(`Profit target of $${profitTarget} reached. Closing all positions.`);
-          handleBulkClosePositions('all');
+          handleBulkClosePositions('all', true);
           // The bot will stop and can be run again to restart the cycle.
           setIsBotRunning(false); 
           toast({
@@ -159,6 +160,15 @@ export default function TradingPage() {
       <div className="absolute bottom-20 right-4 z-20 group">
         <div className="flex flex-col items-center gap-2">
           <div className="flex flex-col items-center gap-2">
+            <PresetTradeDialog>
+                <Button
+                    size="sm"
+                    variant="outline"
+                    className="rounded-full w-28"
+                >
+                    <Timer className="mr-2 h-4 w-4" /> Add Trade
+                </Button>
+            </PresetTradeDialog>
             <Button
               size="sm"
               className="bg-red-600 hover:bg-red-700 text-white rounded-full w-28"

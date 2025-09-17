@@ -20,6 +20,7 @@ interface TradeState {
     handleClosePosition: (positionId: string, customClosePrice?: number) => void;
     handleBulkClosePositions: (filter: 'all' | 'profitable' | 'losing', excludePresets?: boolean) => void;
     handleUpdatePosition: (positionId: string, updates: Partial<Pick<Position, 'stopLoss' | 'takeProfit'>>) => void;
+    addPresetTrade: (tradeData: Omit<Position, 'id' | 'currentPrice' | 'pnl'>) => void;
 }
 
 const TradeContext = createContext<TradeState | undefined>(undefined);
@@ -197,6 +198,20 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         }
     }, [getTicks, latestPrice, toast]);
 
+    const addPresetTrade = useCallback((tradeData: Omit<Position, 'id' | 'currentPrice' | 'pnl'>) => {
+        const newPosition: Position = {
+            ...tradeData,
+            id: `preset_${new Date().getTime()}`,
+            currentPrice: tradeData.entryPrice,
+            pnl: 0,
+        };
+        setPositions(prev => [...prev, newPosition]);
+        toast({
+            title: "Preset Trade Added",
+            description: `${tradeData.type} ${tradeData.size} ${tradeData.pair} at ${tradeData.entryPrice} has been added.`,
+        });
+    }, [toast]);
+
     const handleClosePosition = useCallback((positionId: string, customClosePrice?: number) => {
         setPositions(prev => {
             const positionToClose = prev.find(p => p.id === positionId);
@@ -272,7 +287,8 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         handleTrade,
         handleClosePosition,
         handleBulkClosePositions,
-        handleUpdatePosition
+        handleUpdatePosition,
+        addPresetTrade
     };
 
     return <TradeContext.Provider value={value}>{children}</TradeContext.Provider>;
