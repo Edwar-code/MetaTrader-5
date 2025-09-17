@@ -25,7 +25,7 @@ const NavItem = ({ icon, label, badge, ad, href }: { icon: React.ReactNode, labe
   <Link href={href} className="flex items-center gap-6 px-[23px] py-[7.4px] text-sm font-medium text-foreground">
     {icon}
     <div className="flex flex-1 justify-between items-center">
-      <div className="flex items-center gap-[1px]">
+      <div className="flex items-center gap-[2px]">
         <span>{label}</span>
         {ad && <span className="text-xs border border-blue-500 text-blue-500 rounded-full px-2 py-0.5">Ads</span>}
       </div>
