@@ -9,10 +9,7 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import {
-  LineChart,
-  Newspaper,
   Mail,
-  BookText,
   Settings,
   Calendar,
   Users,
@@ -25,6 +22,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
+import { SidebarTradeIcon, SidebarNewsIcon, SidebarJournalIcon } from './icons';
 
 const NavItem = ({ icon, label, badge, ad, active, href }: { icon: React.ReactNode, label: string, href: string, badge?: number, ad?: boolean, active?: boolean }) => (
   <Link href={href} className={`flex items-center gap-6 px-[35px] py-[7.4px] text-sm font-medium ${active ? 'bg-muted text-foreground' : 'text-foreground'}`}>
@@ -100,10 +98,10 @@ export function Sidebar() {
           </div>
           <Separator className="my-2" />
           <nav className="flex-1 flex flex-col">
-            <NavItem href="/" icon={<LineChart size={24} />} label="Trade" active={pathname === '/' || pathname.startsWith('/chart')} />
-            <NavItem href="#" icon={<Newspaper size={24} />} label="News" />
+            <NavItem href="/" icon={<SidebarTradeIcon />} label="Trade" active={pathname === '/' || pathname.startsWith('/chart')} />
+            <NavItem href="#" icon={<SidebarNewsIcon />} label="News" />
             <NavItem href="#" icon={<Mail size={24} />} label="Mailbox" badge={8} />
-            <NavItem href="#" icon={<BookText size={24} />} label="Journal" />
+            <NavItem href="#" icon={<SidebarJournalIcon />} label="Journal" />
             <NavItem href="/settings" icon={<Settings size={24} />} label="Settings" active={pathname === '/settings'}/>
             <NavItem href="#" icon={<Calendar size={24} />} label="Economic calendar" ad/>
             <NavItem href="#" icon={<Users size={24} />} label="Traders Community" />

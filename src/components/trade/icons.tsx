@@ -152,3 +152,33 @@ export const EurAudIcon = ({ width, height }: { width: number; height: number })
         height={height}
     />
 );
+
+export const SidebarTradeIcon = () => (
+    <ThemedIcon
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.56.38_5c5a0bec.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.10.35_f6bfbad0.jpg"
+        alt="Trade Icon"
+        width={24}
+        height={24}
+    />
+);
+
+export const SidebarNewsIcon = () => (
+    <ThemedIcon
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.57.07_39171ac1.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.11.00_ff8d4be6.jpg"
+        alt="News Icon"
+        width={24}
+        height={24}
+    />
+);
+
+export const SidebarJournalIcon = () => (
+    <ThemedIcon
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.57.28_89bdd212.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.13.01_c232e809.jpg"
+        alt="Journal Icon"
+        width={24}
+        height={24}
+    />
+);
