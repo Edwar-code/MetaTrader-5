@@ -22,8 +22,8 @@ import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { SidebarTradeIcon, SidebarNewsIcon, SidebarJournalIcon, SidebarCommunityIcon, SidebarMQL5Icon } from './icons';
 
-const NavItem = ({ icon, label, badge, ad, active, href }: { icon: React.ReactNode, label: string, href: string, badge?: number, ad?: boolean, active?: boolean }) => (
-  <Link href={href} className={`flex items-center gap-6 px-[35px] py-[7.4px] text-sm font-medium ${active ? 'bg-muted text-foreground' : 'text-foreground'}`}>
+const NavItem = ({ icon, label, badge, ad, href }: { icon: React.ReactNode, label: string, href: string, badge?: number, ad?: boolean, active?: boolean }) => (
+  <Link href={href} className="flex items-center gap-6 px-[35px] py-[7.4px] text-sm font-medium text-foreground">
     {icon}
     <span className="flex-1">{label}</span>
     {badge && <span className="w-5 h-5 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">{badge}</span>}
