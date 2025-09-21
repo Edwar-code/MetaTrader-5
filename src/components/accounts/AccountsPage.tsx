@@ -65,17 +65,26 @@ const AccountCard = ({
 }) => {
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const handleMouseDown = () => {
+  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+    // Prevent Link navigation from firing immediately
+    e.preventDefault();
     longPressTimer.current = setTimeout(() => {
       onLongPress();
+      longPressTimer.current = null; // Prevent click after long press
     }, 1500); // 1.5-second long press
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: React.MouseEvent | React.TouchEvent) => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
+      // If the timer was cleared, it means it was a short click.
+      // We find the closest 'a' tag and click it programmatically.
+      const link = (e.currentTarget as HTMLElement).closest('a');
+      link?.click();
     }
+    longPressTimer.current = null;
   };
+
 
   return (
     <Card 
@@ -303,20 +312,22 @@ export default function AccountsPage() {
               {otherAccounts.map((account, index) => {
                    const loginUrl = `/auth/login?name=${encodeURIComponent(account.name)}&number=${encodeURIComponent(account.number)}&broker=${encodeURIComponent(account.broker)}`;
                    return (
-                      <div key={index} className="mt-4 first:mt-0">
-                        <AccountCard
-                            logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
-                            broker={account.broker}
-                            accountName={account.name}
-                            accountNumber={account.number}
-                            balance={account.balance!}
-                            currency={account.currency!}
-                            isMain={false}
-                            isLoading={false}
-                            scannerIconSrc={scannerIconSrc}
-                            onLongPress={() => openEditModal(account)}
-                        />
-                      </div>
+                      <Link key={index} href={loginUrl} passHref>
+                          <div className="mt-4 first:mt-0">
+                            <AccountCard
+                                logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
+                                broker={account.broker}
+                                accountName={account.name}
+                                accountNumber={account.number}
+                                balance={account.balance!}
+                                currency={account.currency!}
+                                isMain={false}
+                                isLoading={false}
+                                scannerIconSrc={scannerIconSrc}
+                                onLongPress={() => openEditModal(account)}
+                            />
+                          </div>
+                      </Link>
                    )
               })}
           </div>
@@ -347,5 +358,3 @@ export default function AccountsPage() {
     </>
   );
 }
-
-    
