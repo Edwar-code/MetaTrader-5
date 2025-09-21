@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -9,20 +9,13 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
   Mail,
   Settings,
   Calendar,
   HelpCircle,
   Info,
+  Users,
+  Send,
 } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import Link from 'next/link';
@@ -30,20 +23,24 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import { SidebarTradeIcon, SidebarNewsIcon, SidebarJournalIcon, SidebarCommunityIcon, SidebarMQL5Icon } from './icons';
-import { useTradeState } from '@/context/TradeContext';
 
-const NavItem = ({ icon, label, badge, ad, href }: { icon: React.ReactNode, label: string, href: string, badge?: number, ad?: boolean }) => (
-  <Link href={href} className="flex items-center gap-6 px-[23px] py-[7.4px] text-sm font-medium text-foreground">
-    {icon}
-    <div className="flex flex-1 justify-between items-center">
-      <div className="flex items-center gap-[2px]">
-        <span>{label}</span>
-        {ad && <span className="text-xs border border-blue-500 text-blue-500 rounded-full px-2 py-0.5">Ads</span>}
-      </div>
-      {badge && <span className="w-5 h-5 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">{badge}</span>}
-    </div>
-  </Link>
-);
+const NavItem = ({ icon, label, badge, ad, href }: { icon: React.ReactNode, label: string, href: string, badge?: number, ad?: boolean }) => {
+    const pathname = usePathname();
+    const isActive = pathname === href;
+
+    return (
+        <Link href={href} className="flex items-center gap-6 px-[23px] py-[7.4px] text-sm font-medium text-foreground">
+          {icon}
+          <div className="flex flex-1 justify-between items-center">
+             <div className="flex items-center gap-[2px]">
+                <span>{label}</span>
+                {ad && <span className="text-xs border border-blue-500 text-blue-500 rounded-full px-2 py-0.5">Ads</span>}
+             </div>
+            {badge && <span className="w-5 h-5 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">{badge}</span>}
+          </div>
+        </Link>
+    );
+};
 
 interface Account {
   name: string;
@@ -58,17 +55,9 @@ const defaultAccount: Account = {
 };
 
 export function Sidebar() {
-  const pathname = usePathname();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [activeAccount, setActiveAccount] = useState<Account>(defaultAccount);
-  const { updateAccountDetails } = useTradeState();
-
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editName, setEditName] = useState('');
-  const [editBalance, setEditBalance] = useState('');
-
-  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -87,35 +76,9 @@ export function Sidebar() {
     return () => window.removeEventListener('local-storage', handleStorageChange);
   }, []);
 
-  const handleMouseDown = () => {
-    longPressTimer.current = setTimeout(() => {
-      setEditName(activeAccount.name);
-      setEditBalance('');
-      setIsEditModalOpen(true);
-    }, 1500); // 1.5-second long press
-  };
-
-  const handleMouseUp = () => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-    }
-  };
-
   const fbsLogoSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg';
-
-  const handleSave = () => {
-    const newBalance = parseFloat(editBalance);
-    if (updateAccountDetails) {
-        updateAccountDetails(activeAccount.number, {
-            name: editName,
-            balance: isNaN(newBalance) ? undefined : newBalance
-        });
-    }
-    setActiveAccount(prev => ({...prev, name: editName}));
-    setIsEditModalOpen(false);
-  };
 
   const menuIconSrc = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.19.37_df9b14de.jpg' 
@@ -141,11 +104,6 @@ export function Sidebar() {
           <div className="flex flex-col h-full">
             <div 
               className="pl-[10px] pr-4 py-4 pt-8"
-              onMouseDown={handleMouseDown}
-              onMouseUp={handleMouseUp}
-              onTouchStart={handleMouseDown}
-              onTouchEnd={handleMouseUp}
-              onMouseLeave={handleMouseUp}
             >
               <div className="flex items-start gap-6 ml-2">
                 <Image src={fbsLogoSrc} alt="FBS Logo" width={34} height={34} className="shrink-0" />
@@ -172,27 +130,8 @@ export function Sidebar() {
           </div>
         </SheetContent>
       </Sheet>
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>Edit Account Details</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">Name</Label>
-                    <Input id="name" value={editName} onChange={(e) => setEditName(e.target.value)} className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="balance" className="text-right">Balance</Label>
-                    <Input id="balance" type="number" placeholder="Leave blank to keep current" value={editBalance} onChange={(e) => setEditBalance(e.target.value)} className="col-span-3" />
-                </div>
-            </div>
-            <DialogFooter>
-                <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
-                <Button onClick={handleSave}>Save</Button>
-            </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }
+
+    
