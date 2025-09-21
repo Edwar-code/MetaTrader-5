@@ -21,6 +21,7 @@ interface TradeState {
     handleBulkClosePositions: (filter: 'all' | 'profitable' | 'losing', excludePresets?: boolean) => void;
     handleUpdatePosition: (positionId: string, updates: Partial<Pick<Position, 'stopLoss' | 'takeProfit'>>) => void;
     addPresetTrade: (tradeData: Omit<Position, 'id' | 'currentPrice' | 'pnl'>) => void;
+    updateAccountDetails: (accountId: string, details: { name?: string; balance?: number }) => void;
 }
 
 const TradeContext = createContext<TradeState | undefined>(undefined);
@@ -35,10 +36,10 @@ const getContractSize = (pair: string): number => {
 
 const gentKingstonAccountId = '40311301 — FBS-Real';
 
-const accountInitialData: { [key: string]: { balance: number, positions: Position[] } } = {
-    [gentKingstonAccountId]: { balance: 756.67, positions: [] },
-    '40776538 — FBS-Real': { balance: 240.45, positions: [] },
-    '40256784 — FBS-Real': { balance: 456.46, positions: [] },
+const accountInitialData: { [key: string]: { balance: number, positions: Position[], name: string } } = {
+    [gentKingstonAccountId]: { balance: 756.67, positions: [], name: 'GENT KINGSTON BUSI' },
+    '40776538 — FBS-Real': { balance: 240.45, positions: [], name: 'MARY KARANJA KIMEU' },
+    '40256784 — FBS-Real': { balance: 456.46, positions: [], name: 'DENNIS WAITHERA' },
 };
 
 export function TradeProvider({ children }: { children: ReactNode }) {
@@ -75,10 +76,15 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                     setClosedPositions(newState.closedPositions);
                 } else {
                     // First time loading this account, use initial data
-                    const initialData = accountInitialData[newAccountId] || { balance: 100, positions: [] };
+                    const initialData = accountInitialData[newAccountId] || { balance: 100, positions: [], name: 'Unknown User' };
                     setBalance(initialData.balance);
                     setPositions(initialData.positions);
                     setClosedPositions([]);
+                    // also save the default name to active_account
+                    if (typeof window !== 'undefined' && !storedAccountJson) {
+                        localStorage.setItem('active_account', JSON.stringify({ name: initialData.name, number: newAccountId, broker: 'FBS Markets Inc.' }));
+                        window.dispatchEvent(new CustomEvent('local-storage'));
+                    }
                 }
                 setActiveAccountId(newAccountId);
             }
@@ -274,6 +280,49 @@ export function TradeProvider({ children }: { children: ReactNode }) {
     const handleUpdatePosition = useCallback((positionId: string, updates: Partial<Pick<Position, 'stopLoss' | 'takeProfit'>>) => {
         setPositions(prev => prev.map(p => p.id === positionId ? { ...p, ...updates } : p));
     }, []);
+
+    const updateAccountDetails = useCallback((accountId: string, details: { name?: string; balance?: number }) => {
+        // Update active_account in localStorage
+        const storedAccountJson = localStorage.getItem('active_account');
+        if (storedAccountJson) {
+            const storedAccount = JSON.parse(storedAccountJson);
+            if (storedAccount.number === accountId && details.name) {
+                storedAccount.name = details.name;
+                localStorage.setItem('active_account', JSON.stringify(storedAccount));
+            }
+        }
+
+        // Update or create the account_state in localStorage
+        const stateKey = `account_state_${accountId}`;
+        const currentStateJson = localStorage.getItem(stateKey);
+        const currentState = currentStateJson ? JSON.parse(currentStateJson) : { balance: 0, positions: [], closedPositions: [] };
+
+        if (details.balance !== undefined) {
+            currentState.balance = details.balance;
+            // When balance is reset, clear positions and history for a clean slate
+            currentState.positions = [];
+            currentState.closedPositions = [];
+        }
+
+        localStorage.setItem(stateKey, JSON.stringify(currentState));
+
+        // If this is the currently active account, update the context state immediately
+        if (accountId === activeAccountId) {
+            if (details.balance !== undefined) {
+                setBalance(details.balance);
+                setPositions([]);
+                setClosedPositions([]);
+            }
+        }
+        
+        // Trigger a custom event to notify other components like Sidebar to re-fetch the name
+        window.dispatchEvent(new CustomEvent('local-storage'));
+        toast({
+            title: "Account Updated",
+            description: "Account details have been saved.",
+        });
+
+    }, [activeAccountId, toast]);
     
     const value = {
         positions: livePositions,
@@ -288,7 +337,8 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         handleClosePosition,
         handleBulkClosePositions,
         handleUpdatePosition,
-        addPresetTrade
+        addPresetTrade,
+        updateAccountDetails,
     };
 
     return <TradeContext.Provider value={value}>{children}</TradeContext.Provider>;
