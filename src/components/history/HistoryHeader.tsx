@@ -16,6 +16,14 @@ export default function HistoryHeader() {
     setMounted(true);
   }, []);
 
+  const refreshIconSrc = mounted && resolvedTheme === 'dark'
+    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-06%20at%2015.15.09_aa47dbcc.jpg'
+    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-21%20at%2018.36.54_b76299b6.jpg';
+    
+  const filterIconSrc = mounted && resolvedTheme === 'dark'
+    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-06%20at%2015.15.34_492037f3.jpg'
+    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-21%20at%2018.40.17_df1417f1.jpg';
+
 
   if (!mounted) {
     return (
@@ -43,13 +51,13 @@ export default function HistoryHeader() {
         </div>
         <div className="flex items-center gap-[18px]">
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground">
-            <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-06%20at%2015.15.09_aa47dbcc.jpg" alt="Refresh History" width={22} height={22} />
+            <Image src={refreshIconSrc} alt="Refresh History" width={22} height={22} />
           </Button>
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 active:bg-transparent">
             <SortIcon />
           </Button>
           <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground">
-            <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-06%20at%2015.15.34_492037f3.jpg" alt="Filter History" width={22} height={22} />
+            <Image src={filterIconSrc} alt="Filter History" width={22} height={22} />
           </Button>
         </div>
       </div>
