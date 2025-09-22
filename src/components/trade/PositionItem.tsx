@@ -44,7 +44,7 @@ export default function PositionItem({ position }: PositionItemProps) {
   
   const isGold = position.pair === 'frxXAUUSD';
   const isEurAud = position.pair === 'frxEURAUD';
-  const isDe30 = position.pair === 'idx_dax_30';
+  const isDe30 = position.pair === 'idx_germany_40';
   let displayPair = position.pair;
   if (position.pair === 'cryBTCUSD') displayPair = 'BTCUSD';
 
@@ -57,7 +57,7 @@ export default function PositionItem({ position }: PositionItemProps) {
     return <div className="h-[48px] py-2 px-4" />;
   }
   
-  const priceDecimalPoints = position.pair === 'frxXAUUSD' || position.pair === 'cryBTCUSD' || position.pair === 'idx_dax_30' ? 2 : 5;
+  const priceDecimalPoints = position.pair === 'frxXAUUSD' || position.pair === 'cryBTCUSD' || position.pair === 'idx_germany_40' ? 2 : 5;
 
   return (
     <div className="flex flex-col py-2 px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>

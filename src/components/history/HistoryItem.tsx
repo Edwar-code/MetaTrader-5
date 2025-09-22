@@ -44,7 +44,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
   
   const isGold = position.pair === 'frxXAUUSD';
   const isEurAud = position.pair === 'frxEURAUD';
-  const isDe30 = position.pair === 'idx_dax_30';
+  const isDe30 = position.pair === 'idx_germany_40';
   let displayPair = position.pair;
   if (position.pair === 'cryBTCUSD') displayPair = 'BTCUSD';
 
