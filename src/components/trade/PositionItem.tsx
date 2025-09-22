@@ -114,9 +114,9 @@ export default function PositionItem({ position }: PositionItemProps) {
                     {format(new Date(position.openTime * 1000), 'yyyy.MM.dd HH:mm:ss')}
                 </div>
                 <div className="grid grid-cols-2 gap-x-8 gap-y-1">
-                    <DetailRow label="S / L:" value={position.stopLoss?.toFixed(5) || '—'} />
+                    <DetailRow label="S / L:" value={position.stopLoss?.toFixed(priceDecimalPoints) || '—'} />
                     <DetailRow label="Swap:" value={'0.00'} />
-                    <DetailRow label="T / P:" value={position.takeProfit?.toFixed(5) || '—'} />
+                    <DetailRow label="T / P:" value={position.takeProfit?.toFixed(priceDecimalPoints) || '—'} />
                     <DetailRow label="ID:" value={`#${position.id.substring(0, 8)}`} />
                 </div>
             </div>

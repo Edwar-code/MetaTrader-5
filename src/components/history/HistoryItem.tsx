@@ -57,6 +57,8 @@ export default function HistoryItem({ position }: HistoryItemProps) {
     return <div className="h-[48px] py-2 px-4" />;
   }
 
+  const priceDecimalPoints = position.pair === 'frxXAUUSD' || position.pair === 'cryBTCUSD' || position.pair === 'idx_germany_40' ? 2 : 5;
+
   return (
     <div className="flex flex-col py-[4.5px] px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="flex justify-between">
@@ -94,9 +96,9 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 leading-none mt-px">
-                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.entryPrice.toFixed(5)}</span>
+                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.entryPrice.toFixed(priceDecimalPoints)}</span>
                 <span className="text-base font-light" style={{ color: '#838282' }}>→</span>
-                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.closePrice.toFixed(5)}</span>
+                <span className="text-sm font-bold" style={{ color: '#838282' }}>{position.closePrice.toFixed(priceDecimalPoints)}</span>
                 </div>
             </div>
             <div className="text-right">
@@ -111,9 +113,9 @@ export default function HistoryItem({ position }: HistoryItemProps) {
         {isExpanded && (
             <div className="mt-1 pt-1">
                 <div className="grid grid-cols-2 gap-x-8 gap-y-1">
-                    <DetailRow label="S / L:" value={position.stopLoss?.toFixed(5) || '—'} />
+                    <DetailRow label="S / L:" value={position.stopLoss?.toFixed(priceDecimalPoints) || '—'} />
                     <DetailRow label="Swap:" value={'0.00'} />
-                    <DetailRow label="T / P:" value={position.takeProfit?.toFixed(5) || '—'} />
+                    <DetailRow label="T / P:" value={position.takeProfit?.toFixed(priceDecimalPoints) || '—'} />
                     <DetailRow label="ID:" value={`#${position.id.substring(0, 8)}`} />
                 </div>
             </div>
