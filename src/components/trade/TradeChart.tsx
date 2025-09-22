@@ -107,7 +107,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     const time = format(fromUnixTime(data.epoch), 'PPpp');
-    const priceDecimalPoints = data.symbol === 'frxXAUUSD' || data.symbol === 'cryBTCUSD' ? 2 : 5;
+    const priceDecimalPoints = data.symbol === 'frxXAUUSD' || data.symbol === 'cryBTCUSD' || data.symbol === 'idx_dax_30' ? 2 : 5;
 
     return (
       <div className="p-2 bg-background/80 backdrop-blur-sm border rounded-md shadow-lg text-xs">
@@ -171,7 +171,7 @@ const OrderPriceLabel = ({ viewBox, value, tradeType, asset }: any) => {
     if (!viewBox || value === undefined) return null;
     const { y, width } = viewBox;
     const color = tradeType === 'BUY' ? '#007AFF' : '#FF3B30';
-    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 2 : 5;
+    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_dax_30' ? 2 : 5;
   
     return (
       <g>
@@ -193,7 +193,7 @@ OrderPriceLabel.displayName = 'OrderPriceLabel';
 const YAxisLabel = ({ viewBox, value, asset }: any) => {
     if (!viewBox || value === undefined) return null;
     const { y, width } = viewBox;
-    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 2 : 5;
+    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_dax_30' ? 2 : 5;
     return (
       <g>
         <foreignObject x={width + 7} y={y - 10} width="60" height="20" className="overflow-visible">
@@ -212,7 +212,7 @@ YAxisLabel.displayName = 'YAxisLabel';
 const BuyPriceLabel = ({ viewBox, value, asset }: any) => {
     if (!viewBox || value === undefined) return null;
     const { y, width } = viewBox;
-    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 2 : 5;
+    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_dax_30' ? 2 : 5;
     return (
       <g>
         <foreignObject x={width + 7} y={y - 10} width="60" height="20" className="overflow-visible">
@@ -245,7 +245,7 @@ const LiveAreaChart = ({ asset, data, isUp, yAxisDomain, markers, buyPrice, tick
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
     const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
-    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 2 : 5;
+    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_dax_30' ? 2 : 5;
     
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -314,7 +314,7 @@ const LiveCandlestickChart = ({ asset, data, isUp, lastPrice, yAxisDomain, marke
     const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
     const lastCandle = data.length > 0 ? data[data.length-1] : null;
-    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 2 : 5;
+    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_dax_30' ? 2 : 5;
 
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -433,7 +433,7 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
         
         const min = Math.min(...finitePrices);
         const max = Math.max(...finitePrices);
-        const padding = (max - min) * 0.1 || (asset === 'frxXAUUSD' || asset === 'cryBTCUSD' ? 0.01 : 0.0001); 
+        const padding = (max - min) * 0.1 || (asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_dax_30' ? 0.01 : 0.0001); 
 
         return [min - padding, max + padding];
     }, [ticks, heikinAshiCandles, chartInterval, asset]);
@@ -514,3 +514,4 @@ export function TradeChart(props: TradeChartProps) {
 
 
     
+

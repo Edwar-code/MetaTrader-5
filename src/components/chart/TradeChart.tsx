@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format, fromUnixTime } from 'date-fns';
 import { AlertTriangle } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-is-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useSearchParams } from 'next/navigation';
 import { useTheme } from 'next-themes';
 
@@ -433,7 +433,7 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
         
         const min = Math.min(...finitePrices);
         const max = Math.max(...finitePrices);
-        const padding = (max - min) * 0.1 || (asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idxDE30' ? 0.01 : 0.0001); 
+        const padding = (max - min) * 0.1 || (asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_dax_30' ? 0.01 : 0.0001); 
 
         return [min - padding, max + padding];
     }, [ticks, heikinAshiCandles, chartInterval, asset]);

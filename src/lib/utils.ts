@@ -32,7 +32,7 @@ export function calculatePnl(position: Position, currentPrice: number): number {
     } else if (position.pair === 'cryBTCUSD') {
         const contractSize = 1; // 1 Bitcoin per lot
         pnl = priceDifference * position.size * contractSize;
-    } else if (position.pair === 'idxDE30') {
+    } else if (position.pair === 'idx_dax_30') {
         // For indices like DE30, 1 lot often corresponds to 1 unit of the index currency per point.
         // E.g., a 1 point move results in a 1 EUR/USD change for a 1 lot trade.
         const contractSize = 1; 
