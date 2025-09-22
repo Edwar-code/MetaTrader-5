@@ -68,6 +68,7 @@ export type VerificationStatus = 'none' | 'pending' | 'verified' | 'rejected' | 
 // #region State Context
 interface DerivState {
     connectionState: 'connecting' | 'connected' | 'disconnected';
+    isAuthenticated: boolean;
     activeSymbols: ActiveSymbol[];
     subscribeToTicks: (symbol: string, count?: number) => void;
     subscribeToCandles: (symbol: string, granularity: number, count?: number) => void;
@@ -92,6 +93,7 @@ const DerivChartContext = createContext<DerivChartState | undefined>(undefined);
 export function DerivProvider({ children }: { children: ReactNode }) {
     const apiRef = useRef<DerivAPI | null>(null);
     const [connectionState, setConnectionState] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [activeSymbols, setActiveSymbols] = useState<ActiveSymbol[]>([]);
     const [ticks, setTicks] = useState<Tick[]>([]);
     const [candles, setCandles] = useState<Candle[]>([]);
@@ -120,19 +122,34 @@ export function DerivProvider({ children }: { children: ReactNode }) {
         }
         apiRef.current = null;
         setConnectionState('disconnected');
+        setIsAuthenticated(false);
         setTicks([]);
         setCandles([]);
     }, [unsubscribeFromChart]);
 
     useEffect(() => {
-        // Use a public app_id for unauthenticated access. 
-        // Replace with your own if needed.
-        const api = new DerivAPI({ app_id: 96239 }); 
+        const APP_ID = 96239;
+        const api = new DerivAPI({ app_id: APP_ID });
         apiRef.current = api;
         
         const connect = async () => {
             setConnectionState('connecting');
             try {
+                // Check for existing token
+                const token = typeof window !== 'undefined' ? localStorage.getItem('deriv_api_token') : null;
+                if (token) {
+                    try {
+                        await api.basic.authorize({ authorize: token });
+                        setIsAuthenticated(true);
+                    } catch (authError) {
+                        console.warn("Deriv auth failed with token:", authError);
+                        // If token is invalid, clear it and proceed without auth
+                        localStorage.removeItem('deriv_api_token');
+                        localStorage.removeItem('deriv_account_id');
+                        setIsAuthenticated(false);
+                    }
+                }
+
                 const symbolsResponse = await api.basic.activeSymbols({ active_symbols: 'brief', product_type: 'basic' });
                 if (symbolsResponse.error) {
                     throw new Error(symbolsResponse.error.message);
@@ -310,17 +327,17 @@ export function DerivProvider({ children }: { children: ReactNode }) {
         } catch (e: any) {
             const errorMessage = e instanceof Error ? e.message : String(e);
             toast({ title: "Tick History Error", description: errorMessage || 'Failed to fetch tick history.', variant: "destructive" });
-            throw e;
+            throw new Error(errorMessage);
         }
     }, [toast]);
 
 
     const stateValue = useMemo(() => ({
-        connectionState, activeSymbols,
+        connectionState, isAuthenticated, activeSymbols,
         subscribeToTicks, subscribeToCandles, unsubscribeFromChart,
         getTicks, ticks, chartError,
         latestPrice
-    }), [connectionState, activeSymbols, subscribeToTicks, subscribeToCandles, unsubscribeFromChart, getTicks, ticks, chartError, latestPrice]);
+    }), [connectionState, isAuthenticated, activeSymbols, subscribeToTicks, subscribeToCandles, unsubscribeFromChart, getTicks, ticks, chartError, latestPrice]);
 
     const chartValue = useMemo(() => ({
         candles
