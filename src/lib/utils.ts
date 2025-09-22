@@ -1,3 +1,4 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import type { Position } from "./types"
@@ -28,10 +29,13 @@ export function calculatePnl(position: Position, currentPrice: number): number {
     if (position.pair === 'frxXAUUSD') {
         const contractSize = 100; // 100 ounces per lot
         pnl = priceDifference * position.size * contractSize;
+    } else if (position.pair === 'cryBTCUSD') {
+        const contractSize = 1; // 1 Bitcoin per lot
+        pnl = priceDifference * position.size * contractSize;
     } else if (position.pair === 'idxDE30') {
-        // Assuming DE30 contract size is 1, where a 1 point move is 1 EUR (or USD equivalent).
-        // This is a simplification; real CFD contract specs vary.
-        const contractSize = 1;
+        // For indices like DE30, 1 lot often corresponds to 1 unit of the index currency per point.
+        // E.g., a 1 point move results in a 1 EUR/USD change for a 1 lot trade.
+        const contractSize = 1; 
         pnl = priceDifference * position.size * contractSize;
     } else { // Forex
         const contractSize = 100000; // 100,000 units per lot
