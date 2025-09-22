@@ -34,6 +34,7 @@ const assets = [
     { symbol: 'frxXAUUSD', display: 'Gold (XAUUSD)' },
     { symbol: 'cryBTCUSD', display: 'Bitcoin (BTCUSD)' },
     { symbol: 'frxEURAUD', display: 'Euro/AUD (EURAUD)' },
+    { symbol: 'idxDE30', display: 'Germany 30 (DE30)' },
 ];
 
 export function PresetTradeDialog({ children }: { children: React.ReactNode }) {

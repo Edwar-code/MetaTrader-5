@@ -6,7 +6,7 @@ import type { Position } from '@/lib/types';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
-import { EurAudIcon } from './icons';
+import { De30Icon, EurAudIcon } from './icons';
 
 interface PositionItemProps {
   position: Position;
@@ -44,6 +44,7 @@ export default function PositionItem({ position }: PositionItemProps) {
   
   const isGold = position.pair === 'frxXAUUSD';
   const isEurAud = position.pair === 'frxEURAUD';
+  const isDe30 = position.pair === 'idxDE30';
   let displayPair = position.pair;
   if (position.pair === 'cryBTCUSD') displayPair = 'BTCUSD';
 
@@ -56,7 +57,7 @@ export default function PositionItem({ position }: PositionItemProps) {
     return <div className="h-[48px] py-2 px-4" />;
   }
   
-  const priceDecimalPoints = position.pair === 'frxXAUUSD' || position.pair === 'cryBTCUSD' ? 2 : 5;
+  const priceDecimalPoints = position.pair === 'frxXAUUSD' || position.pair === 'cryBTCUSD' || position.pair === 'idxDE30' ? 2 : 5;
 
   return (
     <div className="flex flex-col py-2 px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
@@ -74,6 +75,13 @@ export default function PositionItem({ position }: PositionItemProps) {
                     <div className="flex items-center gap-1">
                         <div className="relative top-[-1px]">
                           <EurAudIcon width={50} height={9} />
+                        </div>
+                        <span className="text-sm font-bold text-card-foreground">,</span>
+                    </div>
+                  ) : isDe30 ? (
+                    <div className="flex items-center gap-1">
+                        <div className="relative top-[-1px]">
+                          <De30Icon width={50} height={9} />
                         </div>
                         <span className="text-sm font-bold text-card-foreground">,</span>
                     </div>

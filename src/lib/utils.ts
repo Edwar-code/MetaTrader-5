@@ -28,6 +28,11 @@ export function calculatePnl(position: Position, currentPrice: number): number {
     if (position.pair === 'frxXAUUSD') {
         const contractSize = 100; // 100 ounces per lot
         pnl = priceDifference * position.size * contractSize;
+    } else if (position.pair === 'idxDE30') {
+        // Assuming DE30 contract size is 1, where a 1 point move is 1 EUR (or USD equivalent).
+        // This is a simplification; real CFD contract specs vary.
+        const contractSize = 1;
+        pnl = priceDifference * position.size * contractSize;
     } else { // Forex
         const contractSize = 100000; // 100,000 units per lot
         pnl = priceDifference * position.size * contractSize;

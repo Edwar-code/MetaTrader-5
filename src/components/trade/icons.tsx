@@ -153,6 +153,10 @@ export const EurAudIcon = ({ width, height }: { width: number; height: number })
     />
 );
 
+export const De30Icon = ({ width, height }: { width: number; height: number }) => (
+    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-22%20at%2020.07.15_a18dc8d8.jpg" alt="DE30" width={width} height={height} className="object-contain" />
+);
+
 export const SidebarTradeIcon = () => (
     <ThemedIcon
         darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.56.38_5c5a0bec.jpg"

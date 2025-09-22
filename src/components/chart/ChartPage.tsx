@@ -19,7 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { BtcIcon, EurAudIcon } from '../trade/icons';
+import { BtcIcon, De30Icon, EurAudIcon } from '../trade/icons';
 
 
 const formatPrice = (price: number | undefined) => {
@@ -42,6 +42,7 @@ const assets = [
     { symbol: 'frxXAUUSD', display: 'XAUUSD', description: 'Gold Spot' },
     { symbol: 'cryBTCUSD', display: 'BTCUSD', description: 'Bitcoin' },
     { symbol: 'frxEURAUD', display: 'EURAUD', description: 'Euro vs Australian Dollar' },
+    { symbol: 'idxDE30', display: 'DE30', description: 'Germany 30' },
 ];
 
 export default function ChartPage() {
@@ -85,6 +86,7 @@ export default function ChartPage() {
   let spread = 0.00015; // Default for forex
   if (selectedAsset === 'cryBTCUSD') spread = 30;
   if (selectedAsset === 'frxXAUUSD') spread = 0.20;
+  if (selectedAsset === 'idxDE30') spread = 1.0;
 
   const buyPrice = sellPrice !== undefined ? sellPrice + spread : undefined;
 
@@ -160,7 +162,7 @@ export default function ChartPage() {
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.19.12_c460d5de.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg';
 
-  const priceFraction = selectedAsset === 'frxXAUUSD' || selectedAsset === 'cryBTCUSD' ? '22' : '28';
+  const priceFraction = selectedAsset === 'frxXAUUSD' || selectedAsset === 'cryBTCUSD' || selectedAsset === 'idxDE30' ? '22' : '28';
 
   if (!mounted) {
     return null; // or a loading skeleton
@@ -189,6 +191,8 @@ export default function ChartPage() {
                                 <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.33.35_e00bef8a.jpg" alt="XAUUSD" width={16} height={16} /> 
                             ) : asset.symbol === 'cryBTCUSD' ? (
                                 <BtcIcon />
+                            ) : asset.symbol === 'idxDE30' ? (
+                                <De30Icon width={16} height={16} />
                             ) : (
                                 <EurAudIcon width={40} height={8} />
                             )}
