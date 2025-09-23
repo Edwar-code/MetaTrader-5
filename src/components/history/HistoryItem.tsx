@@ -92,7 +92,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                       {formattedType}
                   </span>
                   <span className={`text-sm font-normal`} style={{ color: typeColor }}>
-                      {position.size}
+                      {position.size.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 leading-none mt-px">
