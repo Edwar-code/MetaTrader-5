@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -40,6 +41,9 @@ const initialAccounts: Account[] = [
     { name: 'PETER KAMAU', number: '40558899 — FBS-Real', broker: 'FBS Markets Inc.', balance: '550.75', currency: 'USD' },
     { name: 'JANE NJERI', number: '40663344 — FBS-Real', broker: 'FBS Markets Inc.', balance: '180.20', currency: 'USD' },
     { name: 'SAMUEL KIPROTICH', number: '40771122 — FBS-Real', broker: 'FBS Markets Inc.', balance: '3105.50', currency: 'USD' },
+    { name: 'ALICE WAMBUI', number: '40334455 — FBS-Real', broker: 'FBS Markets Inc.', balance: '950.00', currency: 'USD' },
+    { name: 'JAMES OTIENO', number: '40445566 — FBS-Real', broker: 'FBS Markets Inc.', balance: '420.30', currency: 'USD' },
+    { name: 'FAITH MUTUA', number: '40556677 — FBS-Real', broker: 'FBS Markets Inc.', balance: '1500.85', currency: 'USD' },
 ];
 
 const defaultAccount: Account = initialAccounts[0];
@@ -306,29 +310,31 @@ export default function AccountsPage() {
             </div>
           </div>
         </header>
-        <div className="flex-1 overflow-y-auto pb-20 space-y-4 p-2 bg-background">
-          <AccountCard
-            logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
-            broker={activeAccount.broker}
-            accountName={activeAccount.name}
-            accountNumber={activeAccount.number}
-            accountDetails="DC-305-Johannesburg-5R1, Hedge"
-            balance={balance.toFixed(2)}
-            currency="USD"
-            isMain={true}
-            isLoading={loading}
-            scannerIconSrc={scannerIconSrc}
-            onLongPress={() => openEditModal(activeAccount)}
-          />
+        <div className="flex-1 overflow-y-auto pb-20 p-2 bg-background">
+          <div className="mb-4">
+            <AccountCard
+              logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
+              broker={activeAccount.broker}
+              accountName={activeAccount.name}
+              accountNumber={activeAccount.number}
+              accountDetails="DC-305-Johannesburg-5R1, Hedge"
+              balance={balance.toFixed(2)}
+              currency="USD"
+              isMain={true}
+              isLoading={loading}
+              scannerIconSrc={scannerIconSrc}
+              onLongPress={() => openEditModal(activeAccount)}
+            />
+          </div>
 
           <div className="px-2 pt-2">
               <h2 className="text-sm font-semibold text-muted-foreground mb-2">Connect to:</h2>
-              {otherAccounts.map((account, index) => {
-                   const loginUrl = `/auth/login?name=${encodeURIComponent(account.name)}&number=${encodeURIComponent(account.number)}&broker=${encodeURIComponent(account.broker)}`;
-                   return (
-                      <Link key={index} href={loginUrl} passHref legacyBehavior>
-                          <a>
-                            <div className="mt-4 first:mt-0">
+              <div className="space-y-4">
+                {otherAccounts.map((account, index) => {
+                    const loginUrl = `/auth/login?name=${encodeURIComponent(account.name)}&number=${encodeURIComponent(account.number)}&broker=${encodeURIComponent(account.broker)}`;
+                    return (
+                        <Link key={index} href={loginUrl} passHref legacyBehavior>
+                            <a>
                                 <AccountCard
                                     logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
                                     broker={account.broker}
@@ -341,11 +347,11 @@ export default function AccountsPage() {
                                     scannerIconSrc={scannerIconSrc}
                                     onLongPress={() => openEditModal(account)}
                                 />
-                            </div>
-                          </a>
-                      </Link>
-                   )
-              })}
+                            </a>
+                        </Link>
+                    )
+                })}
+              </div>
           </div>
         </div>
         <BottomNav />
