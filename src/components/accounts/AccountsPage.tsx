@@ -34,6 +34,9 @@ const initialAccounts: Account[] = [
     { name: 'GENT KINGSTON BUSI', number: '40311301 — FBS-Real', broker: 'FBS Markets Inc.', balance: '756.67', currency: 'USD' },
     { name: 'MARY KARANJA KIMEU', number: '40776538 — FBS-Real', broker: 'FBS Markets Inc.', balance: '240.45', currency: 'USD' },
     { name: 'DENNIS WAITHERA', number: '40256784 — FBS-Real', broker: 'FBS Markets Inc.', balance: '456.46', currency: 'USD' },
+    { name: 'DAVID MWANGI', number: '40889123 — FBS-Real', broker: 'FBS Markets Inc.', balance: '1205.10', currency: 'USD' },
+    { name: 'SARAH JEPKEMOI', number: '40994567 — FBS-Real', broker: 'FBS Markets Inc.', balance: '88.90', currency: 'USD' },
+    { name: 'BRIAN OMONDI', number: '40112233 — FBS-Real', broker: 'FBS Markets Inc.', balance: '2800.00', currency: 'USD' },
 ];
 
 const defaultAccount: Account = initialAccounts[0];

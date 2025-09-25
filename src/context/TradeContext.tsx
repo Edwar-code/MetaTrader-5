@@ -49,6 +49,9 @@ const initialAccountsData: { [key: string]: { balance: number, positions: Positi
     [gentKingstonAccountId]: { balance: 756.67, positions: [], name: 'GENT KINGSTON BUSI' },
     '40776538 — FBS-Real': { balance: 240.45, positions: [], name: 'MARY KARANJA KIMEU' },
     '40256784 — FBS-Real': { balance: 456.46, positions: [], name: 'DENNIS WAITHERA' },
+    '40889123 — FBS-Real': { balance: 1205.10, positions: [], name: 'DAVID MWANGI' },
+    '40994567 — FBS-Real': { balance: 88.90, positions: [], name: 'SARAH JEPKEMOI' },
+    '40112233 — FBS-Real': { balance: 2800.00, positions: [], name: 'BRIAN OMONDI' },
 };
 
 export function TradeProvider({ children }: { children: ReactNode }) {
