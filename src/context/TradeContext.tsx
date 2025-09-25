@@ -21,7 +21,7 @@ interface TradeState {
     handleBulkClosePositions: (filter: 'all' | 'profitable' | 'losing', excludePresets?: boolean) => void;
     handleUpdatePosition: (positionId: string, updates: Partial<Pick<Position, 'stopLoss' | 'takeProfit'>>) => void;
     addPresetTrade: (tradeData: Omit<Position, 'id' | 'currentPrice' | 'pnl'>) => void;
-    updateAccountDetails: (accountId: string, details: { name?: string; balance?: number }) => void;
+    updateAccountDetails: (originalAccountId: string, details: { name?: string; balance?: number, number?: string }) => void;
 }
 
 const TradeContext = createContext<TradeState | undefined>(undefined);
@@ -52,6 +52,9 @@ const initialAccountsData: { [key: string]: { balance: number, positions: Positi
     '40889123 — FBS-Real': { balance: 1205.10, positions: [], name: 'DAVID MWANGI' },
     '40994567 — FBS-Real': { balance: 88.90, positions: [], name: 'SARAH JEPKEMOI' },
     '40112233 — FBS-Real': { balance: 2800.00, positions: [], name: 'BRIAN OMONDI' },
+    '40558899 — FBS-Real': { balance: 550.75, positions: [], name: 'PETER KAMAU' },
+    '40663344 — FBS-Real': { balance: 180.20, positions: [], name: 'JANE NJERI' },
+    '40771122 — FBS-Real': { balance: 3105.50, positions: [], name: 'SAMUEL KIPROTICH' },
 };
 
 export function TradeProvider({ children }: { children: ReactNode }) {
@@ -287,49 +290,63 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         setPositions(prev => prev.map(p => p.id === positionId ? { ...p, ...updates } : p));
     }, []);
 
-    const updateAccountDetails = useCallback((accountId: string, details: { name?: string; balance?: number }) => {
-        // Update master list of accounts
+    const updateAccountDetails = useCallback((originalAccountId: string, details: { name?: string; balance?: number; number?: string }) => {
         const allAccountsJson = localStorage.getItem('all_accounts');
         let allAccounts = allAccountsJson ? JSON.parse(allAccountsJson) : [];
-        const accountIndex = allAccounts.findIndex((acc: any) => acc.number === accountId);
+        const accountIndex = allAccounts.findIndex((acc: any) => acc.number === originalAccountId);
+
+        const newNumber = details.number || originalAccountId;
 
         if (accountIndex !== -1) {
-            if (details.name) {
-                allAccounts[accountIndex].name = details.name;
-            }
-            if (details.balance !== undefined) {
-                 allAccounts[accountIndex].balance = details.balance.toFixed(2);
-            }
+            if (details.name) allAccounts[accountIndex].name = details.name;
+            if (details.number) allAccounts[accountIndex].number = details.number;
+            if (details.balance !== undefined) allAccounts[accountIndex].balance = details.balance.toFixed(2);
         }
         localStorage.setItem('all_accounts', JSON.stringify(allAccounts));
 
-        // Update active_account if it's the one being edited
+        // Rename the state in localStorage if the number changed
+        if (details.number && originalAccountId !== details.number) {
+            const oldStateKey = `account_state_${originalAccountId}`;
+            const newStateKey = `account_state_${details.number}`;
+            const stateJson = localStorage.getItem(oldStateKey);
+            if (stateJson) {
+                localStorage.setItem(newStateKey, stateJson);
+                localStorage.removeItem(oldStateKey);
+            }
+        }
+        
+        // Update active_account if it was the one edited
         const activeAccountJson = localStorage.getItem('active_account');
         if (activeAccountJson) {
             const activeAccount = JSON.parse(activeAccountJson);
-            if (activeAccount.number === accountId && details.name) {
-                activeAccount.name = details.name;
+            if (activeAccount.number === originalAccountId) {
+                if (details.name) activeAccount.name = details.name;
+                if (details.number) activeAccount.number = details.number;
                 localStorage.setItem('active_account', JSON.stringify(activeAccount));
             }
         }
 
-        // Update the account's specific state (balance, positions, etc.)
-        const stateKey = `account_state_${accountId}`;
+        const stateKey = `account_state_${newNumber}`;
         const currentStateJson = localStorage.getItem(stateKey);
-        const currentState = currentStateJson ? JSON.parse(currentStateJson) : { balance: 0, positions: [], closedPositions: [] };
-
+        let currentState = currentStateJson ? JSON.parse(currentStateJson) : { balance: 0, positions: [], closedPositions: [] };
+        
         if (details.balance !== undefined) {
             currentState.balance = details.balance;
-            currentState.positions = [];
+            // Optionally clear positions when balance is reset
+            currentState.positions = []; 
             currentState.closedPositions = [];
         }
         localStorage.setItem(stateKey, JSON.stringify(currentState));
 
-        if (accountId === activeAccountId) {
+        if (newNumber === activeAccountId || originalAccountId === activeAccountId) {
             if (details.balance !== undefined) {
                 setBalance(details.balance);
                 setPositions([]);
                 setClosedPositions([]);
+            }
+             // If active account's ID changed, we need to trigger a context reload
+            if(details.number && originalAccountId === activeAccountId) {
+                setActiveAccountId(details.number); // This will trigger the useEffect
             }
         }
         
@@ -368,5 +385,3 @@ export function useTradeState() {
     }
     return context;
 }
-
-    

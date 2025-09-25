@@ -7,7 +7,7 @@ import { Sidebar } from '@/components/trade/Sidebar';
 import { MoreVertical, Plus } from 'lucide-react';
 import BottomNav from '@/components/trade/BottomNav';
 import { BellIcon, InfoIcon } from './icons';
-import { useTradeState, useTradeContext } from '@/context/TradeContext';
+import { useTradeContext } from '@/context/TradeContext';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
@@ -37,6 +37,9 @@ const initialAccounts: Account[] = [
     { name: 'DAVID MWANGI', number: '40889123 — FBS-Real', broker: 'FBS Markets Inc.', balance: '1205.10', currency: 'USD' },
     { name: 'SARAH JEPKEMOI', number: '40994567 — FBS-Real', broker: 'FBS Markets Inc.', balance: '88.90', currency: 'USD' },
     { name: 'BRIAN OMONDI', number: '40112233 — FBS-Real', broker: 'FBS Markets Inc.', balance: '2800.00', currency: 'USD' },
+    { name: 'PETER KAMAU', number: '40558899 — FBS-Real', broker: 'FBS Markets Inc.', balance: '550.75', currency: 'USD' },
+    { name: 'JANE NJERI', number: '40663344 — FBS-Real', broker: 'FBS Markets Inc.', balance: '180.20', currency: 'USD' },
+    { name: 'SAMUEL KIPROTICH', number: '40771122 — FBS-Real', broker: 'FBS Markets Inc.', balance: '3105.50', currency: 'USD' },
 ];
 
 const defaultAccount: Account = initialAccounts[0];
@@ -67,36 +70,41 @@ const AccountCard = ({
   onLongPress: () => void;
 }) => {
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const [isLongPress, setIsLongPress] = useState(false);
 
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
-    // Prevent Link navigation from firing immediately
-    e.preventDefault();
+    setIsLongPress(false);
     longPressTimer.current = setTimeout(() => {
+      setIsLongPress(true);
       onLongPress();
-      longPressTimer.current = null; // Prevent click after long press
+      longPressTimer.current = null;
     }, 1500); // 1.5-second long press
   };
 
-  const handleMouseUp = (e: React.MouseEvent | React.TouchEvent) => {
+  const clearTimer = () => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
-      // If the timer was cleared, it means it was a short click.
-      // We find the closest 'a' tag and click it programmatically.
-      const link = (e.currentTarget as HTMLElement).closest('a');
-      link?.click();
+      longPressTimer.current = null;
     }
-    longPressTimer.current = null;
   };
-
+  
+  const handleClick = (e: React.MouseEvent) => {
+    // If it was a long press, prevent the click from navigating.
+    if (isLongPress) {
+        e.preventDefault();
+    }
+    clearTimer();
+  };
 
   return (
     <Card 
       className="shadow-sm border-none overflow-hidden bg-muted/20 rounded-none"
       onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
+      onMouseUp={clearTimer}
       onTouchStart={handleMouseDown}
-      onTouchEnd={handleMouseUp}
-      onMouseLeave={handleMouseUp}
+      onTouchEnd={clearTimer}
+      onMouseLeave={clearTimer}
+      onClickCapture={handleClick}
     >
       <CardContent className={`relative px-4 pt-4 ${isMain ? 'pb-[2px]' : 'pb-4'}`}>
         {isMain && (
@@ -176,7 +184,7 @@ export default function AccountsPage() {
   const [loading, setLoading] = useState(true);
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [allAccounts, setAllAccounts] = useState<Account[]>(initialAccounts);
+  const [allAccounts, setAllAccounts] = useState<Account[]>([]);
   const [activeAccount, setActiveAccount] = useState<Account>(defaultAccount);
   const [otherAccounts, setOtherAccounts] = useState<Account[]>([]);
 
@@ -185,6 +193,7 @@ export default function AccountsPage() {
   const [accountToEdit, setAccountToEdit] = useState<Account | null>(null);
   const [editName, setEditName] = useState('');
   const [editBalance, setEditBalance] = useState('');
+  const [editNumber, setEditNumber] = useState('');
 
   const [fbsLogoSrc, setFbsLogoSrc] = useState(
     'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg'
@@ -195,21 +204,21 @@ export default function AccountsPage() {
 
     const handleStorageChange = () => {
       if (typeof window !== 'undefined') {
-        // Load master list of accounts from localStorage, or initialize it
         const storedAllAccounts = localStorage.getItem('all_accounts');
-        const currentAllAccounts = storedAllAccounts ? JSON.parse(storedAllAccounts) : initialAccounts;
-        if (!storedAllAccounts) {
+        let currentAllAccounts: Account[];
+        if (storedAllAccounts) {
+          currentAllAccounts = JSON.parse(storedAllAccounts);
+        } else {
+          currentAllAccounts = initialAccounts;
           localStorage.setItem('all_accounts', JSON.stringify(initialAccounts));
         }
         setAllAccounts(currentAllAccounts);
         
-        // Determine active account
         const storedAccountJson = localStorage.getItem('active_account');
         const currentActiveAccount = storedAccountJson 
             ? JSON.parse(storedAccountJson) 
-            : currentAllAccounts[0]; // Fallback to first in list
+            : currentAllAccounts[0]; 
         
-        // Ensure active account reflects latest from allAccounts
         const updatedActiveAccount = currentAllAccounts.find(acc => acc.number === currentActiveAccount.number) || currentActiveAccount;
         setActiveAccount(updatedActiveAccount);
         
@@ -244,18 +253,20 @@ export default function AccountsPage() {
   const openEditModal = (account: Account) => {
     setAccountToEdit(account);
     setEditName(account.name);
-    setEditBalance(''); // Always start with a blank balance field
+    setEditNumber(account.number);
+    setEditBalance('');
     setIsEditModalOpen(true);
   };
   
   const handleSave = () => {
     if (!accountToEdit) return;
 
-    const newBalance = parseFloat(editBalance);
+    const newBalance = editBalance ? parseFloat(editBalance) : undefined;
     if (updateAccountDetails) {
         updateAccountDetails(accountToEdit.number, {
             name: editName,
-            balance: isNaN(newBalance) ? undefined : newBalance
+            number: editNumber,
+            balance: newBalance,
         });
     }
     setIsEditModalOpen(false);
@@ -315,21 +326,23 @@ export default function AccountsPage() {
               {otherAccounts.map((account, index) => {
                    const loginUrl = `/auth/login?name=${encodeURIComponent(account.name)}&number=${encodeURIComponent(account.number)}&broker=${encodeURIComponent(account.broker)}`;
                    return (
-                      <Link key={index} href={loginUrl} passHref>
-                          <div className="mt-4 first:mt-0">
-                            <AccountCard
-                                logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
-                                broker={account.broker}
-                                accountName={account.name}
-                                accountNumber={account.number}
-                                balance={account.balance!}
-                                currency={account.currency!}
-                                isMain={false}
-                                isLoading={false}
-                                scannerIconSrc={scannerIconSrc}
-                                onLongPress={() => openEditModal(account)}
-                            />
-                          </div>
+                      <Link key={index} href={loginUrl} passHref legacyBehavior>
+                          <a>
+                            <div className="mt-4 first:mt-0">
+                                <AccountCard
+                                    logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
+                                    broker={account.broker}
+                                    accountName={account.name}
+                                    accountNumber={account.number}
+                                    balance={account.balance!}
+                                    currency={account.currency!}
+                                    isMain={false}
+                                    isLoading={false}
+                                    scannerIconSrc={scannerIconSrc}
+                                    onLongPress={() => openEditModal(account)}
+                                />
+                            </div>
+                          </a>
                       </Link>
                    )
               })}
@@ -346,6 +359,10 @@ export default function AccountsPage() {
                 <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="name" className="text-right">Name</Label>
                     <Input id="name" value={editName} onChange={(e) => setEditName(e.target.value)} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="number" className="text-right">Number</Label>
+                    <Input id="number" value={editNumber} onChange={(e) => setEditNumber(e.target.value)} className="col-span-3" />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="balance" className="text-right">Balance</Label>
