@@ -163,7 +163,7 @@ export default function ChartPage() {
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.19.12_c460d5de.jpg'
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg';
 
-  const priceFraction = selectedAsset === 'frxXAUUSD' || selectedAsset === 'cryBTCUSD' || selectedAsset === 'idx_germany_40' ? '22' : '28';
+  const priceFractionFontSize = selectedAsset === 'frxXAUUSD' || selectedAsset === 'cryBTCUSD' || selectedAsset === 'idx_germany_40' ? '22px' : '28px';
 
   if (!mounted) {
     return null; // or a loading skeleton
@@ -245,7 +245,7 @@ export default function ChartPage() {
           <div className="font-normal opacity-90 text-[10px] leading-none">SELL</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedSellPrice.integer}</span>
-            <span className={`font-bold`} style={{ fontSize: `${priceFraction}px` }}>.{formattedSellPrice.fractional}</span>
+            <span className={`font-bold`} style={{ fontSize: priceFractionFontSize }}>.{formattedSellPrice.fractional}</span>
           </div>
         </div>
         <div className="bg-background px-2 flex items-center justify-center min-w-[140px] flex-grow-[0.4] border-b">
@@ -272,7 +272,7 @@ export default function ChartPage() {
           <div className="font-normal opacity-90 text-[10px] leading-none">BUY</div>
           <div className="leading-none text-center w-full">
             <span className="text-[13px] font-bold">{formattedBuyPrice.integer}</span>
-            <span className={`font-bold`} style={{ fontSize: `${priceFraction}px` }}>.{formattedBuyPrice.fractional}</span>
+            <span className={`font-bold`} style={{ fontSize: priceFractionFontSize }}>.{formattedBuyPrice.fractional}</span>
           </div>
         </div>
       </div>
