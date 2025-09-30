@@ -59,33 +59,33 @@ export default function PositionItem({ position }: PositionItemProps) {
                 <div className="flex items-center gap-1 leading-none mb-[-7px]">
                   {isGold ? (
                     <div className="flex items-center">
-                       <div className="relative top-[-1px]">
+                       <div className="relative top-[1px]">
                         <GoldIcon width={50} height={9} />
                       </div>
                     </div>
                   ) : isBtc ? (
                      <div className="flex items-center">
-                       <div className="relative top-[-1px]">
+                       <div className="relative top-[1px]">
                         <BtcIcon width={50} height={9} />
                       </div>
                     </div>
                   ) : isEurAud ? (
                     <div className="flex items-center gap-1">
-                        <div className="relative top-[-1px]">
+                        <div className="relative top-[1px]">
                           <EurAudIcon width={50} height={9} />
                         </div>
                         <span className="text-sm font-bold text-card-foreground">,</span>
                     </div>
                   ) : isDe30 ? (
                     <div className="flex items-center gap-1">
-                        <div className="relative top-[-1px]">
+                        <div className="relative top-[1px]">
                           <De30Icon width={50} height={9} />
                         </div>
                         <span className="text-sm font-bold text-card-foreground">,</span>
                     </div>
                   ) : isGbpusd ? (
                     <div className="flex items-center gap-1">
-                       <div className="relative top-[-1px]">
+                       <div className="relative top-[1px]">
                         <GbpusdIcon width={50} height={9} />
                        </div>
                     </div>
