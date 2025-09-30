@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Image from "next/image";
 import { useTheme } from 'next-themes';
 
-const ThemedIcon = ({ darkSrc, lightSrc, alt, width, height }: { darkSrc: string, lightSrc: string, alt: string, width: number, height: number }) => {
+const ThemedIcon = ({ darkSrc, lightSrc, alt, width, height, className }: { darkSrc: string, lightSrc: string, alt: string, width: number, height: number, className?: string }) => {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
     
@@ -15,11 +15,11 @@ const ThemedIcon = ({ darkSrc, lightSrc, alt, width, height }: { darkSrc: string
 
     if (!mounted) {
         // Render a placeholder or the light theme version by default to avoid mismatch
-        return <Image src={lightSrc} alt={alt} width={width} height={height} className="object-cover" />;
+        return <Image src={lightSrc} alt={alt} width={width} height={height} className={className} />;
     }
 
     const src = resolvedTheme === 'dark' ? darkSrc : lightSrc;
-    return <Image src={src} alt={alt} width={width} height={height} className="object-cover" />;
+    return <Image src={src} alt={alt} width={width} height={height} className={className} />;
 };
 
 
@@ -150,6 +150,7 @@ export const GoldIcon = ({ width, height }: { width: number; height: number }) =
         alt="XAUUSD"
         width={width}
         height={height}
+        className="object-cover"
     />
 );
 
@@ -160,6 +161,7 @@ export const EurAudIcon = ({ width, height }: { width: number; height: number })
         alt="EURAUD"
         width={width}
         height={height}
+        className="object-cover"
     />
 );
 
@@ -174,6 +176,7 @@ export const GbpusdIcon = ({ width, height }: { width: number; height: number })
         alt="GBPUSD"
         width={width}
         height={height}
+        className="object-cover"
     />
 );
 
@@ -199,7 +202,7 @@ export const SidebarNewsIcon = () => (
 
 export const SidebarJournalIcon = () => (
     <ThemedIcon
-        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%2OImage%202025-09-17%20at%2017.57.28_89bdd212.jpg"
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.57.28_89bdd212.jpg"
         lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.13.01_c232e809.jpg"
         alt="Journal Icon"
         width={24}
