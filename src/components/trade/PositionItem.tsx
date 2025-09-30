@@ -63,7 +63,6 @@ export default function PositionItem({ position }: PositionItemProps) {
                        <div className="relative top-[-1px]">
                         <GoldIcon width={50} height={9} />
                       </div>
-                      <span className="text-sm font-bold text-card-foreground">.m,</span>
                     </div>
                   ) : isEurAud ? (
                     <div className="flex items-center gap-1">
