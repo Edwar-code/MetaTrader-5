@@ -60,7 +60,7 @@ export default function PositionItem({ position }: PositionItemProps) {
                   {isGold ? (
                     <div className="flex items-center">
                        <div className="relative top-[1.1px]">
-                        <GoldIcon width={50} height={9} />
+                        <GoldIcon width={50} height={8.8} />
                       </div>
                     </div>
                   ) : isBtc ? (
