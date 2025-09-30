@@ -83,7 +83,6 @@ export default function PositionItem({ position }: PositionItemProps) {
                        <div className="relative top-[-1px]">
                         <GbpusdIcon width={50} height={9} />
                        </div>
-                        <span className="text-sm font-bold text-card-foreground">,</span>
                     </div>
                   ) : (
                     <span className="text-sm font-bold text-card-foreground">{displayPair},</span>
