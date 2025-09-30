@@ -191,7 +191,7 @@ export default function ChartPage() {
                            {asset.symbol === 'frxXAUUSD' ? (
                                 <GoldIcon width={16} height={16} /> 
                             ) : asset.symbol === 'cryBTCUSD' ? (
-                                <BtcIcon />
+                                <BtcIcon width={16} height={16} />
                             ) : asset.symbol === 'idx_germany_40' ? (
                                 <De30Icon width={16} height={16} />
                             ) : asset.symbol === 'frxGBPUSD' ? (
@@ -199,7 +199,7 @@ export default function ChartPage() {
                             ) : (
                                 <EurAudIcon width={16} height={16} />
                             )}
-                            {asset.symbol !== 'frxEURAUD' && asset.symbol !== 'frxGBPUSD' && <span>{asset.display}</span>}
+                            {asset.symbol !== 'frxEURAUD' && <span>{asset.display}</span>}
                         </div>
                         {selectedAsset === asset.symbol && <Check className="h-4 w-4" />}
                     </div>

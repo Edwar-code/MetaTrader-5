@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import type { ClosedPosition } from '@/lib/types';
 import { format } from 'date-fns';
-import { De30Icon, EurAudIcon, GbpusdIcon, GoldIcon } from '../trade/icons';
+import { BtcIcon, De30Icon, EurAudIcon, GbpusdIcon, GoldIcon } from '../trade/icons';
 
 interface HistoryItemProps {
   position: ClosedPosition;
@@ -43,8 +43,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
   const isEurAud = position.pair === 'frxEURAUD';
   const isDe30 = position.pair === 'idx_germany_40';
   const isGbpusd = position.pair === 'frxGBPUSD';
-  let displayPair = position.pair;
-  if (position.pair === 'cryBTCUSD') displayPair = 'BTCUSD';
+  const isBtc = position.pair === 'cryBTCUSD';
 
   if (!mounted) {
     // Render a skeleton or null during SSR and initial client render
@@ -62,6 +61,12 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                     <div className="flex items-center">
                        <div className="relative top-[-1px]">
                         <GoldIcon width={50} height={9} />
+                      </div>
+                    </div>
+                  ) : isBtc ? (
+                     <div className="flex items-center">
+                       <div className="relative top-[-1px]">
+                        <BtcIcon width={50} height={9} />
                       </div>
                     </div>
                   ) : isEurAud ? (
@@ -85,7 +90,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                        </div>
                     </div>
                   ) : (
-                    <span className="text-sm font-bold text-card-foreground">{displayPair},</span>
+                    <span className="text-sm font-bold text-card-foreground">{position.pair},</span>
                   )}
                   <span className={`text-sm font-normal`} style={{ color: typeColor }}>
                       {formattedType}
