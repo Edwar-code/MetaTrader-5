@@ -19,7 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { BtcIcon, De30Icon, EurAudIcon } from '../trade/icons';
+import { BtcIcon, De30Icon, EurAudIcon, GbpusdIcon } from '../trade/icons';
 
 
 const formatPrice = (price: number | undefined) => {
@@ -42,6 +42,7 @@ const assets = [
     { symbol: 'frxXAUUSD', display: 'XAUUSD', description: 'Gold Spot' },
     { symbol: 'cryBTCUSD', display: 'BTCUSD', description: 'Bitcoin' },
     { symbol: 'frxEURAUD', display: 'EURAUD', description: 'Euro vs Australian Dollar' },
+    { symbol: 'frxGBPUSD', display: 'GBPUSD', description: 'Pound Sterling vs US Dollar' },
     { symbol: 'idx_germany_40', display: 'DE30', description: 'Germany 40' },
 ];
 
@@ -193,10 +194,12 @@ export default function ChartPage() {
                                 <BtcIcon />
                             ) : asset.symbol === 'idx_germany_40' ? (
                                 <De30Icon width={16} height={16} />
+                            ) : asset.symbol === 'frxGBPUSD' ? (
+                                <GbpusdIcon width={50} height={9} />
                             ) : (
                                 <EurAudIcon width={40} height={8} />
                             )}
-                            {asset.symbol !== 'frxEURAUD' && <span>{asset.display}</span>}
+                            {asset.symbol !== 'frxEURAUD' && asset.symbol !== 'frxGBPUSD' && <span>{asset.display}</span>}
                         </div>
                         {selectedAsset === asset.symbol && <Check className="h-4 w-4" />}
                     </div>

@@ -157,6 +157,16 @@ export const De30Icon = ({ width, height }: { width: number; height: number }) =
     <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-22%20at%2020.07.15_a18dc8d8.jpg" alt="DE30" width={width} height={height} className="object-contain" />
 );
 
+export const GbpusdIcon = ({ width, height }: { width: number; height: number }) => (
+    <ThemedIcon
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-30%20at%2016.53.30_7d9c7df5.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-30%20at%2016.52.29_79e100f7.jpg"
+        alt="GBPUSD"
+        width={width}
+        height={height}
+    />
+);
+
 export const SidebarTradeIcon = () => (
     <ThemedIcon
         darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.56.38_5c5a0bec.jpg"

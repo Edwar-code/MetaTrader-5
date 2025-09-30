@@ -34,6 +34,7 @@ const assets = [
     { symbol: 'frxXAUUSD', display: 'Gold (XAUUSD)' },
     { symbol: 'cryBTCUSD', display: 'Bitcoin (BTCUSD)' },
     { symbol: 'frxEURAUD', display: 'Euro/AUD (EURAUD)' },
+    { symbol: 'frxGBPUSD', display: 'GBP/USD (GBPUSD)' },
     { symbol: 'idx_germany_40', display: 'Germany 40 (DE30)' },
 ];
 
