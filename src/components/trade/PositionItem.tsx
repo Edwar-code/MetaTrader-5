@@ -4,9 +4,7 @@
 import { useState, useEffect } from 'react';
 import type { Position } from '@/lib/types';
 import { format } from 'date-fns';
-import Image from 'next/image';
-import { useTheme } from 'next-themes';
-import { De30Icon, EurAudIcon, GbpusdIcon } from './icons';
+import { De30Icon, EurAudIcon, GbpusdIcon, GoldIcon } from './icons';
 
 interface PositionItemProps {
   position: Position;
@@ -21,7 +19,6 @@ const DetailRow = ({ label, value }: { label: string; value: string | number }) 
 
 export default function PositionItem({ position }: PositionItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
@@ -49,10 +46,6 @@ export default function PositionItem({ position }: PositionItemProps) {
   let displayPair = position.pair;
   if (position.pair === 'cryBTCUSD') displayPair = 'BTCUSD';
 
-  const goldImageSrc = mounted && resolvedTheme === 'dark'
-    ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.37.32_cdd3a05d.jpg'
-    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.33.35_e00bef8a.jpg';
-
   if (!mounted) {
     // Render a skeleton or null during SSR and initial client render
     return <div className="h-[48px] py-2 px-4" />;
@@ -68,7 +61,7 @@ export default function PositionItem({ position }: PositionItemProps) {
                   {isGold ? (
                     <div className="flex items-center">
                        <div className="relative top-[-1px]">
-                        <Image src={goldImageSrc} alt="XAUUSD" width={50} height={9} />
+                        <GoldIcon width={50} height={9} />
                       </div>
                       <span className="text-sm font-bold text-card-foreground">.m,</span>
                     </div>

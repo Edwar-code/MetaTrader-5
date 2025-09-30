@@ -19,7 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { BtcIcon, De30Icon, EurAudIcon, GbpusdIcon } from '../trade/icons';
+import { BtcIcon, De30Icon, EurAudIcon, GbpusdIcon, GoldIcon } from '../trade/icons';
 
 
 const formatPrice = (price: number | undefined) => {
@@ -189,15 +189,15 @@ export default function ChartPage() {
                     <div className="flex items-center justify-between w-full">
                         <div className="flex items-center gap-2">
                            {asset.symbol === 'frxXAUUSD' ? (
-                                <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2012.33.35_e00bef8a.jpg" alt="XAUUSD" width={16} height={16} /> 
+                                <GoldIcon width={16} height={16} /> 
                             ) : asset.symbol === 'cryBTCUSD' ? (
                                 <BtcIcon />
                             ) : asset.symbol === 'idx_germany_40' ? (
                                 <De30Icon width={16} height={16} />
                             ) : asset.symbol === 'frxGBPUSD' ? (
-                                <GbpusdIcon width={50} height={9} />
+                                <GbpusdIcon width={16} height={16} />
                             ) : (
-                                <EurAudIcon width={40} height={8} />
+                                <EurAudIcon width={16} height={16} />
                             )}
                             {asset.symbol !== 'frxEURAUD' && asset.symbol !== 'frxGBPUSD' && <span>{asset.display}</span>}
                         </div>

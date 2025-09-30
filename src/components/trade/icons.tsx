@@ -63,7 +63,7 @@ export const HistoryIcon = ({ isActive }: { isActive?: boolean }) => {
     }, []);
 
     if (!mounted) {
-        return <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.56_253ecbbb.jpg" alt="History Icon" width={22} height={22} className="object-contain" />;
+        return <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-21%20at%2010.54.56_253ecbbb.jpg" alt="History Icon" width={22} height={22} />;
     }
 
     const isDark = resolvedTheme === 'dark';
@@ -75,7 +75,7 @@ export const HistoryIcon = ({ isActive }: { isActive?: boolean }) => {
             : "https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.20.08_cb33e6bf.jpg";
     }
 
-    return <Image src={src} alt="History Icon" width={22} height={22} className="object-contain" />;
+    return <Image src={src} alt="History Icon" width={22} height={22} />;
 };
 
 
@@ -143,6 +143,16 @@ export const BtcIcon = () => (
     </svg>
 );
 
+export const GoldIcon = ({ width, height }: { width: number; height: number }) => (
+    <ThemedIcon
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-30%20at%2017.35.06_e571b4fe.jpg"
+        lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-30%20at%2017.35.45_61e44140.jpg"
+        alt="XAUUSD"
+        width={width}
+        height={height}
+    />
+);
+
 export const EurAudIcon = ({ width, height }: { width: number; height: number }) => (
     <ThemedIcon
         darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-16%20at%2016.37.30_6ecf88b5.jpg"
@@ -189,7 +199,7 @@ export const SidebarNewsIcon = () => (
 
 export const SidebarJournalIcon = () => (
     <ThemedIcon
-        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.57.28_89bdd212.jpg"
+        darkSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%2OImage%202025-09-17%20at%2017.57.28_89bdd212.jpg"
         lightSrc="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-17%20at%2017.13.01_c232e809.jpg"
         alt="Journal Icon"
         width={24}
