@@ -15,11 +15,11 @@ const ThemedIcon = ({ darkSrc, lightSrc, alt, width, height }: { darkSrc: string
 
     if (!mounted) {
         // Render a placeholder or the light theme version by default to avoid mismatch
-        return <Image src={lightSrc} alt={alt} width={width} height={height} className="object-contain" />;
+        return <Image src={lightSrc} alt={alt} width={width} height={height} />;
     }
 
     const src = resolvedTheme === 'dark' ? darkSrc : lightSrc;
-    return <Image src={src} alt={alt} width={width} height={height} className="object-contain" />;
+    return <Image src={src} alt={alt} width={width} height={height} />;
 };
 
 
@@ -154,7 +154,7 @@ export const EurAudIcon = ({ width, height }: { width: number; height: number })
 );
 
 export const De30Icon = ({ width, height }: { width: number; height: number }) => (
-    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-22%20at%2020.07.15_a18dc8d8.jpg" alt="DE30" width={width} height={height} className="object-contain" />
+    <Image src="https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-09-22%20at%2020.07.15_a18dc8d8.jpg" alt="DE30" width={width} height={height} />
 );
 
 export const GbpusdIcon = ({ width, height }: { width: number; height: number }) => (

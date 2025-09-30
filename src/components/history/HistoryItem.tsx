@@ -68,7 +68,7 @@ export default function HistoryItem({ position }: HistoryItemProps) {
                   {isGold ? (
                     <div className="flex items-center">
                        <div className="relative top-[-1px]">
-                        <Image src={goldImageSrc} alt="XAUUSD" width={50} height={9} className="object-contain" />
+                        <Image src={goldImageSrc} alt="XAUUSD" width={50} height={9} />
                       </div>
                       <span className="text-sm font-bold text-card-foreground">.m,</span>
                     </div>
