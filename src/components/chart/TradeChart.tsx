@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
+import { AreaChart, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -129,29 +129,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 CustomTooltip.displayName = 'CustomTooltip';
 
-const HeikinAshiCandleStick = (props: any) => {
-    const { x, y, width, height, open, close, high, low } = props;
-    if ([x, y, width, height, open, close, high, low].some(v => v === undefined || !isFinite(v))) return null;
-
-    const isUp = close >= open;
-    const color = isUp ? '#16A085' : '#E74C3C';
-    
-    // Y position of the body
-    const yBody = isUp ? y + (high - close) / (high - low) * height : y + (high - open) / (high - low) * height;
-    // Height of the body
-    const bodyHeight = Math.max(1, Math.abs(open - close) / (high - low) * height);
-
-    return (
-        <g stroke={color} fill={color} strokeWidth="1">
-            {/* Wick */}
-            <line x1={x + width / 2} y1={y} x2={x + width / 2} y2={y + height} />
-            {/* Body */}
-            <rect x={x} y={yBody} width={width} height={bodyHeight} />
-        </g>
-    );
-};
-HeikinAshiCandleStick.displayName = 'HeikinAshiCandleStick';
-
 
 const MarkerLabel = ({ viewBox, value, tradeType, lotSize }: any) => {
     const { x, y } = viewBox;
@@ -250,21 +227,14 @@ const LiveAreaChart = ({ asset, data, isUp, yAxisDomain, markers, buyPrice, tick
     return (
         <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 1 }} animationDuration={0}>
-            <defs>
-                <linearGradient id="chartGradientArea" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0.4}/>
-                <stop offset="95%" stopColor={isUp ? "#22c55e" : "#ef4444"} stopOpacity={0}/>
-                </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={true} stroke={gridColor} />
-            
+
             <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
             <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
 
             <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(priceDecimalPoints) : ''} tickCount={18} tickMargin={1} />
             
             <Tooltip content={<CustomTooltip />} />
-            <Area type="monotone" dataKey="quote" stroke={isUp ? "#22c55e" : "#ef4444"} fillOpacity={1} fill="url(#chartGradientArea)" strokeWidth={2} dot={false} isAnimationActive={false} />
+
             {markers.map((m, i) => m.type === 'entry' && (
                 <ReferenceLine
                     key={`marker-text-${i}`}
@@ -319,7 +289,6 @@ const LiveCandlestickChart = ({ asset, data, isUp, lastPrice, yAxisDomain, marke
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 1 }} animationDuration={0}>
-                <CartesianGrid strokeDasharray="3 3" vertical={true} stroke={gridColor} />
                 
                 {/* Visible X-axis with labels every 6 mins */}
                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
@@ -329,7 +298,6 @@ const LiveCandlestickChart = ({ asset, data, isUp, lastPrice, yAxisDomain, marke
                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(priceDecimalPoints) : ''} tickCount={18} tickMargin={1}/>
                 
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="body" shape={<HeikinAshiCandleStick />} isAnimationActive={false} barSize={6} />
                 
                 {/* Render text label separately */}
                  {markers.map((m, i) => m.type === 'entry' && (
@@ -443,7 +411,7 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
     ), [heikinAshiCandles]);
 
 
-    const showLoader = connectionState !== 'connected' || (ticks.length === 0 && candles.length === 0 && !chartError);
+    const showLoader = connectionState !== 'connected' && !chartError;
     const isTickChart = chartInterval === 'tick';
 
     const tickStyle = React.useMemo(() => ({
@@ -490,29 +458,3 @@ export function TradeChart(props: TradeChartProps) {
 }
 
     
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-    
-
-
