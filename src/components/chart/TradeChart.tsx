@@ -242,7 +242,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
     }), [theme]);
 
     return (
-        <Card className="h-full flex flex-col border-0 shadow-none rounded-none bg-card">
+        <Card className="h-full flex flex-col border-0 shadow-none rounded-none bg-transparent">
             <CardContent className="flex-1 min-h-0 w-full relative p-0">
                 <div className="h-full w-full">
                     {chartError ? (
@@ -271,12 +271,12 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
                                 
-                                <Line type="monotone" dataKey="close" stroke="none" dot={false} isAnimationActive={false} />
-
                                 {customChartImage && chartData.length > 0 && (
                                     <ReferenceArea x1={chartData[0].epoch} x2={chartData[chartData.length - 1].epoch} y1={yAxisDomain[0]} y2={yAxisDomain[1]} strokeOpacity={0} fill="url(#chart-bg-image)" ifOverflow="visible" />
                                 )}
 
+                                <Line type="monotone" dataKey="close" stroke="none" dot={false} isAnimationActive={false} />
+                                
                                 {markers?.map((m, i) => (
                                     <React.Fragment key={`marker-frag-${i}`}>
                                         <ReferenceLine y={m.price} stroke="transparent" label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />} ifOverflow="visible" />
