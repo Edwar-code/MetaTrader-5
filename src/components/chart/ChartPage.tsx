@@ -62,7 +62,7 @@ export default function ChartPage() {
   const [chartInterval, setChartInterval] = useState('15m');
   const [chartType, setChartType] = useState('candle');
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
-  const [lotSize, setLotSize] = useState(0.01);
+  const [lotSize, setLotSize] = useState<number | string>(0.01);
   const [priceDirection, setPriceDirection] = useState<'up' | 'down' | 'neutral'>('neutral');
   const [tradeNotifications, setTradeNotifications] = useState<TradeNotificationData[]>([]);
   const [mounted, setMounted] = useState(false);
@@ -125,11 +125,22 @@ export default function ChartPage() {
       console.error('Cannot trade, not connected or price unavailable.');
       return;
     }
+    
+    const numericLotSize = typeof lotSize === 'string' ? parseFloat(lotSize) : lotSize;
+    if (isNaN(numericLotSize) || numericLotSize <= 0) {
+        toast({
+            title: "Invalid Lot Size",
+            description: "Please enter a valid, positive lot size.",
+            variant: "destructive"
+        });
+        return;
+    }
+
 
     const tradeData = {
       pair: selectedAsset,
       type: tradeType,
-      size: lotSize,
+      size: numericLotSize,
     };
     
     const success = await handleTrade(tradeData);
@@ -156,18 +167,16 @@ export default function ChartPage() {
 
   const handleLotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const parsedValue = parseFloat(value);
-    
-    // Allow empty input or valid positive numbers
-    if (value === '' || (!isNaN(parsedValue) && parsedValue >= 0)) {
-        setLotSize(value === '' ? 0 : parsedValue);
+    // Allow empty string, numbers, and a single decimal point
+    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+        setLotSize(value);
     }
   };
 
   const adjustLotSize = (amount: number) => {
     setLotSize(prev => {
-      const current = prev || 0;
-      const newSize = Math.max(0.01, current + amount);
+      const current = typeof prev === 'string' ? parseFloat(prev) : prev;
+      const newSize = Math.max(0.01, (current || 0) + amount);
       // Format to 2 decimal places to handle floating point inaccuracies
       return parseFloat(newSize.toFixed(2));
     });
@@ -309,6 +318,12 @@ export default function ChartPage() {
               type="text"
               value={lotSize}
               onChange={handleLotChange}
+              onBlur={() => {
+                const numericLotSize = typeof lotSize === 'string' ? parseFloat(lotSize) : lotSize;
+                if (isNaN(numericLotSize) || numericLotSize <= 0) {
+                    setLotSize(0.01);
+                }
+              }}
               className="text-[13px] text-foreground min-w-[40px] w-14 text-center bg-transparent border-none focus:ring-0 focus-visible:outline-none"
             />
             <button className="cursor-pointer p-1" onClick={() => adjustLotSize(0.01)}>
@@ -366,3 +381,5 @@ export default function ChartPage() {
     </div>
   );
 }
+
+    
