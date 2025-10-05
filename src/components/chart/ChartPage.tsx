@@ -220,7 +220,7 @@ export default function ChartPage() {
 
       {/* Chart Container - Now takes full space and is behind other elements */}
       <div 
-        className="flex-1 bg-background relative min-h-0 pt-[48px] pb-[30px]" 
+        className="flex-1 bg-background relative min-h-0 pt-[48px] pb-[45px]" 
         onDoubleClick={handleDoubleClick}
       >
          <div className="absolute top-[110px] left-3 z-10">
