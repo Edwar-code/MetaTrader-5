@@ -247,7 +247,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice }: TradeC
                         <ResponsiveContainer width="100%" height="100%">
                             <ComposedChart 
                                 data={chartData} 
-                                margin={{ top: 20, right: 0, left: -10, bottom: 1 }} 
+                                margin={{ top: 20, right: 0, left: -10, bottom: 20 }} 
                                 animationDuration={0}
                             >
                                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(chartData, 1, 15)} />
