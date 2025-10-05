@@ -192,15 +192,6 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
 };
 CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
-const CustomBackground = ({ x, y, width, height, imageUrl }: any) => {
-  if (!imageUrl) return null;
-  return (
-    <g>
-      <image href={imageUrl} x={x} y={y} width={width} height={height} preserveAspectRatio="none" />
-    </g>
-  );
-};
-
 function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customChartImage }: TradeChartProps) {
     const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
@@ -229,13 +220,11 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
         return chartInterval === 'tick' ? ticks : candles;
     }, [chartInterval, ticks, candles]);
 
-    const { lastPrice, dataMin, dataMax } = React.useMemo(() => {
-        if (chartData.length === 0) return { lastPrice: 0, dataMin: 'auto', dataMax: 'auto' };
+    const { lastPrice } = React.useMemo(() => {
+        if (chartData.length === 0) return { lastPrice: 0 };
         const lastDataPoint = chartData[chartData.length - 1];
         const lastP = 'quote' in lastDataPoint ? lastDataPoint.quote : lastDataPoint.close;
-        const min = chartData[0].epoch;
-        const max = lastDataPoint.epoch;
-        return { lastPrice: lastP, dataMin: min, dataMax: max };
+        return { lastPrice: lastP };
     }, [chartData]);
 
     const yAxisDomain = React.useMemo(() => {
@@ -263,6 +252,9 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
 
     // 3 hours 45 minutes = 225 minutes
     const xAxisTicks = React.useMemo(() => getMinuteTicks(chartData, 225, 5), [chartData]);
+    
+    const gridFill = customChartImage ? `url(#image-${asset})` : 'transparent';
+
 
     return (
         <Card className="h-full flex flex-col border-0 shadow-none rounded-none bg-transparent">
@@ -280,17 +272,21 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 data={chartData} 
                                 margin={{ top: 20, right: 0, left: -10, bottom: 20 }} 
                             >
+                                <defs>
+                                    {customChartImage && (
+                                        <pattern id={`image-${asset}`} patternUnits="userSpaceOnUse" width="100%" height="100%">
+                                            <image href={customChartImage} x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" />
+                                        </pattern>
+                                    )}
+                                </defs>
                                 
-                                {customChartImage && (
-                                  <ReferenceArea 
-                                    x1={dataMin} x2={dataMax} 
-                                    y1={yAxisDomain[0]} y2={yAxisDomain[1]} 
-                                    ifOverflow="visible"
-                                    shape={(props) => <CustomBackground {...props} imageUrl={customChartImage} />}
-                                  />
-                                )}
-
-                                <CartesianGrid strokeDasharray="3 3" vertical={true} horizontal={false} stroke={theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'} />
+                                <CartesianGrid 
+                                    strokeDasharray="3 3" 
+                                    vertical={true} 
+                                    horizontal={false} 
+                                    stroke={theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'} 
+                                    fill={gridFill}
+                                />
                                 
                                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#888' }} tickLine={{ stroke: '#888888' }} ticks={xAxisTicks} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888' }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
