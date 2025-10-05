@@ -30,7 +30,6 @@ interface TradeChartProps {
     chartType: string;
     setChartType: (type: string) => void;
     buyPrice?: number;
-    customChartImage?: string | null;
 }
 
 const intervalMap: { [key: string]: number | string } = {
@@ -180,14 +179,13 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
 };
 CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
-function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customChartImage }: TradeChartProps) {
+function ChartComponent({ asset, markers = [], chartInterval, buyPrice }: TradeChartProps) {
     const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
     const isMobile = useIsMobile();
     const searchParams = useSearchParams();
     const isMobileFromParam = searchParams.get('mobile') === 'true';
     const { theme } = useTheme();
-    const [chartLayout, setChartLayout] = React.useState({ x: 0, y: 0, width: 0, height: 0 });
 
     React.useEffect(() => {
         if (connectionState === 'connected' && asset) {
@@ -236,7 +234,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
     }), [theme]);
 
     return (
-        <Card className="h-full flex flex-col border-0 shadow-none rounded-none">
+        <Card className="h-full flex flex-col border-0 shadow-none rounded-none bg-transparent">
             <CardContent className="flex-1 min-h-0 w-full relative p-0">
                 <div className="h-full w-full">
                     {chartError ? (
@@ -251,28 +249,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 data={chartData} 
                                 margin={{ top: 20, right: 0, left: -10, bottom: 1 }} 
                                 animationDuration={0}
-                                onMouseMove={(e: any) => {
-                                    if (e && e.chartX && e.chartY && e.chartWidth && e.chartHeight) {
-                                      if (chartLayout.x !== e.chartX || chartLayout.y !== e.chartY || chartLayout.width !== e.chartWidth || chartLayout.height !== e.chartHeight) {
-                                        setChartLayout({ x: e.chartX, y: e.chartY, width: e.chartWidth, height: e.chartHeight });
-                                      }
-                                    }
-                                  }}
                             >
-                                {customChartImage && chartLayout.width > 0 && (
-                                    <foreignObject
-                                        x={chartLayout.x}
-                                        y={chartLayout.y}
-                                        width={chartLayout.width}
-                                        height={chartLayout.height}
-                                        style={{ pointerEvents: 'none' }}
-                                    >
-                                        <div xmlns="http://www.w3.org/1999/xhtml" style={{ width: '100%', height: '100%' }}>
-                                            <img src={customChartImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Custom chart" />
-                                        </div>
-                                    </foreignObject>
-                                )}
-
                                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(chartData, 1, 15)} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 
@@ -305,5 +282,3 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
-
-    
