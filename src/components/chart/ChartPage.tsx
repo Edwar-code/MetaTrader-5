@@ -86,7 +86,7 @@ export default function ChartPage() {
       price: pos.entryPrice,
       type: 'entry',
       tradeType: pos.type === 'BUY' ? 'BUY' : 'SELL',
-      lotSize: pos.size.toString(),
+      lotSize: pos.size.toFixed(2),
     }));
   }, [positions, selectedAsset]);
 
