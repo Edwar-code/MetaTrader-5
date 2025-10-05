@@ -181,6 +181,15 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
 };
 CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
+const CustomBackground = ({ x, y, width, height, imageUrl }: any) => {
+  if (!imageUrl) return null;
+  return (
+    <g>
+      <image href={imageUrl} x={x} y={y} width={width} height={height} preserveAspectRatio="xMidYMid slice" />
+    </g>
+  );
+};
+
 function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customChartImage }: TradeChartProps) {
     const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
@@ -209,13 +218,13 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
         return chartInterval === 'tick' ? ticks : candles;
     }, [chartInterval, ticks, candles]);
 
-    const { lastPrice } = React.useMemo(() => {
-        if (chartData.length === 0) return { lastPrice: 0 };
+    const { lastPrice, dataMin, dataMax } = React.useMemo(() => {
+        if (chartData.length === 0) return { lastPrice: 0, dataMin: 'auto', dataMax: 'auto' };
         const lastDataPoint = chartData[chartData.length - 1];
-        if ('quote' in lastDataPoint) {
-            return { lastPrice: lastDataPoint.quote };
-        }
-        return { lastPrice: lastDataPoint.close };
+        const lastP = 'quote' in lastDataPoint ? lastDataPoint.quote : lastDataPoint.close;
+        const min = chartData[0].epoch;
+        const max = lastDataPoint.epoch;
+        return { lastPrice: lastP, dataMin: min, dataMax: max };
     }, [chartData]);
 
     const yAxisDomain = React.useMemo(() => {
@@ -256,8 +265,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                             <ComposedChart 
                                 data={chartData} 
                                 margin={{ top: 20, right: 0, left: -10, bottom: 20 }} 
-                                animationDuration={0}
-                                style={{ background: customChartImage ? `url(${customChartImage})` : 'transparent', backgroundSize: 'cover', backgroundPosition: 'center' }}
+                                style={{ background: 'transparent' }}
                             >
                                 
                                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(chartData, 1, 15)} />
@@ -265,6 +273,15 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
                                 
+                                {customChartImage && (
+                                  <ReferenceArea 
+                                    x1={dataMin} x2={dataMax} 
+                                    y1={yAxisDomain[0]} y2={yAxisDomain[1]} 
+                                    ifOverflow="visible"
+                                    shape={(props) => <CustomBackground {...props} imageUrl={customChartImage} />}
+                                  />
+                                )}
+
                                 {/* This line ensures the chart axes are drawn, but is invisible */}
                                 <Line type="monotone" dataKey="close" stroke="none" dot={false} isAnimationActive={false} fill="transparent" />
                                 
@@ -295,5 +312,3 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
-
-    
