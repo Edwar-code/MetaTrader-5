@@ -59,7 +59,7 @@ export default function ChartPage() {
   const { toast } = useToast();
   
   const [selectedAsset, setAsset] = useState('frxXAUUSD');
-  const [chartInterval, setChartInterval] = useState('1m');
+  const [chartInterval, setChartInterval] = useState('15m');
   const [chartType, setChartType] = useState('candle');
   const [isTimeframeWheelOpen, setIsTimeframeWheelOpen] = useState(false);
   const [lotSize, setLotSize] = useState(0.01);
@@ -73,7 +73,8 @@ export default function ChartPage() {
 
   useEffect(() => {
     setMounted(true);
-    setCustomChartImage(DEFAULT_CHART_IMAGE);
+    // Removed localStorage logic for customChartImage
+    setShowUploadButton(true);
   }, []);
 
   const prevSellPriceRef = useRef<number | undefined>();
