@@ -262,7 +262,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
     }), [theme]);
 
     return (
-        <Card className="h-full flex flex-col border-0 shadow-none rounded-none bg-transparent">
+        <Card className="h-full flex flex-col border-0 shadow-none rounded-none bg-card">
             <CardContent className="flex-1 min-h-0 w-full relative p-0">
                 <div className="h-full w-full">
                     {chartError ? (
