@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
+import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -39,30 +39,6 @@ const intervalMap: { [key: string]: number | string } = {
   '1d': 86400, '1W': '1W', '1M': '1M'
 };
 
-// Heikin-Ashi calculation logic
-const calculateHeikinAshi = (candles: Candle[]): Candle[] => {
-    if (!candles || candles.length === 0) return [];
-
-    return candles.reduce((acc: Candle[], candle, i) => {
-        const prev = i > 0 ? acc[i - 1] : null;
-        const ohlc = candle;
-
-        const haClose = (ohlc.open + ohlc.high + ohlc.low + ohlc.close) / 4;
-        const haOpen = prev ? (prev.open + prev.close) / 2 : (ohlc.open + ohlc.close) / 2;
-        const haHigh = Math.max(ohlc.high, haOpen, haClose);
-        const haLow = Math.min(ohlc.low, haOpen, haClose);
-
-        acc.push({
-            epoch: ohlc.epoch,
-            open: haOpen,
-            high: haHigh,
-            low: haLow,
-            close: haClose,
-        });
-        return acc;
-    }, []);
-};
-
 const getMinuteTicks = (data: { epoch: number }[], intervalMinutes: number, maxTicks: number): number[] => {
     if (!data || data.length < 2) return [];
 
@@ -91,19 +67,6 @@ const getMinuteTicks = (data: { epoch: number }[], intervalMinutes: number, maxT
     return ticks;
 };
 
-const getAllMinuteTicks = (data: { epoch: number }[]): number[] => {
-    if (!data || data.length < 2) return [];
-    const dataMin = data[0].epoch;
-    const dataMax = data[data.length - 1].epoch;
-    const intervalSeconds = 60; // 1 minute
-    const firstTick = Math.ceil(dataMin / intervalSeconds) * intervalSeconds;
-    const ticks: number[] = [];
-    for (let currentTick = firstTick; currentTick <= dataMax; currentTick += intervalSeconds) {
-        ticks.push(currentTick);
-    }
-    return ticks;
-};
-
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -129,29 +92,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 CustomTooltip.displayName = 'CustomTooltip';
-
-const HeikinAshiCandleStick = (props: any) => {
-    const { x, y, width, height, open, close, high, low } = props;
-    if ([x, y, width, height, open, close, high, low].some(v => v === undefined || !isFinite(v))) return null;
-
-    const isUp = close >= open;
-    const color = isUp ? '#16A085' : '#E74C3C';
-    
-    // Y position of the body
-    const yBody = isUp ? y + (high - close) / (high - low) * height : y + (high - open) / (high - low) * height;
-    // Height of the body
-    const bodyHeight = Math.max(1, Math.abs(open - close) / (high - low) * height);
-
-    return (
-        <g stroke={color} fill={color} strokeWidth="1">
-            {/* Wick */}
-            <line x1={x + width / 2} y1={y} x2={x + width / 2} y2={y + height} />
-            {/* Body */}
-            <rect x={x} y={yBody} width={width} height={bodyHeight} />
-        </g>
-    );
-};
-HeikinAshiCandleStick.displayName = 'HeikinAshiCandleStick';
 
 
 const MarkerLabel = ({ viewBox, value, tradeType, lotSize }: any) => {
@@ -232,8 +172,6 @@ BuyPriceLabel.displayName = 'BuyPriceLabel';
 const CurrentTimeIndicator = ({ viewBox }: any) => {
   if (!viewBox) return null;
   const { x, y, height } = viewBox;
-  // Position the arrow on the x-axis line. y + height is the axis line itself.
-  // We subtract the arrow's height (4px) to make it sit ON TOP of the line.
   return (
     <svg x={x - 4} y={y + height - 4} width="8" height="4" viewBox="0 0 8 4" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M4 0L8 4H0L4 0Z" fill="#8E8E93"/>
@@ -242,7 +180,7 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
 };
 CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
-function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, buyPrice, customChartImage }: TradeChartProps) {
+function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customChartImage }: TradeChartProps) {
     const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
     const isMobile = useIsMobile();
@@ -261,51 +199,35 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
                 subscribeToCandles(asset, mappedInterval, dataCount);
             } else {
                 console.warn(`String-based interval "${mappedInterval}" is not yet supported.`);
-                 subscribeToCandles(asset, 86400, dataCount); // fallback to daily
+                 subscribeToCandles(asset, 86400, dataCount);
             }
         }
         return () => { unsubscribeFromChart(); };
     }, [asset, chartInterval, connectionState, subscribeToTicks, subscribeToCandles, unsubscribeFromChart, isMobile, isMobileFromParam]);
     
-    const heikinAshiCandles = React.useMemo(() => calculateHeikinAshi(candles), [candles]);
+    const chartData = React.useMemo(() => {
+        return chartInterval === 'tick' ? ticks : candles;
+    }, [chartInterval, ticks, candles]);
 
-    const { lastPrice, isUp } = React.useMemo(() => {
-        const lastTick = ticks.length > 0 ? ticks[ticks.length - 1] : null;
-        if (lastTick) {
-             const secondLastTick = ticks.length > 1 ? ticks[ticks.length - 2].quote : lastTick.quote;
-             return { lastPrice: lastTick.quote, isUp: lastTick.quote >= secondLastTick };
+    const { lastPrice } = React.useMemo(() => {
+        if (chartData.length === 0) return { lastPrice: 0 };
+        const lastDataPoint = chartData[chartData.length - 1];
+        if ('quote' in lastDataPoint) {
+            return { lastPrice: lastDataPoint.quote };
         }
-
-        if (chartInterval !== 'tick' && heikinAshiCandles.length > 0) {
-            const lastCandle = heikinAshiCandles[heikinAshiCandles.length - 1];
-            return { lastPrice: lastCandle.close, isUp: lastCandle.close >= lastCandle.open };
-        }
-
-        return { lastPrice: 0, isUp: true };
-    }, [ticks, heikinAshiCandles, chartInterval]);
+        return { lastPrice: lastDataPoint.close };
+    }, [chartData]);
 
     const yAxisDomain = React.useMemo(() => {
-        const dataSet = chartInterval === 'tick' ? ticks : heikinAshiCandles;
-        if (!dataSet || dataSet.length === 0) return ['auto', 'auto'];
-
-        const pricesFromData = dataSet.flatMap((d: any) => d.quote !== undefined ? [d.quote] : [d.low, d.high]);
-        const finitePrices = pricesFromData.filter(p => isFinite(p));
-
+        if (!chartData || chartData.length === 0) return ['auto', 'auto'];
+        const prices = chartData.flatMap((d: any) => d.quote !== undefined ? [d.quote] : [d.low, d.high]);
+        const finitePrices = prices.filter(p => isFinite(p));
         if (finitePrices.length === 0) return ['auto', 'auto'];
-        
         const min = Math.min(...finitePrices);
         const max = Math.max(...finitePrices);
         const padding = (max - min) * 0.1 || (asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 0.01 : 0.0001); 
-
         return [min - padding, max + padding];
-    }, [ticks, heikinAshiCandles, chartInterval, asset]);
-
-    const chartDataForCandle = React.useMemo(() => (
-        heikinAshiCandles.map(c => ({...c, body: [c.low, c.high]}))
-    ), [heikinAshiCandles]);
-
-
-    const isTickChart = chartInterval === 'tick';
+    }, [chartData, asset]);
 
     const tickStyle = React.useMemo(() => ({
         fontSize: 12,
@@ -326,7 +248,7 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
                     ) : (
                         <ResponsiveContainer width="100%" height="100%">
                             <ComposedChart 
-                                data={isTickChart ? ticks : chartDataForCandle} 
+                                data={chartData} 
                                 margin={{ top: 20, right: 0, left: -10, bottom: 1 }} 
                                 animationDuration={0}
                                 onMouseMove={(e: any) => {
@@ -351,10 +273,10 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
                                     </foreignObject>
                                 )}
 
-                                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(isTickChart ? ticks : chartDataForCandle, 1, 15)} />
+                                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(chartData, 1, 15)} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 
-                                <Tooltip content={<CustomTooltip />} />
+                                <Tooltip content={<CustomTooltip />} cursor={false} />
                                 
                                 {markers?.map((m, i) => (
                                     <React.Fragment key={`marker-frag-${i}`}>
@@ -366,8 +288,7 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
                                 {lastPrice > 0 && <ReferenceLine y={lastPrice} stroke="#16A085" strokeWidth={1} label={<YAxisLabel value={lastPrice} asset={asset}/>} />}
                                 {buyPrice && <ReferenceLine y={buyPrice} stroke="#E74C3C" strokeWidth={1} label={<BuyPriceLabel value={buyPrice} asset={asset}/>} />}
                                 
-                                { (isTickChart && ticks.length > 0) && <ReferenceLine x={ticks[ticks.length-1].epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" /> }
-                                { (!isTickChart && chartDataForCandle.length > 0) && <ReferenceLine x={chartDataForCandle[chartDataForCandle.length-1].epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" /> }
+                                { (chartData.length > 0) && <ReferenceLine x={chartData[chartData.length-1].epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" /> }
                             </ComposedChart>
                         </ResponsiveContainer>
                     )}
@@ -377,7 +298,6 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
     );
 }
 
-// Suspense boundary to allow use of useSearchParams
 export function TradeChart(props: TradeChartProps) {
     return (
         <React.Suspense fallback={<Skeleton className="h-full w-full" />}>

@@ -193,6 +193,10 @@ export default function ChartPage() {
     return null; // or a loading skeleton
   }
 
+  const handleDoubleClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       
@@ -206,7 +210,7 @@ export default function ChartPage() {
       />
 
       {/* Chart Container - Now takes full space and is behind other elements */}
-      <div className="flex-1 bg-background relative min-h-0 pt-[48px] border pb-[1.6rem]">
+      <div className="flex-1 bg-background relative min-h-0 pt-[48px] border pb-[1.6rem]" onDoubleClick={handleDoubleClick}>
          <div className="absolute top-[110px] left-3 z-10">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
