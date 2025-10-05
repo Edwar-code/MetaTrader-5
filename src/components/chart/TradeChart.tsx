@@ -2,11 +2,12 @@
 'use client';
 
 import React from 'react';
-import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line, CartesianGrid } from 'recharts';
-import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
+import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, CartesianGrid } from 'recharts';
+import { useDerivState, useDerivChart, Candle } from '@/context/DerivContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { format, fromUnixTime } from 'date-fns';
+import { fromUnixTime } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 import { AlertTriangle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSearchParams } from 'next/navigation';
@@ -42,7 +43,8 @@ const intervalMap: { [key: string]: number | string } = {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
-    const time = format(fromUnixTime(data.epoch), 'PPpp');
+    const userTimeZone = 'Africa/Nairobi';
+    const time = formatInTimeZone(fromUnixTime(data.epoch), userTimeZone, 'PPpp');
     const priceDecimalPoints = data.symbol === 'frxXAUUSD' || data.symbol === 'cryBTCUSD' || data.symbol === 'idx_germany_40' ? 2 : 5;
 
     return (
@@ -213,6 +215,10 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
 
     const gridFill = customChartImage ? `url(#image-${asset})` : 'transparent';
 
+    const xAxisTickFormatter = (v: number) => {
+        const userTimeZone = 'Africa/Nairobi';
+        return formatInTimeZone(fromUnixTime(v), userTimeZone, 'dd MMM HH:mm');
+    }
 
     return (
         <Card className="h-full flex flex-col border-0 shadow-none rounded-none bg-transparent">
@@ -246,7 +252,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                     fill={gridFill}
                                 />
                                 
-                                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#888' }} tickLine={{ stroke: '#888888' }} />
+                                <XAxis dataKey="epoch" tickFormatter={xAxisTickFormatter} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: 'rgba(136, 136, 136, 0.5)' }} tickLine={{ stroke: '#888888' }} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888' }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
