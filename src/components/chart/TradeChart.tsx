@@ -193,7 +193,8 @@ const ChartBackgroundImage = ({ customChartImage }: { customChartImage: string |
                         width: '100%',
                         height: '100%',
                         backgroundImage: `url(${customChartImage})`,
-                        backgroundSize: '100% 100%',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
                     }}
                 />
