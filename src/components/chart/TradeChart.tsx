@@ -96,7 +96,8 @@ CustomTooltip.displayName = 'CustomTooltip';
 
 const MarkerLabel = ({ viewBox, value, tradeType, lotSize }: any) => {
     const { x, y } = viewBox;
-    const text = `${tradeType} ${lotSize}`;
+    const formattedLotSize = typeof lotSize === 'number' ? lotSize.toFixed(2) : lotSize;
+    const text = `${tradeType} ${formattedLotSize}`;
     const color = tradeType === 'BUY' ? '#3082ff' : '#ea4d4a';
     return (
         <g>
