@@ -218,6 +218,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
     const xAxisTickFormatter = (v: number) => {
         const userTimeZone = 'Africa/Nairobi';
         try {
+            if (typeof v !== 'number') return '';
             return formatInTimeZone(fromUnixTime(v), userTimeZone, 'dd MMM HH:mm');
         } catch (e) {
             console.error("Error formatting date:", e, "value:", v);
@@ -257,7 +258,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                     fill={gridFill}
                                 />
                                 
-                                <XAxis dataKey="epoch" tickFormatter={xAxisTickFormatter} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: 'rgba(136, 136, 136, 0.5)' }} tickLine={{ stroke: '#888888' }} />
+                                <XAxis dataKey="epoch" tickFormatter={xAxisTickFormatter} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: 'rgba(136, 136, 136, 0.5)' }} tickLine={{ stroke: '#888888' }} tickCount={7} tickMargin={5} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888' }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
