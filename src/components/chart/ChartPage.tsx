@@ -8,7 +8,7 @@ import { Sidebar } from '../trade/Sidebar';
 import { useDerivState } from '@/context/DerivContext';
 import { useTradeState } from '@/context/TradeContext';
 import { TimeframeWheel } from './TimeframeWheel';
-import { ChevronUp, ChevronDown, ChevronRight, Check } from 'lucide-react';
+import { ChevronUp, ChevronDown, ChevronRight, Check, ImagePlus } from 'lucide-react';
 import type { Position } from '@/lib/types';
 import Image from 'next/image';
 import TradeNotification from './TradeNotification';
@@ -20,6 +20,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { BtcIcon, De30Icon, EurAudIcon, GbpusdIcon, GoldIcon } from '../trade/icons';
+import { Button } from '../ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 
 const formatPrice = (price: number | undefined) => {
@@ -50,6 +52,7 @@ export default function ChartPage() {
   const { ticks, connectionState, latestPrice } = useDerivState();
   const { positions, handleTrade } = useTradeState();
   const { resolvedTheme } = useTheme();
+  const { toast } = useToast();
   
   const [selectedAsset, setAsset] = useState('frxXAUUSD');
   const [chartInterval, setChartInterval] = useState('1m');
@@ -164,6 +167,13 @@ export default function ChartPage() {
     : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg';
 
   const priceFractionFontSize = selectedAsset === 'frxXAUUSD' || selectedAsset === 'cryBTCUSD' || selectedAsset === 'idx_germany_40' ? '22px' : '28px';
+
+  const handleCustomChart = () => {
+    toast({
+      title: 'Custom Chart',
+      description: 'Image upload will be implemented here.',
+    });
+  };
 
   if (!mounted) {
     return null; // or a loading skeleton
@@ -298,6 +308,15 @@ export default function ChartPage() {
         ))}
       </div>
 
+      <div className="absolute bottom-20 right-4 z-20">
+        <Button
+          size="icon"
+          className="rounded-full w-14 h-14 bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-lg"
+          onClick={handleCustomChart}
+        >
+          <ImagePlus className="h-7 w-7" />
+        </Button>
+      </div>
 
       <BottomNav />
     </div>
