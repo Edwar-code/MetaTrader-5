@@ -240,7 +240,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                         <ResponsiveContainer width="100%" height="100%">
                             <ComposedChart 
                                 data={chartData} 
-                                margin={{ top: 20, right: 0, left: -10, bottom: 20 }} 
+                                margin={{ top: 20, right: 70, left: -10, bottom: 20 }} 
                             >
                                 <defs>
                                     {customChartImage && (

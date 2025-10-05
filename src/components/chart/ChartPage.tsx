@@ -86,7 +86,7 @@ export default function ChartPage() {
       epoch: pos.openTime,
       price: pos.entryPrice,
       type: 'entry',
-      tradeType: pos.type === 'BUY' | 'SELL' ? 'BUY' : 'SELL',
+      tradeType: pos.type,
       lotSize: pos.size.toFixed(2),
     }));
   }, [positions, selectedAsset]);
@@ -364,5 +364,3 @@ export default function ChartPage() {
     </div>
   );
 }
-
-    
