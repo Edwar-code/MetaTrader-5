@@ -156,9 +156,11 @@ export default function ChartPage() {
 
   const handleLotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Allow only numbers and a single dot
-    if (/^\d*\.?\d*$/.test(value)) {
-      setLotSize(parseFloat(value) || 0);
+    const parsedValue = parseFloat(value);
+    
+    // Allow empty input or valid positive numbers
+    if (value === '' || (!isNaN(parsedValue) && parsedValue >= 0)) {
+        setLotSize(value === '' ? 0 : parsedValue);
     }
   };
 
