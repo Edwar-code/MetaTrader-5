@@ -282,7 +282,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 style={{ background: 'transparent' }}
                             >
                                 
-                                <CartesianGrid strokeDasharray="3 3" vertical={true} horizontal={false} stroke={theme === 'dark' ? '#444' : '#ccc'} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} horizontal={false} stroke={theme === 'dark' ? '#444' : '#ccc'} />
                                 
                                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#888' }} tickLine={{ stroke: '#888888' }} ticks={xAxisTicks} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
