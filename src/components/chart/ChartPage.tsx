@@ -358,3 +358,5 @@ export default function ChartPage() {
     </div>
   );
 }
+
+    
