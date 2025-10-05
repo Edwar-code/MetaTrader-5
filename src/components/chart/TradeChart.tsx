@@ -39,45 +39,6 @@ const intervalMap: { [key: string]: number | string } = {
   '1d': 86400, '1W': '1W', '1M': '1M'
 };
 
-const getMinuteTicks = (data: { epoch: number }[], intervalMinutes: number, minTicks: number): number[] => {
-    if (!data || data.length < 2) return [];
-
-    const dataEnd = data[data.length - 1].epoch;
-    const dataStart = data[0].epoch;
-    const intervalSeconds = intervalMinutes * 60;
-    
-    // Find the first tick that is a multiple of intervalSeconds before or at dataEnd
-    let currentTick = Math.floor(dataEnd / intervalSeconds) * intervalSeconds;
-    if (currentTick > dataEnd) {
-      currentTick -= intervalSeconds;
-    }
-    
-    const ticks: number[] = [];
-    
-    // Generate ticks backwards until we are before the data starts or have enough ticks
-    while (currentTick >= dataStart && ticks.length < minTicks) {
-        ticks.unshift(currentTick);
-        currentTick -= intervalSeconds;
-    }
-    
-    // If not enough ticks were generated, fill forwards from the earliest point
-    if (ticks.length > 0) {
-        let firstTick = ticks[0];
-        while(ticks.length < minTicks) {
-            firstTick += intervalSeconds;
-            ticks.push(firstTick);
-        }
-    } else { // Fallback if data range is very small
-       let tick = Math.floor(dataStart / intervalSeconds) * intervalSeconds;
-       for(let i=0; i<minTicks; i++) {
-           ticks.push(tick);
-           tick += intervalSeconds;
-       }
-    }
-    
-    return ticks;
-};
-
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -250,9 +211,6 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
         fill: theme === 'dark' ? '#d3d9db' : 'hsl(var(--muted-foreground))'
     }), [theme]);
 
-    // 3 hours 45 minutes = 225 minutes
-    const xAxisTicks = React.useMemo(() => getMinuteTicks(chartData, 225, 5), [chartData]);
-    
     const gridFill = customChartImage ? `url(#image-${asset})` : 'transparent';
 
 
@@ -288,7 +246,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                     fill={gridFill}
                                 />
                                 
-                                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#888' }} tickLine={{ stroke: '#888888' }} ticks={xAxisTicks} />
+                                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#888' }} tickLine={{ stroke: '#888888' }} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888' }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
@@ -323,5 +281,3 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
-
-    
