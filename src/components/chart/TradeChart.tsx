@@ -112,7 +112,7 @@ const YAxisLabel = ({ viewBox, value, asset }: any) => {
     const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5;
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="60" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 8} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center text-white bg-[#16A085] px-1"
@@ -131,7 +131,7 @@ const BuyPriceLabel = ({ viewBox, value, asset }: any) => {
     const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5;
     return (
       <g>
-        <foreignObject x={width} y={y - 10} width="60" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 8} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center text-white bg-[#E74C3C] px-1"
@@ -293,3 +293,5 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
+
+    
