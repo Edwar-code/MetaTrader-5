@@ -48,6 +48,8 @@ const assets = [
     { symbol: 'idx_germany_40', display: 'DE30', description: 'Germany 40' },
 ];
 
+const LOCAL_STORAGE_KEY = 'customChartImage';
+
 export default function ChartPage() {
   const { ticks, connectionState, latestPrice } = useDerivState();
   const { positions, handleTrade } = useTradeState();
@@ -68,6 +70,10 @@ export default function ChartPage() {
 
   useEffect(() => {
     setMounted(true);
+    const savedImage = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedImage) {
+      setCustomChartImage(savedImage);
+    }
   }, []);
 
   const prevSellPriceRef = useRef<number | undefined>();
@@ -177,15 +183,17 @@ export default function ChartPage() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (customChartImage) {
-        URL.revokeObjectURL(customChartImage);
-      }
-      const imageUrl = URL.createObjectURL(file);
-      setCustomChartImage(imageUrl);
-      toast({
-        title: 'Chart Updated',
-        description: 'Your custom chart image has been applied.',
-      });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        localStorage.setItem(LOCAL_STORAGE_KEY, base64String);
+        setCustomChartImage(base64String);
+        toast({
+          title: 'Chart Updated',
+          description: 'Your custom chart image has been applied.',
+        });
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -349,4 +357,5 @@ export default function ChartPage() {
       <BottomNav />
     </div>
   );
-}
+
+    
