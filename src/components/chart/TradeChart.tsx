@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line } from 'recharts';
+import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line, Candlestick } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -275,7 +275,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
                                 
-                                {/* This invisible line ensures the chart axes are drawn even if no other data is visible */}
+                                <Candlestick dataKey="close" fill="transparent" stroke="transparent" isAnimationActive={false} />
                                 <Line type="monotone" dataKey="close" stroke="none" dot={false} isAnimationActive={false} />
 
                                 {markers?.map((m, i) => (
