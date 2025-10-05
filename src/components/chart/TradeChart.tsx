@@ -180,14 +180,6 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
 };
 CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
-const ChartBackgroundImage = ({ customChartImage }: { customChartImage: string | null | undefined }) => {
-    if (!customChartImage) return null;
-
-    return <ReferenceArea x1={0} x2={1} y1={0} y2={1} ifOverflow="hidden" fill={`url(#${customChartImage})`} isFront={false} />;
-};
-ChartBackgroundImage.displayName = 'ChartBackgroundImage';
-
-
 function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customChartImage }: TradeChartProps) {
     const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
@@ -262,7 +254,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                         <ResponsiveContainer width="100%" height="100%">
                             <ComposedChart 
                                 data={chartData} 
-                                margin={{ top: 20, right: 0, left: -10, bottom: 0 }} 
+                                margin={{ top: 20, right: 0, left: -10, bottom: 20 }} 
                                 animationDuration={0}
                             >
                                 <defs>
@@ -276,8 +268,8 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(chartData, 1, 15)} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 
-                                {customChartImage && (
-                                    <ReferenceArea x1={chartData[0]?.epoch} x2={chartData[chartData.length -1]?.epoch} y1={yAxisDomain[0]} y2={yAxisDomain[1]} strokeOpacity={0} fill="url(#chart-bg-image)" ifOverflow="visible" />
+                                {customChartImage && chartData.length > 0 && (
+                                    <ReferenceArea x1={chartData[0].epoch} x2={chartData[chartData.length - 1].epoch} y1={yAxisDomain[0]} y2={yAxisDomain[1]} strokeOpacity={0} fill="url(#chart-bg-image)" ifOverflow="visible" />
                                 )}
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
