@@ -97,7 +97,7 @@ CustomTooltip.displayName = 'CustomTooltip';
 const MarkerLabel = ({ viewBox, value, tradeType, lotSize }: any) => {
     const { x, y } = viewBox;
     const text = `${tradeType} ${lotSize}`;
-    const color = tradeType === 'BUY' ? '#007AFF' : '#FF3B30';
+    const color = tradeType === 'BUY' ? '#3082ff' : '#ea4d4a';
     return (
         <g>
             <text x={x + 10} y={y} dy={-4} fill={color} fontSize="12">
@@ -111,7 +111,7 @@ MarkerLabel.displayName = 'MarkerLabel';
 const OrderPriceLabel = ({ viewBox, value, tradeType, asset }: any) => {
     if (!viewBox || value === undefined) return null;
     const { y, width } = viewBox;
-    const color = tradeType === 'BUY' ? '#007AFF' : '#FF3B30';
+    const color = tradeType === 'BUY' ? '#3082ff' : '#ea4d4a';
     const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5;
   
     return (
@@ -119,7 +119,7 @@ const OrderPriceLabel = ({ viewBox, value, tradeType, asset }: any) => {
         <foreignObject x={width + 7} y={y - 10} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
-            className="w-full h-full text-xs flex items-center justify-center bg-white/90 border px-1"
+            className="w-full h-full text-xs flex items-center justify-center bg-background/90 border px-1"
             style={{ borderColor: color, color: color }}
           >
             {value.toFixed(priceDecimalPoints)}
@@ -183,27 +183,7 @@ CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 const ChartBackgroundImage = ({ customChartImage }: { customChartImage: string | null | undefined }) => {
     if (!customChartImage) return null;
 
-    const Label = (props: any) => {
-        const { x, y, width, height } = props.viewBox;
-        return (
-            <foreignObject x={x} y={y} width={width} height={height}>
-                <div
-                    xmlns="http://www.w3.org/1999/xhtml"
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundImage: `url(${customChartImage})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                    }}
-                />
-            </foreignObject>
-        );
-    };
-    Label.displayName = 'ChartBackgroundImageLabel';
-
-    return <ReferenceArea x1={0} x2={1} y1={0} y2={1} ifOverflow="visible" isFront={false} shape={<div/>} label={<Label />} />;
+    return <ReferenceArea x1={0} x2={1} y1={0} y2={1} ifOverflow="hidden" fill={`url(#${customChartImage})`} isFront={false} />;
 };
 ChartBackgroundImage.displayName = 'ChartBackgroundImage';
 
@@ -248,13 +228,19 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
     const yAxisDomain = React.useMemo(() => {
         if (!chartData || chartData.length === 0) return ['auto', 'auto'];
         const prices = chartData.flatMap((d: any) => d.quote !== undefined ? [d.quote] : [d.low, d.high]);
+        if (markers) {
+          markers.forEach(m => prices.push(m.price));
+        }
+        if (buyPrice) prices.push(buyPrice);
+        if (lastPrice) prices.push(lastPrice);
+
         const finitePrices = prices.filter(p => isFinite(p));
         if (finitePrices.length === 0) return ['auto', 'auto'];
         const min = Math.min(...finitePrices);
         const max = Math.max(...finitePrices);
         const padding = (max - min) * 0.1 || (asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 0.01 : 0.0001); 
         return [min - padding, max + padding];
-    }, [chartData, asset]);
+    }, [chartData, markers, buyPrice, lastPrice, asset]);
 
     const tickStyle = React.useMemo(() => ({
         fontSize: 12,
@@ -276,32 +262,35 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                         <ResponsiveContainer width="100%" height="100%">
                             <ComposedChart 
                                 data={chartData} 
-                                margin={{ top: 20, right: 0, left: -10, bottom: 20 }} 
+                                margin={{ top: 20, right: 0, left: -10, bottom: 0 }} 
                                 animationDuration={0}
                             >
                                 <defs>
                                     {customChartImage && (
-                                        <pattern id="image-bg" patternUnits="userSpaceOnUse" width="100%" height="100%">
-                                            <image href={customChartImage} x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" />
+                                        <pattern id="chart-bg-image" patternUnits="userSpaceOnUse" width="100%" height="100%">
+                                            <image href={customChartImage} x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" />
                                         </pattern>
                                     )}
                                 </defs>
-                                {customChartImage && <ReferenceArea x1={chartData[0]?.epoch} x2={chartData[chartData.length -1]?.epoch} y1={yAxisDomain[0]} y2={yAxisDomain[1]} strokeOpacity={0} fill="url(#image-bg)" ifOverflow="visible" />}
                                 
                                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(chartData, 1, 15)} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
+
+                                {customChartImage && (
+                                    <ReferenceArea x1={chartData[0]?.epoch} x2={chartData[chartData.length -1]?.epoch} y1={yAxisDomain[0]} y2={yAxisDomain[1]} strokeOpacity={0} fill="url(#chart-bg-image)" ifOverflow="visible" />
+                                )}
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
                                 
                                 {markers?.map((m, i) => (
                                     <React.Fragment key={`marker-frag-${i}`}>
                                         <ReferenceLine y={m.price} stroke="transparent" label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />} ifOverflow="visible" />
-                                        <ReferenceLine y={m.price} stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'} strokeDasharray="3 3" strokeWidth={1} label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} asset={asset} />} ifOverflow="visible" />
+                                        <ReferenceLine y={m.price} stroke={m.tradeType === 'BUY' ? '#3082ff' : '#ea4d4a'} strokeDasharray="3 3" strokeWidth={1} label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} asset={asset} />} ifOverflow="visible" />
                                     </React.Fragment>
                                 ))}
                                 
                                 {lastPrice > 0 && <ReferenceLine y={lastPrice} stroke="#16A085" strokeWidth={1} label={<YAxisLabel value={lastPrice} asset={asset}/>} />}
-                                {buyPrice && <ReferenceLine y={buyPrice} stroke="#E74C3C" strokeWidth={1} label={<BuyPriceLabel value={buyPrice} asset={asset}/>} />}
+                                {buyPrice && <ReferenceLine y={buyPrice} stroke="#E74C3C" strokeWidth={1} label={<BuyPriceLabel value={buy-price} asset={asset}/>} />}
                                 
                                 { (chartData.length > 0) && <ReferenceLine x={chartData[chartData.length-1].epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" /> }
                             </ComposedChart>
@@ -320,5 +309,3 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
-
-    
