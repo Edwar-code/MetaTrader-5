@@ -43,20 +43,39 @@ const getMinuteTicks = (data: { epoch: number }[], intervalMinutes: number, minT
     if (!data || data.length < 2) return [];
 
     const dataEnd = data[data.length - 1].epoch;
+    const dataStart = data[0].epoch;
     const intervalSeconds = intervalMinutes * 60;
     
+    // Find the first tick that is a multiple of intervalSeconds before or at dataEnd
+    let currentTick = Math.floor(dataEnd / intervalSeconds) * intervalSeconds;
+    if (currentTick > dataEnd) {
+      currentTick -= intervalSeconds;
+    }
+    
     const ticks: number[] = [];
-    let currentTick = dataEnd;
-
-    // Generate ticks backwards from the last data point
-    for (let i = 0; i < minTicks; i++) {
+    
+    // Generate ticks backwards until we are before the data starts or have enough ticks
+    while (currentTick >= dataStart && ticks.length < minTicks) {
         ticks.unshift(currentTick);
         currentTick -= intervalSeconds;
     }
     
-    // Ensure the first tick isn't before the actual data starts
-    const dataStart = data[0].epoch;
-    return ticks.filter(tick => tick >= dataStart);
+    // If not enough ticks were generated, fill forwards from the earliest point
+    if (ticks.length > 0) {
+        let firstTick = ticks[0];
+        while(ticks.length < minTicks) {
+            firstTick += intervalSeconds;
+            ticks.push(firstTick);
+        }
+    } else { // Fallback if data range is very small
+       let tick = Math.floor(dataStart / intervalSeconds) * intervalSeconds;
+       for(let i=0; i<minTicks; i++) {
+           ticks.push(tick);
+           tick += intervalSeconds;
+       }
+    }
+    
+    return ticks;
 };
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -265,7 +284,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 
                                 <CartesianGrid strokeDasharray="3 3" vertical={true} horizontal={false} stroke={theme === 'dark' ? '#444' : '#ccc'} />
                                 
-                                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#888888' }} tickLine={{ stroke: '#888888' }} ticks={xAxisTicks} />
+                                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#888' }} tickLine={{ stroke: '#888888' }} ticks={xAxisTicks} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
@@ -309,3 +328,5 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
+
+    

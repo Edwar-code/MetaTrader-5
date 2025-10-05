@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useToast } from "@/hooks/use-toast";
@@ -259,7 +260,7 @@ export function DerivProvider({ children }: { children: ReactNode }) {
                 }
             }
             
-            chartSubscription.current = await api.basic.subscribe({ ticks_history: symbol, style: 'candles', granularity, end: 'latest' });
+            chartSubscription.current = await api.basic.subscribe({ ticks_history: symbol, style: 'candles', granularity, end: 'latest', adjust_start_time: 1 });
             chartSubscription.current.subscribe((response: any) => {
                 if (response.error) {
                     setChartError(response.error.message);
@@ -368,3 +369,5 @@ export function useDerivChart() {
     }
     return context;
 }
+
+    
