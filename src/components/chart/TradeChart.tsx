@@ -210,8 +210,8 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
     const tickStyle = React.useMemo(() => ({
         fontSize: 12,
         fontWeight: 'normal',
-        fill: theme === 'dark' ? '#d3d9db' : 'hsl(var(--muted-foreground))'
-    }), [theme]);
+        fill: 'hsl(var(--foreground))'
+    }), []);
 
     const gridFill = customChartImage ? `url(#image-${asset})` : 'transparent';
 
@@ -258,7 +258,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                     fill={gridFill}
                                 />
                                 
-                                <XAxis dataKey="epoch" tickFormatter={xAxisTickFormatter} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: 'rgba(136, 136, 136, 0.5)' }} tickLine={{ stroke: '#888888' }} tickCount={7} tickMargin={5} />
+                                <XAxis dataKey="epoch" tickFormatter={xAxisTickFormatter} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={false} tickLine={false} tickCount={7} tickMargin={5} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888' }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
@@ -293,3 +293,5 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
+
+    
