@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea } from 'recharts';
+import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -275,6 +275,9 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
                                 
+                                {/* This invisible line ensures the chart axes are drawn even if no other data is visible */}
+                                <Line type="monotone" dataKey="close" stroke="none" dot={false} isAnimationActive={false} />
+
                                 {markers?.map((m, i) => (
                                     <React.Fragment key={`marker-frag-${i}`}>
                                         <ReferenceLine y={m.price} stroke="transparent" label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />} ifOverflow="visible" />
@@ -302,3 +305,5 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
+
+    
