@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
+import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -30,6 +30,7 @@ interface TradeChartProps {
     chartType: string;
     setChartType: (type: string) => void;
     buyPrice?: number;
+    customChartImage?: string | null;
 }
 
 const intervalMap: { [key: string]: number | string } = {
@@ -179,7 +180,34 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
 };
 CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
-function ChartComponent({ asset, markers = [], chartInterval, buyPrice }: TradeChartProps) {
+const ChartBackgroundImage = ({ customChartImage }: { customChartImage: string | null | undefined }) => {
+    if (!customChartImage) return null;
+
+    const Label = (props: any) => {
+        const { x, y, width, height } = props.viewBox;
+        return (
+            <foreignObject x={x} y={y} width={width} height={height}>
+                <div
+                    xmlns="http://www.w3.org/1999/xhtml"
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        backgroundImage: `url(${customChartImage})`,
+                        backgroundSize: '100% 100%',
+                        backgroundRepeat: 'no-repeat',
+                    }}
+                />
+            </foreignObject>
+        );
+    };
+    Label.displayName = 'ChartBackgroundImageLabel';
+
+    return <ReferenceArea x1={0} x2={1} y1={0} y2={1} ifOverflow="visible" isFront={false} shape={<div/>} label={<Label />} />;
+};
+ChartBackgroundImage.displayName = 'ChartBackgroundImage';
+
+
+function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customChartImage }: TradeChartProps) {
     const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
     const isMobile = useIsMobile();
@@ -250,6 +278,15 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice }: TradeC
                                 margin={{ top: 20, right: 0, left: -10, bottom: 20 }} 
                                 animationDuration={0}
                             >
+                                <defs>
+                                    {customChartImage && (
+                                        <pattern id="image-bg" patternUnits="userSpaceOnUse" width="100%" height="100%">
+                                            <image href={customChartImage} x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" />
+                                        </pattern>
+                                    )}
+                                </defs>
+                                {customChartImage && <ReferenceArea x1={chartData[0]?.epoch} x2={chartData[chartData.length -1]?.epoch} y1={yAxisDomain[0]} y2={yAxisDomain[1]} strokeOpacity={0} fill="url(#image-bg)" ifOverflow="visible" />}
+                                
                                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(chartData, 1, 15)} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 

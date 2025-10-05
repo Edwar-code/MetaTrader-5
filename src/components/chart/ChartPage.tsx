@@ -219,8 +219,7 @@ export default function ChartPage() {
 
       {/* Chart Container - Now takes full space and is behind other elements */}
       <div 
-        className="flex-1 bg-background relative min-h-0 pt-[48px] pb-[1.6rem] bg-cover bg-center" 
-        style={{ backgroundImage: customChartImage ? `url(${customChartImage})` : 'none' }}
+        className="flex-1 bg-background relative min-h-0 pt-[48px] pb-[1.6rem]" 
         onDoubleClick={handleDoubleClick}
       >
          <div className="absolute top-[110px] left-3 z-10">
@@ -268,6 +267,7 @@ export default function ChartPage() {
           chartType={chartType}
           setChartType={setChartType}
           buyPrice={buyPrice}
+          customChartImage={customChartImage}
         />
       </div>
 
