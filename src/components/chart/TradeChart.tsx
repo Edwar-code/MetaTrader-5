@@ -269,13 +269,13 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(chartData, 1, 15)} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 
-                                {customChartImage && chartData.length > 0 && (
-                                    <ReferenceArea x1={chartData[0].epoch} x2={chartData[chartData.length - 1].epoch} y1={yAxisDomain[0]} y2={yAxisDomain[1]} strokeOpacity={0} fill="url(#chart-bg-image)" ifOverflow="visible" />
-                                )}
-
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
                                 
                                 <Line type="monotone" dataKey="close" stroke="none" dot={false} isAnimationActive={false} />
+
+                                {customChartImage && chartData.length > 0 && (
+                                    <ReferenceArea x1={chartData[0].epoch} x2={chartData[chartData.length - 1].epoch} y1={yAxisDomain[0]} y2={yAxisDomain[1]} strokeOpacity={0} fill="url(#chart-bg-image)" ifOverflow="visible" />
+                                )}
 
                                 {markers?.map((m, i) => (
                                     <React.Fragment key={`marker-frag-${i}`}>
