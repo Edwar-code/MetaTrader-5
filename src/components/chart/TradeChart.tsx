@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, CartesianGrid } from 'recharts';
+import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, CartesianGrid, Line } from 'recharts';
 import { useDerivState, useDerivChart, Candle } from '@/context/DerivContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -217,7 +217,12 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
 
     const xAxisTickFormatter = (v: number) => {
         const userTimeZone = 'Africa/Nairobi';
-        return formatInTimeZone(fromUnixTime(v), userTimeZone, 'dd MMM HH:mm');
+        try {
+            return formatInTimeZone(fromUnixTime(v), userTimeZone, 'dd MMM HH:mm');
+        } catch (e) {
+            console.error("Error formatting date:", e, "value:", v);
+            return '';
+        }
     }
 
     return (
@@ -246,7 +251,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 
                                 <CartesianGrid 
                                     strokeDasharray="3 3" 
-                                    vertical={true} 
+                                    vertical={false} 
                                     horizontal={false} 
                                     stroke={theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'} 
                                     fill={gridFill}
