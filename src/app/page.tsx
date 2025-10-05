@@ -1,9 +1,12 @@
-import TradingPage from '@/components/trade/TradingPage';
+
+import ChartPage from '@/components/chart/ChartPage';
 
 export default function Home() {
   return (
     <main className="bg-background">
-      <TradingPage />
+      <ChartPage />
     </main>
   );
 }
+
+    

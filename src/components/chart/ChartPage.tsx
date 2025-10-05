@@ -49,6 +49,7 @@ const assets = [
 ];
 
 const LOCAL_STORAGE_KEY = 'customChartImage';
+const DEFAULT_CHART_IMAGE = 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/SDD.PNG';
 
 export default function ChartPage() {
   const { ticks, connectionState, latestPrice } = useDerivState();
@@ -71,9 +72,7 @@ export default function ChartPage() {
   useEffect(() => {
     setMounted(true);
     const savedImage = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (savedImage) {
-      setCustomChartImage(savedImage);
-    }
+    setCustomChartImage(savedImage || DEFAULT_CHART_IMAGE);
   }, []);
 
   const prevSellPriceRef = useRef<number | undefined>();
@@ -358,5 +357,7 @@ export default function ChartPage() {
     </div>
   );
 }
+
+    
 
     
