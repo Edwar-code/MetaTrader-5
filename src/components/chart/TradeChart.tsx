@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { AreaChart, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
+import { Area, AreaChart, Bar, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -30,6 +30,7 @@ interface TradeChartProps {
     chartType: string;
     setChartType: (type: string) => void;
     buyPrice?: number;
+    customChartImage?: string | null;
 }
 
 const intervalMap: { [key: string]: number | string } = {
@@ -129,6 +130,29 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 CustomTooltip.displayName = 'CustomTooltip';
 
+const HeikinAshiCandleStick = (props: any) => {
+    const { x, y, width, height, open, close, high, low } = props;
+    if ([x, y, width, height, open, close, high, low].some(v => v === undefined || !isFinite(v))) return null;
+
+    const isUp = close >= open;
+    const color = isUp ? '#16A085' : '#E74C3C';
+    
+    // Y position of the body
+    const yBody = isUp ? y + (high - close) / (high - low) * height : y + (high - open) / (high - low) * height;
+    // Height of the body
+    const bodyHeight = Math.max(1, Math.abs(open - close) / (high - low) * height);
+
+    return (
+        <g stroke={color} fill={color} strokeWidth="1">
+            {/* Wick */}
+            <line x1={x + width / 2} y1={y} x2={x + width / 2} y2={y + height} />
+            {/* Body */}
+            <rect x={x} y={yBody} width={width} height={bodyHeight} />
+        </g>
+    );
+};
+HeikinAshiCandleStick.displayName = 'HeikinAshiCandleStick';
+
 
 const MarkerLabel = ({ viewBox, value, tradeType, lotSize }: any) => {
     const { x, y } = viewBox;
@@ -218,7 +242,7 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
 };
 CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
-const LiveAreaChart = ({ asset, data, isUp, yAxisDomain, markers, buyPrice, tickStyle, gridColor }: { asset: string, data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string }) => {
+const LiveAreaChart = ({ asset, data, isUp, yAxisDomain, markers, buyPrice, tickStyle, gridColor, customChartImage, chartLayout }: { asset: string, data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string, customChartImage?: string | null, chartLayout: any }) => {
     const lastTick = data.length > 0 ? data[data.length - 1] : null;
     const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
@@ -227,6 +251,19 @@ const LiveAreaChart = ({ asset, data, isUp, yAxisDomain, markers, buyPrice, tick
     return (
         <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 1 }} animationDuration={0}>
+            {customChartImage && chartLayout && (
+                <foreignObject
+                    x={chartLayout.x}
+                    y={chartLayout.y}
+                    width={chartLayout.width}
+                    height={chartLayout.height}
+                    style={{ pointerEvents: 'none' }}
+                >
+                    <div xmlns="http://www.w3.org/1999/xhtml" style={{ width: '100%', height: '100%' }}>
+                        <img src={customChartImage} style={{ width: '100%', height: '100%', objectFit: 'fill' }} alt="Custom chart" />
+                    </div>
+                </foreignObject>
+            )}
 
             <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
             <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
@@ -280,7 +317,7 @@ const LiveAreaChart = ({ asset, data, isUp, yAxisDomain, markers, buyPrice, tick
 };
 LiveAreaChart.displayName = 'LiveAreaChart';
 
-const LiveCandlestickChart = ({ asset, data, isUp, lastPrice, yAxisDomain, markers, buyPrice, tickStyle, gridColor }: { asset: string, data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string }) => {
+const LiveCandlestickChart = ({ asset, data, isUp, lastPrice, yAxisDomain, markers, buyPrice, tickStyle, gridColor, customChartImage, chartLayout }: { asset: string, data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string, customChartImage?: string | null, chartLayout: any }) => {
     const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
     const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
     const lastCandle = data.length > 0 ? data[data.length-1] : null;
@@ -289,6 +326,19 @@ const LiveCandlestickChart = ({ asset, data, isUp, lastPrice, yAxisDomain, marke
     return (
         <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 1 }} animationDuration={0}>
+                 {customChartImage && chartLayout && (
+                    <foreignObject
+                        x={chartLayout.x}
+                        y={chartLayout.y}
+                        width={chartLayout.width}
+                        height={chartLayout.height}
+                        style={{ pointerEvents: 'none' }}
+                    >
+                        <div xmlns="http://www.w3.org/1999/xhtml" style={{ width: '100%', height: '100%' }}>
+                            <img src={customChartImage} style={{ width: '100%', height: '100%', objectFit: 'fill' }} alt="Custom chart" />
+                        </div>
+                    </foreignObject>
+                )}
                 
                 {/* Visible X-axis with labels every 6 mins */}
                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
@@ -349,13 +399,14 @@ const LiveCandlestickChart = ({ asset, data, isUp, lastPrice, yAxisDomain, marke
 LiveCandlestickChart.displayName = 'LiveCandlestickChart';
 
 
-function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, buyPrice }: TradeChartProps) {
+function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, buyPrice, customChartImage }: TradeChartProps) {
     const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
     const isMobile = useIsMobile();
     const searchParams = useSearchParams();
     const isMobileFromParam = searchParams.get('mobile') === 'true';
     const { theme } = useTheme();
+    const [chartLayout, setChartLayout] = React.useState({ x: 0, y: 0, width: 0, height: 0 });
 
     React.useEffect(() => {
         if (connectionState === 'connected' && asset) {
@@ -411,7 +462,7 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
     ), [heikinAshiCandles]);
 
 
-    const showLoader = connectionState !== 'connected' && !chartError;
+    const showLoader = connectionState !== 'connected' || (ticks.length === 0 && candles.length === 0 && !chartError);
     const isTickChart = chartInterval === 'tick';
 
     const tickStyle = React.useMemo(() => ({
@@ -432,15 +483,53 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
                             <p className="font-semibold">Chart Unavailable</p>
                             <p className="text-sm text-muted-foreground">{chartError}</p>
                         </div>
-                    ) : showLoader ? (
-                        <div className="flex items-center justify-center h-full text-muted-foreground flex-col">
-                            <Skeleton className="h-full w-full absolute" />
-                            <p className="z-10">{connectionState === 'connecting' ? 'Connecting to data stream...' : 'Loading chart data...'}</p>
-                        </div>
                     ) : (
-                        (chartType === 'area' || isTickChart)
-                        ? <LiveAreaChart asset={asset} data={ticks} isUp={isUp} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} gridColor={gridColor} />
-                        : <LiveCandlestickChart asset={asset} data={chartDataForCandle} isUp={isUp} lastPrice={lastPrice} yAxisDomain={yAxisDomain} markers={markers} buyPrice={buyPrice} tickStyle={tickStyle} gridColor={gridColor} />
+                        <ResponsiveContainer width="100%" height="100%">
+                            <ComposedChart 
+                                data={isTickChart ? ticks : chartDataForCandle} 
+                                margin={{ top: 20, right: 0, left: -10, bottom: 1 }} 
+                                animationDuration={0}
+                                onMouseMove={(e: any) => {
+                                    if (e && e.chartX && e.chartY && e.chartWidth && e.chartHeight) {
+                                      if (chartLayout.x !== e.chartX || chartLayout.y !== e.chartY || chartLayout.width !== e.chartWidth || chartLayout.height !== e.chartHeight) {
+                                        setChartLayout({ x: e.chartX, y: e.chartY, width: e.chartWidth, height: e.chartHeight });
+                                      }
+                                    }
+                                  }}
+                            >
+                                {customChartImage && chartLayout.width > 0 && (
+                                    <foreignObject
+                                        x={chartLayout.x}
+                                        y={chartLayout.y}
+                                        width={chartLayout.width}
+                                        height={chartLayout.height}
+                                        style={{ pointerEvents: 'none' }}
+                                    >
+                                        <div xmlns="http://www.w3.org/1999/xhtml" style={{ width: '100%', height: '100%' }}>
+                                            <img src={customChartImage} style={{ width: '100%', height: '100%', objectFit: 'fill' }} alt="Custom chart" />
+                                        </div>
+                                    </foreignObject>
+                                )}
+
+                                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(isTickChart ? ticks : chartDataForCandle, 1, 15)} />
+                                <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
+
+                                <Tooltip content={<CustomTooltip />} />
+                                
+                                {markers?.map((m, i) => (
+                                    <React.Fragment key={`marker-frag-${i}`}>
+                                        <ReferenceLine y={m.price} stroke="transparent" label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />} ifOverflow="visible" />
+                                        <ReferenceLine y={m.price} stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'} strokeDasharray="3 3" strokeWidth={1} label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} asset={asset} />} ifOverflow="visible" />
+                                    </React.Fragment>
+                                ))}
+                                
+                                {lastPrice > 0 && <ReferenceLine y={lastPrice} stroke="#16A085" strokeWidth={1} label={<YAxisLabel value={lastPrice} asset={asset}/>} />}
+                                {buyPrice && <ReferenceLine y={buyPrice} stroke="#E74C3C" strokeWidth={1} label={<BuyPriceLabel value={buyPrice} asset={asset}/>} />}
+                                
+                                { (isTickChart && ticks.length > 0) && <ReferenceLine x={ticks[ticks.length-1].epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" /> }
+                                { (!isTickChart && chartDataForCandle.length > 0) && <ReferenceLine x={chartDataForCandle[chartDataForCandle.length-1].epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" /> }
+                            </ComposedChart>
+                        </ResponsiveContainer>
                     )}
                 </div>
             </CardContent>
@@ -456,5 +545,3 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
-
-    

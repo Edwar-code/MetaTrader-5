@@ -62,6 +62,8 @@ export default function ChartPage() {
   const [priceDirection, setPriceDirection] = useState<'up' | 'down' | 'neutral'>('neutral');
   const [tradeNotifications, setTradeNotifications] = useState<TradeNotificationData[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [customChartImage, setCustomChartImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
 
   useEffect(() => {
@@ -169,10 +171,22 @@ export default function ChartPage() {
   const priceFractionFontSize = selectedAsset === 'frxXAUUSD' || selectedAsset === 'cryBTCUSD' || selectedAsset === 'idx_germany_40' ? '22px' : '28px';
 
   const handleCustomChart = () => {
-    toast({
-      title: 'Custom Chart',
-      description: 'Image upload will be implemented here.',
-    });
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (customChartImage) {
+        URL.revokeObjectURL(customChartImage);
+      }
+      const imageUrl = URL.createObjectURL(file);
+      setCustomChartImage(imageUrl);
+      toast({
+        title: 'Chart Updated',
+        description: 'Your custom chart image has been applied.',
+      });
+    }
   };
 
   if (!mounted) {
@@ -182,6 +196,15 @@ export default function ChartPage() {
   return (
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        className="hidden"
+        accept="image/*"
+      />
+
       {/* Chart Container - Now takes full space and is behind other elements */}
       <div className="flex-1 bg-background relative min-h-0 pt-[48px] border pb-[1.6rem]">
          <div className="absolute top-[110px] left-3 z-10">
@@ -229,6 +252,7 @@ export default function ChartPage() {
           chartType={chartType}
           setChartType={setChartType}
           buyPrice={buyPrice}
+          customChartImage={customChartImage}
         />
       </div>
 
