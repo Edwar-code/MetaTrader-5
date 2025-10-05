@@ -25,11 +25,12 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
 
-const formatPrice = (price: number | undefined) => {
+const formatPrice = (price: number | undefined, asset: string) => {
   if (typeof price !== 'number' || isNaN(price)) {
     return { integer: '-', fractional: '--' };
   }
-  const priceString = price.toFixed(5);
+  const decimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5;
+  const priceString = price.toFixed(decimalPoints);
   const parts = priceString.split('.');
   return { integer: parts[0], fractional: parts[1] };
 };
@@ -115,8 +116,8 @@ export default function ChartPage() {
     }
   }, [sellPrice]);
 
-  const formattedSellPrice = useMemo(() => formatPrice(sellPrice), [sellPrice]);
-  const formattedBuyPrice = useMemo(() => formatPrice(buyPrice), [buyPrice]);
+  const formattedSellPrice = useMemo(() => formatPrice(sellPrice, selectedAsset), [sellPrice, selectedAsset]);
+  const formattedBuyPrice = useMemo(() => formatPrice(buyPrice, selectedAsset), [buyPrice, selectedAsset]);
 
   const onTrade = async (tradeType: 'BUY' | 'SELL') => {
     if (connectionState !== 'connected' || !sellPrice) {
