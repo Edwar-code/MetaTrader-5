@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line } from 'recharts';
+import { ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceArea, Line, CartesianGrid } from 'recharts';
 import { useDerivState, useDerivChart, Candle, Tick } from '@/context/DerivContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -271,6 +271,8 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 margin={{ top: 20, right: 0, left: -10, bottom: 20 }} 
                                 style={{ background: 'transparent' }}
                             >
+                                
+                                <CartesianGrid strokeDasharray="3 3" vertical={true} horizontal={false} stroke={theme === 'dark' ? '#444' : '#ccc'} />
                                 
                                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#888888' }} tickLine={{ stroke: '#888888' }} ticks={xAxisTicks} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
