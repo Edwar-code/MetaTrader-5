@@ -257,26 +257,17 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 data={chartData} 
                                 margin={{ top: 20, right: 0, left: -10, bottom: 20 }} 
                                 animationDuration={0}
+                                style={{ background: customChartImage ? `url(${customChartImage})` : 'transparent', backgroundSize: 'cover', backgroundPosition: 'center' }}
                             >
-                                <defs>
-                                    {customChartImage && (
-                                        <pattern id="chart-bg-image" patternUnits="userSpaceOnUse" width="100%" height="100%">
-                                            <image href={customChartImage} x="0" y="0" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" />
-                                        </pattern>
-                                    )}
-                                </defs>
                                 
                                 <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(chartData, 1, 15)} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
                                 
+                                {/* This line ensures the chart axes are drawn, but is invisible */}
                                 <Line type="monotone" dataKey="close" stroke="none" dot={false} isAnimationActive={false} fill="transparent" />
                                 
-                                {customChartImage && chartData.length > 0 && (
-                                    <ReferenceArea x1={chartData[0].epoch} x2={chartData[chartData.length - 1].epoch} y1={yAxisDomain[0]} y2={yAxisDomain[1]} strokeOpacity={0} fill="url(#chart-bg-image)" ifOverflow="visible" />
-                                )}
-
                                 {markers?.map((m, i) => (
                                     <React.Fragment key={`marker-frag-${i}`}>
                                         <ReferenceLine y={m.price} stroke="transparent" label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />} ifOverflow="visible" />
@@ -304,3 +295,5 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
+
+    
