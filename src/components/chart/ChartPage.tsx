@@ -50,7 +50,6 @@ const assets = [
     { symbol: 'idx_germany_40', display: 'DE30', description: 'Germany 40' },
 ];
 
-const LOCAL_STORAGE_KEY = 'customChartImage';
 const DEFAULT_CHART_IMAGE = 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/SDD.PNG';
 
 export default function ChartPage() {
@@ -68,13 +67,13 @@ export default function ChartPage() {
   const [tradeNotifications, setTradeNotifications] = useState<TradeNotificationData[]>([]);
   const [mounted, setMounted] = useState(false);
   const [customChartImage, setCustomChartImage] = useState<string | null>(null);
+  const [showUploadButton, setShowUploadButton] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
 
   useEffect(() => {
     setMounted(true);
-    const savedImage = localStorage.getItem(LOCAL_STORAGE_KEY);
-    setCustomChartImage(savedImage || DEFAULT_CHART_IMAGE);
+    setCustomChartImage(DEFAULT_CHART_IMAGE);
   }, []);
 
   const prevSellPriceRef = useRef<number | undefined>();
@@ -86,7 +85,7 @@ export default function ChartPage() {
       epoch: pos.openTime,
       price: pos.entryPrice,
       type: 'entry',
-      tradeType: pos.type === 'BUY' ? 'BUY' : 'SELL',
+      tradeType: pos.type === 'BUY' | 'SELL' ? 'BUY' : 'SELL',
       lotSize: pos.size.toFixed(2),
     }));
   }, [positions, selectedAsset]);
@@ -187,8 +186,8 @@ export default function ChartPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
-        localStorage.setItem(LOCAL_STORAGE_KEY, base64String);
         setCustomChartImage(base64String);
+        setShowUploadButton(false); // Hide button after upload
         toast({
           title: 'Chart Updated',
           description: 'Your custom chart image has been applied.',
@@ -348,17 +347,21 @@ export default function ChartPage() {
         ))}
       </div>
 
-      <div className="absolute bottom-20 right-4 z-20">
-        <Button
-          size="icon"
-          className="rounded-full w-14 h-14 bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-lg"
-          onClick={handleCustomChart}
-        >
-          <ImagePlus className="h-7 w-7" />
-        </Button>
-      </div>
+      {showUploadButton && (
+        <div className="absolute bottom-20 right-4 z-20">
+          <Button
+            size="icon"
+            className="rounded-full w-14 h-14 bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-lg"
+            onClick={handleCustomChart}
+          >
+            <ImagePlus className="h-7 w-7" />
+          </Button>
+        </div>
+      )}
 
       <BottomNav />
     </div>
   );
 }
+
+    
