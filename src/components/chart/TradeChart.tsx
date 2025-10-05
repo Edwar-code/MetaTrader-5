@@ -290,7 +290,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 ))}
                                 
                                 {lastPrice > 0 && <ReferenceLine y={lastPrice} stroke="#16A085" strokeWidth={1} label={<YAxisLabel value={lastPrice} asset={asset}/>} />}
-                                {buyPrice && <ReferenceLine y={buyPrice} stroke="#E74C3C" strokeWidth={1} label={<BuyPriceLabel value={buy-price} asset={asset}/>} />}
+                                {buyPrice && <ReferenceLine y={buyPrice} stroke="#E74C3C" strokeWidth={1} label={<BuyPriceLabel value={buyPrice} asset={asset}/>} />}
                                 
                                 { (chartData.length > 0) && <ReferenceLine x={chartData[chartData.length-1].epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" /> }
                             </ComposedChart>
