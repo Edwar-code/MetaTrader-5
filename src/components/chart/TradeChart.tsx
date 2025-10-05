@@ -91,7 +91,7 @@ const OrderPriceLabel = ({ viewBox, value, tradeType, asset }: any) => {
   
     return (
       <g>
-        <foreignObject x={width + 7} y={y - 10} width="60" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 10} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center bg-background/90 border px-1"
@@ -112,7 +112,7 @@ const YAxisLabel = ({ viewBox, value, asset }: any) => {
     const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5;
     return (
       <g>
-        <foreignObject x={width + 7} y={y - 10} width="60" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 10} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center text-white bg-[#16A085] px-1"
@@ -131,7 +131,7 @@ const BuyPriceLabel = ({ viewBox, value, asset }: any) => {
     const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5;
     return (
       <g>
-        <foreignObject x={width + 7} y={y - 10} width="60" height="20" className="overflow-visible">
+        <foreignObject x={width} y={y - 10} width="60" height="20" className="overflow-visible">
           <div
             xmlns="http://www.w3.org/1999/xhtml"
             className="w-full h-full text-xs flex items-center justify-center text-white bg-[#E74C3C] px-1"
@@ -240,7 +240,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                         <ResponsiveContainer width="100%" height="100%">
                             <ComposedChart 
                                 data={chartData} 
-                                margin={{ top: 20, right: 70, left: -10, bottom: 20 }} 
+                                margin={{ top: 20, right: 0, left: -10, bottom: 20 }} 
                             >
                                 <defs>
                                     {customChartImage && (
@@ -266,17 +266,17 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 {/* This line ensures the chart axes are drawn, but is invisible */}
                                 <Line type="monotone" dataKey="close" stroke="none" dot={false} isAnimationActive={false} fill="transparent" />
                                 
+                                {lastPrice > 0 && <ReferenceLine y={lastPrice} stroke="#16A085" strokeWidth={1} label={<YAxisLabel value={lastPrice} asset={asset}/>} />}
+                                {buyPrice && <ReferenceLine y={buyPrice} stroke="#E74C3C" strokeWidth={1} label={<BuyPriceLabel value={buyPrice} asset={asset}/>} />}
+                                
+                                { (chartData.length > 0) && <ReferenceLine x={chartData[chartData.length-1].epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" /> }
+                                
                                 {markers?.map((m, i) => (
                                     <React.Fragment key={`marker-frag-${i}`}>
                                         <ReferenceLine y={m.price} stroke="transparent" label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />} ifOverflow="visible" />
                                         <ReferenceLine y={m.price} stroke={m.tradeType === 'BUY' ? '#3082ff' : '#ea4d4a'} strokeDasharray="3 3" strokeWidth={1} label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} asset={asset} />} ifOverflow="visible" />
                                     </React.Fragment>
                                 ))}
-                                
-                                {lastPrice > 0 && <ReferenceLine y={lastPrice} stroke="#16A085" strokeWidth={1} label={<YAxisLabel value={lastPrice} asset={asset}/>} />}
-                                {buyPrice && <ReferenceLine y={buyPrice} stroke="#E74C3C" strokeWidth={1} label={<BuyPriceLabel value={buyPrice} asset={asset}/>} />}
-                                
-                                { (chartData.length > 0) && <ReferenceLine x={chartData[chartData.length-1].epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" /> }
                             </ComposedChart>
                         </ResponsiveContainer>
                     )}
