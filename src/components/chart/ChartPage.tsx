@@ -184,7 +184,7 @@ export default function ChartPage() {
   
   const chartSettingsImage = mounted && resolvedTheme === 'dark'
     ? 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2010.19.12_c460d5de.jpg'
-    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/charts.jpg';
+    : 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-05%20at%2023.55.48_c652ef44.jpg';
 
   const priceFractionFontSize = selectedAsset === 'frxXAUUSD' || selectedAsset === 'cryBTCUSD' || selectedAsset === 'idx_germany_40' ? '22px' : '28px';
 
@@ -381,5 +381,7 @@ export default function ChartPage() {
     </div>
   );
 }
+
+    
 
     
