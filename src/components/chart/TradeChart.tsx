@@ -39,33 +39,24 @@ const intervalMap: { [key: string]: number | string } = {
   '1d': 86400, '1W': '1W', '1M': '1M'
 };
 
-const getMinuteTicks = (data: { epoch: number }[], intervalMinutes: number, maxTicks: number): number[] => {
+const getMinuteTicks = (data: { epoch: number }[], intervalMinutes: number, minTicks: number): number[] => {
     if (!data || data.length < 2) return [];
 
-    const dataMin = data[0].epoch;
-    const dataMax = data[data.length - 1].epoch;
+    const dataEnd = data[data.length - 1].epoch;
     const intervalSeconds = intervalMinutes * 60;
+    
+    const ticks: number[] = [];
+    let currentTick = dataEnd;
 
-    let ticks: number[] = [];
-    // Start from the most recent candlestick time and go backwards
-    for (let currentTick = dataMax; currentTick >= dataMin; currentTick -= intervalSeconds) {
-        ticks.unshift(currentTick); // Add to the beginning of the array
-    }
-
-    // If no ticks were generated within the range, add the boundaries
-    if (ticks.length === 0) {
-        ticks.push(dataMin);
-        if(dataMax > dataMin) ticks.push(dataMax);
-        return ticks;
+    // Generate ticks backwards from the last data point
+    for (let i = 0; i < minTicks; i++) {
+        ticks.unshift(currentTick);
+        currentTick -= intervalSeconds;
     }
     
-    // If we have too many ticks, we can thin them out, though with this logic it's less likely.
-    if (ticks.length > maxTicks) {
-      const step = Math.ceil(ticks.length / maxTicks);
-      return ticks.filter((_, i) => i % step === 0);
-    }
-  
-    return ticks;
+    // Ensure the first tick isn't before the actual data starts
+    const dataStart = data[0].epoch;
+    return ticks.filter(tick => tick >= dataStart);
 };
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -252,7 +243,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
     }), [theme]);
 
     // 3 hours 45 minutes = 225 minutes
-    const xAxisTicks = React.useMemo(() => getMinuteTicks(chartData, 225, 10), [chartData]);
+    const xAxisTicks = React.useMemo(() => getMinuteTicks(chartData, 225, 5), [chartData]);
 
     return (
         <Card className="h-full flex flex-col border-0 shadow-none rounded-none bg-transparent">
@@ -318,7 +309,3 @@ export function TradeChart(props: TradeChartProps) {
         </React.Suspense>
     )
 }
-
-    
-
-    
