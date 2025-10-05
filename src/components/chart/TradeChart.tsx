@@ -46,19 +46,20 @@ const getMinuteTicks = (data: { epoch: number }[], intervalMinutes: number, maxT
     const dataMax = data[data.length - 1].epoch;
     const intervalSeconds = intervalMinutes * 60;
 
-    const firstTick = Math.ceil(dataMin / intervalSeconds) * intervalSeconds;
-
-    const ticks: number[] = [];
-    for (let currentTick = firstTick; currentTick <= dataMax; currentTick += intervalSeconds) {
-        ticks.push(currentTick);
+    let ticks: number[] = [];
+    // Start from the most recent candlestick time and go backwards
+    for (let currentTick = dataMax; currentTick >= dataMin; currentTick -= intervalSeconds) {
+        ticks.unshift(currentTick); // Add to the beginning of the array
     }
-    
+
+    // If no ticks were generated within the range, add the boundaries
     if (ticks.length === 0) {
         ticks.push(dataMin);
         if(dataMax > dataMin) ticks.push(dataMax);
         return ticks;
     }
-
+    
+    // If we have too many ticks, we can thin them out, though with this logic it's less likely.
     if (ticks.length > maxTicks) {
       const step = Math.ceil(ticks.length / maxTicks);
       return ticks.filter((_, i) => i % step === 0);
@@ -250,6 +251,9 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
         fill: theme === 'dark' ? '#d3d9db' : 'hsl(var(--muted-foreground))'
     }), [theme]);
 
+    // 3 hours 45 minutes = 225 minutes
+    const xAxisTicks = React.useMemo(() => getMinuteTicks(chartData, 225, 10), [chartData]);
+
     return (
         <Card className="h-full flex flex-col border-0 shadow-none rounded-none bg-transparent">
             <CardContent className="flex-1 min-h-0 w-full relative p-0">
@@ -268,7 +272,7 @@ function ChartComponent({ asset, markers = [], chartInterval, buyPrice, customCh
                                 style={{ background: 'transparent' }}
                             >
                                 
-                                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={getMinuteTicks(chartData, 1, 15)} />
+                                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={xAxisTicks} />
                                 <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5) : ''} tickCount={18} tickMargin={1}/>
 
                                 <Tooltip content={<CustomTooltip />} cursor={false} />
