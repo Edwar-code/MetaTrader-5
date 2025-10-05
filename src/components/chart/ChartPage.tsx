@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import BottomNav from '../trade/BottomNav';
-import { TradeChart, type ChartMarker } from '../trade/TradeChart';
+import { TradeChart, type ChartMarker } from './TradeChart';
 import { Sidebar } from '../trade/Sidebar';
 import { useDerivState } from '@/context/DerivContext';
 import { useTradeState } from '@/context/TradeContext';

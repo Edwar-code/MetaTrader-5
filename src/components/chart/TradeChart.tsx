@@ -242,163 +242,6 @@ const CurrentTimeIndicator = ({ viewBox }: any) => {
 };
 CurrentTimeIndicator.displayName = 'CurrentTimeIndicator';
 
-const LiveAreaChart = ({ asset, data, isUp, yAxisDomain, markers, buyPrice, tickStyle, gridColor, customChartImage, chartLayout }: { asset: string, data: Tick[], isUp: boolean, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string, customChartImage?: string | null, chartLayout: any }) => {
-    const lastTick = data.length > 0 ? data[data.length - 1] : null;
-    const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
-    const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
-    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5;
-    
-    return (
-        <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 1 }} animationDuration={0}>
-            {customChartImage && chartLayout && (
-                <foreignObject
-                    x={chartLayout.x}
-                    y={chartLayout.y}
-                    width={chartLayout.width}
-                    height={chartLayout.height}
-                    style={{ pointerEvents: 'none' }}
-                >
-                    <div xmlns="http://www.w3.org/1999/xhtml" style={{ width: '100%', height: '100%' }}>
-                        <img src={customChartImage} style={{ width: '100%', height: '100%', objectFit: 'fill' }} alt="Custom chart" />
-                    </div>
-                </foreignObject>
-            )}
-
-            <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
-            <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
-
-            <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(priceDecimalPoints) : ''} tickCount={18} tickMargin={1} />
-            
-            <Tooltip content={<CustomTooltip />} />
-
-            {markers.map((m, i) => m.type === 'entry' && (
-                <ReferenceLine
-                    key={`marker-text-${i}`}
-                    y={m.price}
-                    stroke="transparent" // Hide the line for the text label
-                    label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />}
-                    ifOverflow="visible"
-                />
-            ))}
-            {markers.map((m, i) => m.type === 'entry' && (
-                <ReferenceLine 
-                    key={`marker-line-${i}`}
-                    y={m.price}
-                    stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'}
-                    strokeDasharray="3 3"
-                    strokeWidth={1}
-                    label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} asset={asset} />}
-                    ifOverflow="visible"
-                />
-            ))}
-            {lastTick && (
-                <ReferenceLine 
-                    y={lastTick.quote} 
-                    stroke="#16A085" 
-                    strokeWidth={1} 
-                    label={<YAxisLabel value={lastTick.quote} asset={asset}/>}
-                />
-            )}
-             {buyPrice && (
-                <ReferenceLine 
-                    y={buyPrice} 
-                    stroke="#E74C3C" 
-                    strokeWidth={1} 
-                    label={<BuyPriceLabel value={buyPrice} asset={asset}/>}
-                />
-            )}
-            {lastTick && (
-              <ReferenceLine x={lastTick.epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" />
-            )}
-            </AreaChart>
-        </ResponsiveContainer>
-    );
-};
-LiveAreaChart.displayName = 'LiveAreaChart';
-
-const LiveCandlestickChart = ({ asset, data, isUp, lastPrice, yAxisDomain, markers, buyPrice, tickStyle, gridColor, customChartImage, chartLayout }: { asset: string, data: (Candle & {body: [number, number]})[], isUp: boolean, lastPrice: number, yAxisDomain: (string|number)[], markers: ChartMarker[], buyPrice?: number, tickStyle: any, gridColor: string, customChartImage?: string | null, chartLayout: any }) => {
-    const labelTicks = React.useMemo(() => getMinuteTicks(data, 1, 15), [data]);
-    const gridTicks = React.useMemo(() => getAllMinuteTicks(data), [data]);
-    const lastCandle = data.length > 0 ? data[data.length-1] : null;
-    const priceDecimalPoints = asset === 'frxXAUUSD' || asset === 'cryBTCUSD' || asset === 'idx_germany_40' ? 2 : 5;
-
-    return (
-        <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={data} margin={{ top: 20, right: 0, left: -10, bottom: 1 }} animationDuration={0}>
-                 {customChartImage && chartLayout && (
-                    <foreignObject
-                        x={chartLayout.x}
-                        y={chartLayout.y}
-                        width={chartLayout.width}
-                        height={chartLayout.height}
-                        style={{ pointerEvents: 'none' }}
-                    >
-                        <div xmlns="http://www.w3.org/1999/xhtml" style={{ width: '100%', height: '100%' }}>
-                            <img src={customChartImage} style={{ width: '100%', height: '100%', objectFit: 'fill' }} alt="Custom chart" />
-                        </div>
-                    </foreignObject>
-                )}
-                
-                {/* Visible X-axis with labels every 6 mins */}
-                <XAxis dataKey="epoch" tickFormatter={(v) => format(fromUnixTime(v), 'dd MMM HH:mm')} domain={['dataMin', `dataMax + 10`]} type="number" tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={false} ticks={labelTicks} />
-                {/* Hidden X-axis for per-minute grid lines */}
-                <XAxis dataKey="epoch" xAxisId="grid" tick={false} tickLine={false} axisLine={false} ticks={gridTicks} domain={['dataMin', `dataMax + 10`]} />
-
-                <YAxis domain={yAxisDomain} tick={tickStyle} axisLine={{ stroke: '#ccc' }} tickLine={{ stroke: '#888888', strokeWidth: 1, width: 0.9 }} allowDataOverflow={true} orientation="right" tickFormatter={(v) => typeof v === 'number' ? v.toFixed(priceDecimalPoints) : ''} tickCount={18} tickMargin={1}/>
-                
-                <Tooltip content={<CustomTooltip />} />
-                
-                {/* Render text label separately */}
-                 {markers.map((m, i) => m.type === 'entry' && (
-                    <ReferenceLine
-                        key={`marker-text-${i}`}
-                        y={m.price}
-                        stroke="transparent" 
-                        label={<MarkerLabel value={m.price} tradeType={m.tradeType} lotSize={m.lotSize} />}
-                        ifOverflow="visible"
-                    />
-                ))}
-                
-                {/* Render the line and price label */}
-                {markers.map((m, i) => m.type === 'entry' && (
-                     <ReferenceLine 
-                        key={`marker-line-${i}`}
-                        y={m.price}
-                        stroke={m.tradeType === 'BUY' ? '#007AFF' : '#FF3B30'}
-                        strokeDasharray="3 3"
-                        strokeWidth={1}
-                        label={<OrderPriceLabel value={m.price} tradeType={m.tradeType} asset={asset} />}
-                        ifOverflow="visible"
-                    />
-                ))}
-
-                {lastPrice > 0 && (
-                     <ReferenceLine 
-                        y={lastPrice} 
-                        stroke="#16A085" 
-                        strokeWidth={1}
-                        label={<YAxisLabel value={lastPrice} asset={asset}/>}
-                    />
-                )}
-                {buyPrice && (
-                    <ReferenceLine 
-                        y={buyPrice} 
-                        stroke="#E74C3C" 
-                        strokeWidth={1} 
-                        label={<BuyPriceLabel value={buyPrice} asset={asset}/>}
-                    />
-                )}
-                {lastCandle && (
-                  <ReferenceLine x={lastCandle.epoch} stroke="transparent" label={<CurrentTimeIndicator />} ifOverflow="visible" />
-                )}
-            </ComposedChart>
-        </ResponsiveContainer>
-    );
-};
-LiveCandlestickChart.displayName = 'LiveCandlestickChart';
-
-
 function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setChartInterval, chartType, setChartType, buyPrice, customChartImage }: TradeChartProps) {
     const { subscribeToTicks, subscribeToCandles, unsubscribeFromChart, connectionState, ticks, chartError } = useDerivState();
     const { candles } = useDerivChart();
@@ -462,7 +305,6 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
     ), [heikinAshiCandles]);
 
 
-    const showLoader = connectionState !== 'connected' || (ticks.length === 0 && candles.length === 0 && !chartError);
     const isTickChart = chartInterval === 'tick';
 
     const tickStyle = React.useMemo(() => ({
@@ -470,8 +312,6 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
         fontWeight: 'normal',
         fill: theme === 'dark' ? '#d3d9db' : 'hsl(var(--muted-foreground))'
     }), [theme]);
-
-    const gridColor = React.useMemo(() => theme === 'dark' ? '#232a34' : '#ccc', [theme]);
 
     return (
         <Card className="h-full flex flex-col border-0 shadow-none rounded-none">
@@ -506,7 +346,7 @@ function ChartComponent({ asset, assetLabel, markers = [], chartInterval, setCha
                                         style={{ pointerEvents: 'none' }}
                                     >
                                         <div xmlns="http://www.w3.org/1999/xhtml" style={{ width: '100%', height: '100%' }}>
-                                            <img src={customChartImage} style={{ width: '100%', height: '100%', objectFit: 'fill' }} alt="Custom chart" />
+                                            <img src={customChartImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Custom chart" />
                                         </div>
                                     </foreignObject>
                                 )}
