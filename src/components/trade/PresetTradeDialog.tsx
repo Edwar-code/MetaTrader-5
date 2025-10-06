@@ -25,8 +25,13 @@ const presetTradeSchema = z.object({
   pair: z.string().min(1, "Asset is required."),
   type: z.enum(['BUY', 'SELL']),
   size: z.coerce.number().min(0.01, "Lot size must be at least 0.01."),
-  entryPrice: z.coerce.number().gt(0, "Entry price must be positive."),
+  entryPrice: z.string()
+    .refine(value => !isNaN(parseFloat(value)) && parseFloat(value) > 0, {
+      message: "Entry price must be a positive number.",
+    })
+    .transform(value => parseFloat(value)),
 });
+
 
 type PresetTradeForm = z.infer<typeof presetTradeSchema>;
 
@@ -125,7 +130,7 @@ export function PresetTradeDialog({ children }: { children: React.ReactNode }) {
 
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="entryPrice" className="text-right">Entry Price</Label>
-                        <Input id="entryPrice" type="number" step="any" className="col-span-3" {...register('entryPrice')} />
+                        <Input id="entryPrice" type="text" inputMode="decimal" step="any" className="col-span-3" {...register('entryPrice')} />
                         {errors.entryPrice && <p className="col-span-4 text-red-500 text-sm">{errors.entryPrice.message}</p>}
                     </div>
                     <DialogFooter>
