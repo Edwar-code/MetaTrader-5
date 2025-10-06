@@ -125,7 +125,7 @@ export function PresetTradeDialog({ children }: { children: React.ReactNode }) {
 
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="entryPrice" className="text-right">Entry Price</Label>
-                        <Input id="entryPrice" type="number" step="0.01" className="col-span-3" {...register('entryPrice')} />
+                        <Input id="entryPrice" type="number" step="any" className="col-span-3" {...register('entryPrice')} />
                         {errors.entryPrice && <p className="col-span-4 text-red-500 text-sm">{errors.entryPrice.message}</p>}
                     </div>
                     <DialogFooter>
