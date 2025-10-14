@@ -57,17 +57,78 @@ const initialAccountsData: { [key: string]: { balance: number, positions: Positi
     '40771122 — FBS-Real': { balance: 3105.50, positions: [], name: 'SAMUEL KIPROTICH' },
 };
 
+async function generateFakeHistory(getHistory: (symbol: string, count: number, granularity: number) => Promise<any[]>): Promise<ClosedPosition[]> {
+    const fakeTrades: ClosedPosition[] = [];
+    const assets = ['frxXAUUSD', 'cryBTCUSD', 'frxGBPUSD'];
+    const now = Date.now() / 1000;
+
+    for (const asset of assets) {
+        try {
+            const candles = await getHistory(asset, 96, 900); // 96 candles of 15-min = 24 hours
+            if (candles.length < 10) continue;
+
+            for (let i = 5; i < candles.length - 5; i++) {
+                const prevCandle = candles[i-1];
+                const entryCandle = candles[i];
+                const exitCandle = candles[i+1];
+                
+                // Simple strategy: Look for a dip to buy or peak to sell
+                const isDip = entryCandle.low < prevCandle.low && entryCandle.close > entryCandle.open;
+                const isPeak = entryCandle.high > prevCandle.high && entryCandle.close < entryCandle.open;
+
+                let trade: ClosedPosition | null = null;
+                const lotSize = asset === 'frxXAUUSD' ? 0.05 : (asset === 'cryBTCUSD' ? 0.01 : 0.1);
+
+                if (isDip && Math.random() > 0.7) { // Buy the dip
+                    const entryPrice = entryCandle.low;
+                    const closePrice = exitCandle.high;
+                    const openTime = entryCandle.epoch;
+                    
+                    const basePosition: Position = {
+                        id: `fake_${asset}_buy_${i}`, pair: asset, type: 'BUY', size: lotSize,
+                        entryPrice, currentPrice: closePrice, openTime, pnl: 0
+                    };
+                    const pnl = calculatePnl(basePosition, closePrice);
+                    trade = { ...basePosition, closePrice, closeTime: exitCandle.epoch, pnl };
+                } else if (isPeak && Math.random() > 0.7) { // Sell the peak
+                    const entryPrice = entryCandle.high;
+                    const closePrice = exitCandle.low;
+                    const openTime = entryCandle.epoch;
+
+                    const basePosition: Position = {
+                        id: `fake_${asset}_sell_${i}`, pair: asset, type: 'SELL', size: lotSize,
+                        entryPrice, currentPrice: closePrice, openTime, pnl: 0
+                    };
+                    const pnl = calculatePnl(basePosition, closePrice);
+                    trade = { ...basePosition, closePrice, closeTime: exitCandle.epoch, pnl };
+                }
+
+                if (trade && Math.abs(trade.pnl) > 0.5) { // Only add meaningful trades
+                    fakeTrades.push(trade);
+                    if (fakeTrades.length >= 15) break; 
+                }
+            }
+        } catch (error) {
+            console.warn(`Could not generate fake history for ${asset}:`, error);
+        }
+        if (fakeTrades.length >= 15) break;
+    }
+    
+    // Sort by close time descending
+    return fakeTrades.sort((a, b) => b.closeTime - a.closeTime);
+}
+
 export function TradeProvider({ children }: { children: ReactNode }) {
     const [positions, setPositions] = useState<Position[]>([]);
     const [closedPositions, setClosedPositions] = useState<ClosedPosition[]>([]);
     const [balance, setBalance] = useState<number>(0);
     const [activeAccountId, setActiveAccountId] = useState<string>('');
 
-    const { latestPrice, getTicks } = useDerivState();
+    const { latestPrice, getTicks, getHistory } = useDerivState();
     const { toast } = useToast();
 
     useEffect(() => {
-        const handleStorageChange = () => {
+        const handleStorageChange = async () => {
             const storedAccountJson = localStorage.getItem('active_account');
             const newAccountId = storedAccountJson ? JSON.parse(storedAccountJson).number : gentKingstonAccountId;
             
@@ -86,12 +147,21 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                     const newState = JSON.parse(newStateJson);
                     setBalance(newState.balance);
                     setPositions(newState.positions);
-                    setClosedPositions(newState.closedPositions);
+                    
+                    if (newState.closedPositions && newState.closedPositions.length > 0) {
+                        setClosedPositions(newState.closedPositions);
+                    } else {
+                        const fakeHistory = await generateFakeHistory(getHistory);
+                        setClosedPositions(fakeHistory);
+                    }
                 } else {
                     const initialData = initialAccountsData[newAccountId] || { balance: 100, positions: [], name: 'Unknown User' };
                     setBalance(initialData.balance);
                     setPositions(initialData.positions);
-                    setClosedPositions([]);
+                    
+                    const fakeHistory = await generateFakeHistory(getHistory);
+                    setClosedPositions(fakeHistory);
+
                     if (typeof window !== 'undefined' && !storedAccountJson) {
                         localStorage.setItem('active_account', JSON.stringify({ name: initialData.name, number: newAccountId, broker: 'FBS Markets Inc.' }));
                         window.dispatchEvent(new CustomEvent('local-storage'));
@@ -110,7 +180,8 @@ export function TradeProvider({ children }: { children: ReactNode }) {
             window.removeEventListener('local-storage', handleStorageChange);
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeAccountId]);
+    }, [activeAccountId, getHistory]);
+
 
      const livePositions = useMemo(() => {
         return positions.map(pos => {
@@ -248,7 +319,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                 closeTime: Date.now() / 1000,
             };
 
-            setClosedPositions(prevClosed => [closedPosition, ...prevClosed]);
+            setClosedPositions(prevClosed => [closedPosition, ...prevClosed.filter(p => !p.id.startsWith('fake_'))]);
             setBalance(prevBalance => prevBalance + finalPnl);
 
             return prev.filter(p => p.id !== positionId);
@@ -385,3 +456,5 @@ export function useTradeState() {
     }
     return context;
 }
+
+    

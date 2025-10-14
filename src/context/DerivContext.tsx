@@ -75,6 +75,7 @@ interface DerivState {
     subscribeToCandles: (symbol: string, granularity: number, count?: number) => void;
     unsubscribeFromChart: () => void;
     getTicks: (symbol: string, count: number) => Promise<Tick[]>;
+    getHistory: (symbol: string, count: number, granularity: number) => Promise<Candle[]>;
     ticks: Tick[];
     chartError: string | null;
     latestPrice: { [symbol: string]: number };
@@ -331,14 +332,49 @@ export function DerivProvider({ children }: { children: ReactNode }) {
             throw new Error(errorMessage);
         }
     }, [toast]);
+    
+    const getHistory = useCallback(async (symbol: string, count: number, granularity: number): Promise<Candle[]> => {
+        const api = apiRef.current;
+        if (!api) throw new Error("Not connected");
+
+        try {
+            const historyResponse = await api.basic.ticksHistory({
+                ticks_history: symbol,
+                adjust_start_time: 1,
+                count: count,
+                end: "latest",
+                style: "candles",
+                granularity,
+            });
+
+            if (historyResponse.error) {
+                throw new Error(historyResponse.error.message);
+            }
+
+            if (historyResponse.candles) {
+                return historyResponse.candles.map((c: any) => ({
+                    epoch: c.epoch,
+                    open: parseFloat(c.open),
+                    high: parseFloat(c.high),
+                    low: parseFloat(c.low),
+                    close: parseFloat(c.close),
+                }));
+            }
+            return [];
+        } catch (e: any) {
+            const errorMessage = e instanceof Error ? e.message : String(e);
+            console.error(`History fetch error for ${symbol}: ${errorMessage}`);
+            throw new Error(errorMessage);
+        }
+    }, []);
 
 
     const stateValue = useMemo(() => ({
         connectionState, isAuthenticated, activeSymbols,
         subscribeToTicks, subscribeToCandles, unsubscribeFromChart,
-        getTicks, ticks, chartError,
+        getTicks, getHistory, ticks, chartError,
         latestPrice
-    }), [connectionState, isAuthenticated, activeSymbols, subscribeToTicks, subscribeToCandles, unsubscribeFromChart, getTicks, ticks, chartError, latestPrice]);
+    }), [connectionState, isAuthenticated, activeSymbols, subscribeToTicks, subscribeToCandles, unsubscribeFromChart, getTicks, getHistory, ticks, chartError, latestPrice]);
 
     const chartValue = useMemo(() => ({
         candles
