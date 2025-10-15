@@ -47,6 +47,12 @@ export default function HistoryItem({ position, onLongPress }: HistoryItemProps)
     }
   };
 
+  const handleProfitClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent the main item's click handler from firing
+    clearTimer(); // Clear any pending long-press timers
+    onLongPress(position); // Open the edit modal
+  };
+
   const formatNumberWithSpaces = (num: number) => {
     const [integer, decimal] = num.toFixed(2).split('.');
     return `${integer.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}.${decimal}`;
@@ -139,7 +145,11 @@ export default function HistoryItem({ position, onLongPress }: HistoryItemProps)
                  <span className="text-[13.5px] text-muted-foreground">
                     {format(new Date(position.closeTime * 1000), 'yyyy.MM.dd HH:mm:ss')}
                 </span>
-                <span className={`block text-[13.5px] font-bold`} style={{ color: profitColor, position: 'relative', top: '-7px' }}>
+                <span 
+                    className={`block text-[13.5px] font-bold`} 
+                    style={{ color: profitColor, position: 'relative', top: '-7px' }}
+                    onClick={handleProfitClick}
+                >
                     {profitString}
                 </span>
             </div>
