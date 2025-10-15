@@ -7,6 +7,7 @@ interface HistorySummaryProps {
     balance: string;
   };
   onEditProfit: () => void;
+  onEditDeposit: () => void;
 }
 
 const SummaryItem = ({ label, value, onClick, isClickable = false }: { label: string; value: string; onClick?: () => void; isClickable?: boolean }) => {
@@ -44,11 +45,11 @@ const SummaryItem = ({ label, value, onClick, isClickable = false }: { label: st
   );
 };
 
-export default function HistorySummary({ data, onEditProfit }: HistorySummaryProps) {
+export default function HistorySummary({ data, onEditProfit, onEditDeposit }: HistorySummaryProps) {
   return (
     <div className="p-4 space-y-2">
       <SummaryItem label="Profit" value={data.profit} onClick={onEditProfit} isClickable={true} />
-      <SummaryItem label="Deposit" value={data.deposit} />
+      <SummaryItem label="Deposit" value={data.deposit} onClick={onEditDeposit} isClickable={true} />
       <SummaryItem label="Swap" value={data.swap} />
       <SummaryItem label="Commission" value={data.commission} />
       <SummaryItem label="Balance" value={data.balance} />

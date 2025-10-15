@@ -37,10 +37,15 @@ export default function HistoryPage() {
   const [positionToEdit, setPositionToEdit] = useState<ClosedPosition | null>(null);
   const [editFormState, setEditFormState] = useState<Partial<ClosedPosition>>({});
   
-  // States for editing the summary profit
+  // States for editing summary values
   const [isProfitModalOpen, setIsProfitModalOpen] = useState(false);
   const [customProfit, setCustomProfit] = useState<number | null>(null);
   const [profitInput, setProfitInput] = useState('');
+  
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [customDeposit, setCustomDeposit] = useState<number>(100.00);
+  const [depositInput, setDepositInput] = useState('');
+
 
   const calculatedTotalProfit = useMemo(() => {
     return closedPositions.reduce((acc, pos) => acc + pos.pnl, 0);
@@ -49,17 +54,16 @@ export default function HistoryPage() {
   const displayProfit = customProfit !== null ? customProfit : calculatedTotalProfit;
   
   const historySummary = useMemo(() => {
-    const initialDeposit = 100.00;
-    const newBalance = initialDeposit + displayProfit;
+    const newBalance = customDeposit + displayProfit;
 
     return {
       profit: displayProfit.toFixed(2),
-      deposit: initialDeposit.toFixed(2),
+      deposit: customDeposit.toFixed(2),
       swap: '0.00',
       commission: '0.00',
       balance: newBalance.toFixed(2),
     };
-  }, [displayProfit]);
+  }, [displayProfit, customDeposit]);
   
   const displayDate = '2025.09.06 14:56:57';
 
@@ -109,6 +113,20 @@ export default function HistoryPage() {
     setIsProfitModalOpen(false);
   };
 
+  const handleEditDepositClick = () => {
+    setDepositInput(customDeposit.toFixed(2));
+    setIsDepositModalOpen(true);
+  };
+
+  const handleSaveDeposit = () => {
+    const newDeposit = parseFloat(depositInput);
+    if (!isNaN(newDeposit)) {
+        setCustomDeposit(newDeposit);
+    }
+    setIsDepositModalOpen(false);
+  };
+
+
   return (
     <>
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
@@ -121,7 +139,11 @@ export default function HistoryPage() {
              <span className="flex-1 text-center py-3" style={{ fontSize: '13px', color: '#6a7684' }}>DEALS</span>
            </div>
         </div>
-        <HistorySummary data={historySummary} onEditProfit={handleEditProfitClick} />
+        <HistorySummary 
+            data={historySummary} 
+            onEditProfit={handleEditProfitClick}
+            onEditDeposit={handleEditDepositClick}
+        />
         
         <div className="px-4 py-[1.7px] border-t border-b bg-background">
             <div className="flex items-center justify-between">
@@ -227,6 +249,36 @@ export default function HistoryPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsProfitModalOpen(false)}>Cancel</Button>
             <Button onClick={handleSaveProfit}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog for editing deposit */}
+      <Dialog open={isDepositModalOpen} onOpenChange={setIsDepositModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Deposit</DialogTitle>
+            <DialogDescription>
+              Set the initial deposit amount for this account history.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="deposit" className="text-right">
+                Deposit
+              </Label>
+              <Input
+                id="deposit"
+                type="number"
+                value={depositInput}
+                onChange={(e) => setDepositInput(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDepositModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleSaveDeposit}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
