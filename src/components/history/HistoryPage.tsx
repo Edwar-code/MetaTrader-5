@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import { ClosedPosition } from '@/lib/types';
 
 export default function HistoryPage() {
-  const { closedPositions, balance, handleUpdateHistoryItem } = useTradeState();
+  const { closedPositions, balance, handleUpdateHistoryItem } = useTradeContext();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [positionToEdit, setPositionToEdit] = useState<ClosedPosition | null>(null);
   const [editFormState, setEditFormState] = useState<Partial<ClosedPosition>>({});
