@@ -6,9 +6,10 @@ interface HistorySummaryProps {
     commission: string;
     balance: string;
   };
+  onEditProfit: () => void;
 }
 
-const SummaryItem = ({ label, value }: { label: string; value: string }) => {
+const SummaryItem = ({ label, value, onClick, isClickable = false }: { label: string; value: string; onClick?: () => void; isClickable?: boolean }) => {
   const isLoss = parseFloat(value.replace(/ /g, '')) < 0;
   const isBalance = label === 'Balance';
   const isDefault = label === 'Deposit' || label === 'Swap' || label === 'Commission';
@@ -21,8 +22,13 @@ const SummaryItem = ({ label, value }: { label: string; value: string }) => {
 
   const valueStyle = isLoss ? { color: '#ad3434' } : {};
 
+  const Wrapper = isClickable ? 'button' : 'div';
+
   return (
-    <div className="flex justify-between items-center text-[14.5px]">
+    <Wrapper 
+        className={`flex justify-between items-center text-[14.5px] w-full text-left ${isClickable ? 'cursor-pointer' : ''}`}
+        onClick={onClick}
+    >
       <span className="font-semibold text-card-foreground">{label}:</span>
       <div
         className="flex-1 mx-3 h-[1px]"
@@ -34,14 +40,14 @@ const SummaryItem = ({ label, value }: { label: string; value: string }) => {
         }}
       ></div>
       <span className={`font-semibold ${valueColorClass}`} style={valueStyle}>{value}</span>
-    </div>
+    </Wrapper>
   );
 };
 
-export default function HistorySummary({ data }: HistorySummaryProps) {
+export default function HistorySummary({ data, onEditProfit }: HistorySummaryProps) {
   return (
     <div className="p-4 space-y-2">
-      <SummaryItem label="Profit" value={data.profit} />
+      <SummaryItem label="Profit" value={data.profit} onClick={onEditProfit} isClickable={true} />
       <SummaryItem label="Deposit" value={data.deposit} />
       <SummaryItem label="Swap" value={data.swap} />
       <SummaryItem label="Commission" value={data.commission} />

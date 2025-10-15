@@ -32,23 +32,34 @@ const formatEpochToDateTimeLocal = (epoch: number): string => {
 };
 
 export default function HistoryPage() {
-  const { closedPositions, balance, handleUpdateHistoryItem } = useTradeContext();
+  const { closedPositions, balance: contextBalance, handleUpdateHistoryItem } = useTradeContext();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [positionToEdit, setPositionToEdit] = useState<ClosedPosition | null>(null);
   const [editFormState, setEditFormState] = useState<Partial<ClosedPosition>>({});
+  
+  // States for editing the summary profit
+  const [isProfitModalOpen, setIsProfitModalOpen] = useState(false);
+  const [customProfit, setCustomProfit] = useState<number | null>(null);
+  const [profitInput, setProfitInput] = useState('');
 
+  const calculatedTotalProfit = useMemo(() => {
+    return closedPositions.reduce((acc, pos) => acc + pos.pnl, 0);
+  }, [closedPositions]);
+  
+  const displayProfit = customProfit !== null ? customProfit : calculatedTotalProfit;
+  
   const historySummary = useMemo(() => {
-    const totalProfit = closedPositions.reduce((acc, pos) => acc + pos.pnl, 0);
-    const initialDeposit = 100.00; // The starting balance
+    const initialDeposit = 100.00;
+    const newBalance = initialDeposit + displayProfit;
 
     return {
-      profit: totalProfit.toFixed(2),
+      profit: displayProfit.toFixed(2),
       deposit: initialDeposit.toFixed(2),
       swap: '0.00',
       commission: '0.00',
-      balance: balance.toFixed(2),
+      balance: newBalance.toFixed(2),
     };
-  }, [closedPositions, balance]);
+  }, [displayProfit]);
   
   const displayDate = '2025.09.06 14:56:57';
 
@@ -64,7 +75,6 @@ export default function HistoryPage() {
     let processedValue: string | number;
 
     if (name === 'closeTime') {
-        // Convert datetime-local string to epoch seconds
         processedValue = new Date(value).getTime() / 1000;
     } else if (['size', 'entryPrice', 'closePrice', 'pnl'].includes(name)) {
         processedValue = parseFloat(value) || 0;
@@ -85,6 +95,19 @@ export default function HistoryPage() {
     setIsEditModalOpen(false);
     setPositionToEdit(null);
   };
+  
+  const handleEditProfitClick = () => {
+    setProfitInput(displayProfit.toFixed(2));
+    setIsProfitModalOpen(true);
+  };
+
+  const handleSaveProfit = () => {
+    const newProfit = parseFloat(profitInput);
+    if (!isNaN(newProfit)) {
+        setCustomProfit(newProfit);
+    }
+    setIsProfitModalOpen(false);
+  };
 
   return (
     <>
@@ -98,7 +121,7 @@ export default function HistoryPage() {
              <span className="flex-1 text-center py-3" style={{ fontSize: '13px', color: '#6a7684' }}>DEALS</span>
            </div>
         </div>
-        <HistorySummary data={historySummary} />
+        <HistorySummary data={historySummary} onEditProfit={handleEditProfitClick} />
         
         <div className="px-4 py-[1.7px] border-t border-b bg-background">
             <div className="flex items-center justify-between">
@@ -109,7 +132,7 @@ export default function HistoryPage() {
             </div>
             <div className="text-right">
                  <span className="text-[13.5px] font-bold text-primary">
-                    {balance.toFixed(2)}
+                    {historySummary.balance}
                 </span>
             </div>
         </div>
@@ -125,6 +148,7 @@ export default function HistoryPage() {
       <BottomNav />
     </div>
 
+    {/* Dialog for editing individual history items */}
     <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent>
             <DialogHeader>
@@ -174,6 +198,36 @@ export default function HistoryPage() {
                 <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
                 <Button onClick={handleSaveChanges}>Save Changes</Button>
             </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Dialog for editing total profit */}
+      <Dialog open={isProfitModalOpen} onOpenChange={setIsProfitModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Total Profit</DialogTitle>
+            <DialogDescription>
+              Set a custom total profit. This will override the calculated value from individual trades.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="profit" className="text-right">
+                Total Profit
+              </Label>
+              <Input
+                id="profit"
+                type="number"
+                value={profitInput}
+                onChange={(e) => setProfitInput(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsProfitModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleSaveProfit}>Save</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
