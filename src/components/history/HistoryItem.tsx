@@ -1,13 +1,14 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { ClosedPosition } from '@/lib/types';
 import { format } from 'date-fns';
 import { BtcIcon, De30Icon, EurAudIcon, GbpusdIcon, GoldIcon } from '../trade/icons';
 
 interface HistoryItemProps {
   position: ClosedPosition;
+  onLongPress: (position: ClosedPosition) => void;
 }
 
 const DetailRow = ({ label, value }: { label: string; value: string | number }) => (
@@ -17,13 +18,34 @@ const DetailRow = ({ label, value }: { label: string; value: string | number }) 
     </div>
 );
 
-export default function HistoryItem({ position }: HistoryItemProps) {
+export default function HistoryItem({ position, onLongPress }: HistoryItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
-  
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleMouseDown = () => {
+    longPressTimer.current = setTimeout(() => {
+      onLongPress(position);
+    }, 1500); // 1.5-second long press
+  };
+
+  const clearTimer = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
+  };
+
+  const handleClick = () => {
+    // If a long press timer was not cleared, it means it fired. Don't toggle expansion.
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      setIsExpanded(!isExpanded);
+    }
+  };
 
   const formatNumberWithSpaces = (num: number) => {
     const [integer, decimal] = num.toFixed(2).split('.');
@@ -53,7 +75,15 @@ export default function HistoryItem({ position }: HistoryItemProps) {
   const priceDecimalPoints = position.pair === 'frxXAUUSD' || position.pair === 'cryBTCUSD' || position.pair === 'idx_germany_40' ? 2 : 5;
 
   return (
-    <div className="flex flex-col py-[4.5px] px-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+    <div 
+        className="flex flex-col py-[4.5px] px-4 cursor-pointer" 
+        onClick={handleClick}
+        onMouseDown={handleMouseDown}
+        onMouseUp={clearTimer}
+        onMouseLeave={clearTimer}
+        onTouchStart={handleMouseDown}
+        onTouchEnd={clearTimer}
+    >
         <div className="flex justify-between">
             <div className="flex-1">
                 <div className="flex items-center gap-1 leading-none mb-[-7px]">

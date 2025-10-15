@@ -6,9 +6,10 @@ import { format } from 'date-fns';
 
 interface HistoryListProps {
   positions: ClosedPosition[];
+  onItemLongPress: (position: ClosedPosition) => void;
 }
 
-export default function HistoryList({ positions }: HistoryListProps) {
+export default function HistoryList({ positions, onItemLongPress }: HistoryListProps) {
   if (positions.length === 0) {
     return null;
   }
@@ -17,7 +18,7 @@ export default function HistoryList({ positions }: HistoryListProps) {
     <div className="overflow-y-auto">
       {positions.map((position, index) => (
         <div key={position.id}>
-          <HistoryItem position={position} />
+          <HistoryItem position={position} onLongPress={onItemLongPress} />
           {index < positions.length - 1 && <Separator />}
         </div>
       ))}

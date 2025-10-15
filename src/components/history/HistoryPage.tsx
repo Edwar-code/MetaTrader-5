@@ -1,15 +1,30 @@
 
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import HistorySummary from './HistorySummary';
 import BottomNav from '../trade/BottomNav';
 import HistoryHeader from './HistoryHeader';
 import HistoryList from './HistoryList';
-import { useTradeState } from '@/context/TradeContext';
+import { useTradeContext } from '@/context/TradeContext';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { ClosedPosition } from '@/lib/types';
 
 export default function HistoryPage() {
-  const { closedPositions, balance } = useTradeState();
+  const { closedPositions, balance, handleUpdateHistoryItem } = useTradeState();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [positionToEdit, setPositionToEdit] = useState<ClosedPosition | null>(null);
+  const [editFormState, setEditFormState] = useState<Partial<ClosedPosition>>({});
 
   const historySummary = useMemo(() => {
     const totalProfit = closedPositions.reduce((acc, pos) => acc + pos.pnl, 0);
@@ -26,7 +41,31 @@ export default function HistoryPage() {
   
   const displayDate = '2025.09.06 14:56:57';
 
+  const handleLongPress = (position: ClosedPosition) => {
+    setPositionToEdit(position);
+    setEditFormState(position);
+    setIsEditModalOpen(true);
+  };
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const isNumeric = ['size', 'entryPrice', 'closePrice', 'pnl'].includes(name);
+    setEditFormState(prev => ({
+        ...prev,
+        [name]: isNumeric ? parseFloat(value) || 0 : value,
+    }));
+  };
+
+  const handleSaveChanges = () => {
+    if (positionToEdit && handleUpdateHistoryItem) {
+        handleUpdateHistoryItem(positionToEdit.id, editFormState);
+    }
+    setIsEditModalOpen(false);
+    setPositionToEdit(null);
+  };
+
   return (
+    <>
     <div className="relative flex flex-col h-[100svh] w-full bg-card shadow-lg overflow-hidden">
       <HistoryHeader />
       <div className="flex-1 overflow-y-auto pb-24">
@@ -54,7 +93,7 @@ export default function HistoryPage() {
         </div>
 
         {closedPositions.length > 0 ? (
-          <HistoryList positions={closedPositions} />
+          <HistoryList positions={closedPositions} onItemLongPress={handleLongPress} />
         ) : (
           <div className="text-center p-8 text-muted-foreground">
               No history yet. Closed trades will appear here.
@@ -63,5 +102,47 @@ export default function HistoryPage() {
       </div>
       <BottomNav />
     </div>
+
+    <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Edit History Item</DialogTitle>
+                <DialogDescription>
+                    Adjust the details of this closed trade. Changes will affect summary calculations.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="pair" className="text-right">Pair</Label>
+                    <Input id="pair" name="pair" value={editFormState.pair || ''} onChange={handleFormChange} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="type" className="text-right">Type</Label>
+                    <Input id="type" name="type" value={editFormState.type || ''} onChange={handleFormChange} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="size" className="text-right">Size</Label>
+                    <Input id="size" name="size" type="number" value={editFormState.size || ''} onChange={handleFormChange} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="entryPrice" className="text-right">Entry Price</Label>
+                    <Input id="entryPrice" name="entryPrice" type="number" value={editFormState.entryPrice || ''} onChange={handleFormChange} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="closePrice" className="text-right">Close Price</Label>
+                    <Input id="closePrice" name="closePrice" type="number" value={editFormState.closePrice || ''} onChange={handleFormChange} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="pnl" className="text-right">Profit/Loss</Label>
+                    <Input id="pnl" name="pnl" type="number" value={editFormState.pnl || ''} onChange={handleFormChange} className="col-span-3" />
+                </div>
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+                <Button onClick={handleSaveChanges}>Save Changes</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

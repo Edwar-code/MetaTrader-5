@@ -22,6 +22,7 @@ interface TradeState {
     handleUpdatePosition: (positionId: string, updates: Partial<Pick<Position, 'stopLoss' | 'takeProfit'>>) => void;
     addPresetTrade: (tradeData: Omit<Position, 'id' | 'currentPrice' | 'pnl'>) => void;
     updateAccountDetails: (originalAccountId: string, details: { name?: string; balance?: number, number?: string }) => void;
+    handleUpdateHistoryItem: (positionId: string, updates: Partial<ClosedPosition>) => void;
 }
 
 const TradeContext = createContext<TradeState | undefined>(undefined);
@@ -319,7 +320,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                 closeTime: Date.now() / 1000,
             };
 
-            setClosedPositions(prevClosed => [closedPosition, ...prevClosed.filter(p => !p.id.startsWith('fake_'))]);
+            setClosedPositions(prevClosed => [closedPosition, ...prevClosed]);
             setBalance(prevBalance => prevBalance + finalPnl);
 
             return prev.filter(p => p.id !== positionId);
@@ -429,6 +430,18 @@ export function TradeProvider({ children }: { children: ReactNode }) {
 
     }, [activeAccountId, toast]);
     
+    const handleUpdateHistoryItem = useCallback((positionId: string, updates: Partial<ClosedPosition>) => {
+        setClosedPositions(prev => {
+            const newClosedPositions = prev.map(p => 
+                p.id === positionId ? { ...p, ...updates } : p
+            );
+            // After updating, we need to recalculate the balance based on the entire history
+            const newBalance = (initialAccountsData[activeAccountId]?.balance || 0) + newClosedPositions.reduce((acc, p) => acc + p.pnl, 0);
+            setBalance(newBalance);
+            return newClosedPositions;
+        });
+    }, [activeAccountId]);
+
     const value = {
         positions: livePositions,
         closedPositions,
@@ -444,6 +457,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
         handleUpdatePosition,
         addPresetTrade,
         updateAccountDetails,
+        handleUpdateHistoryItem,
     };
 
     return <TradeContext.Provider value={value}>{children}</TradeContext.Provider>;
@@ -456,5 +470,3 @@ export function useTradeState() {
     }
     return context;
 }
-
-    
