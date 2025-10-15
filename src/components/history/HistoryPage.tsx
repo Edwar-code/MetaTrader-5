@@ -19,6 +19,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { ClosedPosition } from '@/lib/types';
+import { format } from 'date-fns-tz';
+
+// Helper to convert Unix timestamp (seconds) to 'yyyy-MM-ddTHH:mm' format
+const formatEpochToDateTimeLocal = (epoch: number): string => {
+    if (!epoch) return '';
+    const date = new Date(epoch * 1000);
+    // Adjust for local timezone offset before formatting
+    const timeZoneOffset = date.getTimezoneOffset() * 60000;
+    const adjustedDate = new Date(date.getTime() - timeZoneOffset);
+    return adjustedDate.toISOString().slice(0, 16);
+};
 
 export default function HistoryPage() {
   const { closedPositions, balance, handleUpdateHistoryItem } = useTradeContext();
@@ -48,11 +59,22 @@ export default function HistoryPage() {
   };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const isNumeric = ['size', 'entryPrice', 'closePrice', 'pnl'].includes(name);
+    const { name, value, type } = e.target;
+    
+    let processedValue: string | number;
+
+    if (name === 'closeTime') {
+        // Convert datetime-local string to epoch seconds
+        processedValue = new Date(value).getTime() / 1000;
+    } else if (['size', 'entryPrice', 'closePrice', 'pnl'].includes(name)) {
+        processedValue = parseFloat(value) || 0;
+    } else {
+        processedValue = value;
+    }
+
     setEditFormState(prev => ({
         ...prev,
-        [name]: isNumeric ? parseFloat(value) || 0 : value,
+        [name]: processedValue,
     }));
   };
 
@@ -135,6 +157,17 @@ export default function HistoryPage() {
                 <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="pnl" className="text-right">Profit/Loss</Label>
                     <Input id="pnl" name="pnl" type="number" value={editFormState.pnl || ''} onChange={handleFormChange} className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="closeTime" className="text-right">Close Time</Label>
+                    <Input 
+                      id="closeTime" 
+                      name="closeTime" 
+                      type="datetime-local" 
+                      value={formatEpochToDateTimeLocal(editFormState.closeTime || 0)} 
+                      onChange={handleFormChange} 
+                      className="col-span-3" 
+                    />
                 </div>
             </div>
             <DialogFooter>
