@@ -37,7 +37,7 @@ const NavItem = ({ icon, label, badge, ad, href }: { icon: React.ReactNode, labe
                 <span>{label}</span>
                 {ad && <span className="text-xs border border-blue-500 text-blue-500 rounded-full px-2 py-0.5">Ads</span>}
              </div>
-            {badge && <span className="w-5 h-5 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">{badge}</span>}
+            {badge && badge > 0 && <span className="w-5 h-5 text-xs bg-red-500 text-white rounded-full flex items-center justify-center">{badge}</span>}
           </div>
         </Link>
     );
@@ -47,12 +47,14 @@ interface Account {
   name: string;
   number: string;
   broker: string;
+  mailboxBadge?: number;
 }
 
 const defaultAccount: Account = {
     name: 'GENT KINGSTON BUSI',
     number: '40311301 — HFMarketsSA-Live2',
-    broker: 'HFM Investments Ltd'
+    broker: 'HFM Investments Ltd',
+    mailboxBadge: 8,
 };
 
 export function Sidebar() {
@@ -117,7 +119,7 @@ export function Sidebar() {
             <nav className="flex-1 flex flex-col">
               <NavItem href="/" icon={<SidebarTradeIcon />} label="Trade" />
               <NavItem href="#" icon={<SidebarNewsIcon />} label="News" />
-              <NavItem href="#" icon={<Mail size={24} />} label="Mailbox" badge={8} />
+              <NavItem href="#" icon={<Mail size={24} />} label="Mailbox" badge={activeAccount.mailboxBadge} />
               <NavItem href="#" icon={<SidebarJournalIcon />} label="Journal" />
               <NavItem href="/settings" icon={<Settings size={24} />} label="Settings" />
               <NavItem href="#" icon={<Calendar size={24} />} label="Economic calendar" ad/>

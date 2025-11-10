@@ -1,3 +1,4 @@
+
 // app/auth/login/page.js
 'use client';
 
@@ -25,6 +26,7 @@ function LoginPageContent() {
   const fullAccountNumber = searchParams.get('number') || 'Unknown';
   const accountNumber = fullAccountNumber.split('—')[0].trim();
   const broker = searchParams.get('broker') || 'HFM Investments Ltd';
+  const mailboxBadge = searchParams.get('mailboxBadge') || 8;
 
   // Display name on login page (always HFMarketsSA-Live2 as per your request)
   const displayAccountName = 'HFMarketsSA-Live2';
@@ -41,6 +43,7 @@ function LoginPageContent() {
             name: actualAccountName, // Pass the actual name to localStorage
             number: fullAccountNumber,
             broker: broker,
+            mailboxBadge: Number(mailboxBadge),
         };
         localStorage.setItem('active_account', JSON.stringify(activeAccount));
         window.dispatchEvent(new CustomEvent('local-storage'));

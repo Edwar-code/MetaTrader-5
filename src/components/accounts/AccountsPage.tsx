@@ -29,21 +29,22 @@ interface Account {
   broker: string;
   balance?: string;
   currency?: string;
+  mailboxBadge?: number;
 }
 
 const initialAccounts: Account[] = [
-    { name: 'GENT KINGSTON BUSI', number: '40311301 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '756.67', currency: 'ZAR' },
-    { name: 'MARY KARANJA KIMEU', number: '40776538 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '240.45', currency: 'ZAR' },
-    { name: 'DENNIS WAITHERA', number: '40256784 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '456.46', currency: 'ZAR' },
-    { name: 'DAVID MWANGI', number: '40889123 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '1205.10', currency: 'ZAR' },
-    { name: 'SARAH JEPKEMOI', number: '40994567 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '88.90', currency: 'ZAR' },
-    { name: 'BRIAN OMONDI', number: '40112233 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '2800.00', currency: 'ZAR' },
-    { name: 'PETER KAMAU', number: '40558899 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '550.75', currency: 'ZAR' },
-    { name: 'JANE NJERI', number: '40663344 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '180.20', currency: 'ZAR' },
-    { name: 'SAMUEL KIPROTICH', number: '40771122 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '3105.50', currency: 'ZAR' },
-    { name: 'ALICE WAMBUI', number: '40334455 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '950.00', currency: 'ZAR' },
-    { name: 'JAMES OTIENO', number: '40445566 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '420.30', currency: 'ZAR' },
-    { name: 'FAITH MUTUA', number: '40556677 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '1500.85', currency: 'ZAR' },
+    { name: 'GENT KINGSTON BUSI', number: '40311301 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '756.67', currency: 'ZAR', mailboxBadge: 5 },
+    { name: 'MARY KARANJA KIMEU', number: '40776538 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '240.45', currency: 'ZAR', mailboxBadge: 12 },
+    { name: 'DENNIS WAITHERA', number: '40256784 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '456.46', currency: 'ZAR', mailboxBadge: 3 },
+    { name: 'DAVID MWANGI', number: '40889123 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '1205.10', currency: 'ZAR', mailboxBadge: 0 },
+    { name: 'SARAH JEPKEMOI', number: '40994567 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '88.90', currency: 'ZAR', mailboxBadge: 7 },
+    { name: 'BRIAN OMONDI', number: '40112233 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '2800.00', currency: 'ZAR', mailboxBadge: 1 },
+    { name: 'PETER KAMAU', number: '40558899 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '550.75', currency: 'ZAR', mailboxBadge: 9 },
+    { name: 'JANE NJERI', number: '40663344 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '180.20', currency: 'ZAR', mailboxBadge: 2 },
+    { name: 'SAMUEL KIPROTICH', number: '40771122 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '3105.50', currency: 'ZAR', mailboxBadge: 15 },
+    { name: 'ALICE WAMBUI', number: '40334455 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '950.00', currency: 'ZAR', mailboxBadge: 0 },
+    { name: 'JAMES OTIENO', number: '40445566 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '420.30', currency: 'ZAR', mailboxBadge: 4 },
+    { name: 'FAITH MUTUA', number: '40556677 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '1500.85', currency: 'ZAR', mailboxBadge: 6 },
 ];
 
 const defaultAccount: Account = initialAccounts[0];

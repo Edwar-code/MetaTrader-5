@@ -47,19 +47,19 @@ const getContractSize = (pair: string): number => {
 
 const gentKingstonAccountId = '40311301 — HFMarketsSA-Live2';
 
-const initialAccountsData: { [key: string]: { balance: number, positions: Position[], name: string } } = {
-    [gentKingstonAccountId]: { balance: 756.67, positions: [], name: 'GENT KINGSTON BUSI' },
-    '40776538 — HFMarketsSA-Live2': { balance: 240.45, positions: [], name: 'MARY KARANJA KIMEU' },
-    '40256784 — HFMarketsSA-Live2': { balance: 456.46, positions: [], name: 'DENNIS WAITHERA' },
-    '40889123 — HFMarketsSA-Live2': { balance: 1205.10, positions: [], name: 'DAVID MWANGI' },
-    '40994567 — HFMarketsSA-Live2': { balance: 88.90, positions: [], name: 'SARAH JEPKEMOI' },
-    '40112233 — HFMarketsSA-Live2': { balance: 2800.00, positions: [], name: 'BRIAN OMONDI' },
-    '40558899 — HFMarketsSA-Live2': { balance: 550.75, positions: [], name: 'PETER KAMAU' },
-    '40663344 — HFMarketsSA-Live2': { balance: 180.20, positions: [], name: 'JANE NJERI' },
-    '40771122 — HFMarketsSA-Live2': { balance: 3105.50, positions: [], name: 'SAMUEL KIPROTICH' },
-    '40334455 — HFMarketsSA-Live2': { balance: 950.00, positions: [], name: 'ALICE WAMBUI' },
-    '40445566 — HFMarketsSA-Live2': { balance: 420.30, positions: [], name: 'JAMES OTIENO' },
-    '40556677 — HFMarketsSA-Live2': { balance: 1500.85, positions: [], name: 'FAITH MUTUA' },
+const initialAccountsData: { [key: string]: { balance: number, positions: Position[], name: string, mailboxBadge: number } } = {
+    [gentKingstonAccountId]: { balance: 756.67, positions: [], name: 'GENT KINGSTON BUSI', mailboxBadge: 5 },
+    '40776538 — HFMarketsSA-Live2': { balance: 240.45, positions: [], name: 'MARY KARANJA KIMEU', mailboxBadge: 12 },
+    '40256784 — HFMarketsSA-Live2': { balance: 456.46, positions: [], name: 'DENNIS WAITHERA', mailboxBadge: 3 },
+    '40889123 — HFMarketsSA-Live2': { balance: 1205.10, positions: [], name: 'DAVID MWANGI', mailboxBadge: 0 },
+    '40994567 — HFMarketsSA-Live2': { balance: 88.90, positions: [], name: 'SARAH JEPKEMOI', mailboxBadge: 7 },
+    '40112233 — HFMarketsSA-Live2': { balance: 2800.00, positions: [], name: 'BRIAN OMONDI', mailboxBadge: 1 },
+    '40558899 — HFMarketsSA-Live2': { balance: 550.75, positions: [], name: 'PETER KAMAU', mailboxBadge: 9 },
+    '40663344 — HFMarketsSA-Live2': { balance: 180.20, positions: [], name: 'JANE NJERI', mailboxBadge: 2 },
+    '40771122 — HFMarketsSA-Live2': { balance: 3105.50, positions: [], name: 'SAMUEL KIPROTICH', mailboxBadge: 15 },
+    '40334455 — HFMarketsSA-Live2': { balance: 950.00, positions: [], name: 'ALICE WAMBUI', mailboxBadge: 0 },
+    '40445566 — HFMarketsSA-Live2': { balance: 420.30, positions: [], name: 'JAMES OTIENO', mailboxBadge: 4 },
+    '40556677 — HFMarketsSA-Live2': { balance: 1500.85, positions: [], name: 'FAITH MUTUA', mailboxBadge: 6 },
 };
 
 async function generateFakeHistory(getHistory: (symbol: string, count: number, granularity: number) => Promise<any[]>): Promise<ClosedPosition[]> {
@@ -160,7 +160,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                         setClosedPositions(fakeHistory);
                     }
                 } else {
-                    const initialData = initialAccountsData[newAccountId] || { balance: 756.67, positions: [], name: 'GENT KINGSTON BUSI' };
+                    const initialData = initialAccountsData[newAccountId] || { balance: 756.67, positions: [], name: 'GENT KINGSTON BUSI', mailboxBadge: 8 };
                     setBalance(initialData.balance);
                     setPositions(initialData.positions);
                     
@@ -168,7 +168,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                     setClosedPositions(fakeHistory);
 
                     if (typeof window !== 'undefined' && !storedAccountJson) {
-                        localStorage.setItem('active_account', JSON.stringify({ name: initialData.name, number: newAccountId, broker: 'HFM Investments Ltd' }));
+                        localStorage.setItem('active_account', JSON.stringify({ name: initialData.name, number: newAccountId, broker: 'HFM Investments Ltd', mailboxBadge: initialData.mailboxBadge }));
                         window.dispatchEvent(new CustomEvent('local-storage'));
                     }
                 }
