@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -50,7 +51,7 @@ interface Account {
 
 const defaultAccount: Account = {
     name: 'GENT KINGSTON BUSI',
-    number: '40311301 - HFMarketsSA-Live2',
+    number: '40311301 — HFMarketsSA-Live2',
     broker: 'HFM Investments Ltd'
 };
 
@@ -131,5 +132,4 @@ export function Sidebar() {
     </>
   );
 }
-
     
