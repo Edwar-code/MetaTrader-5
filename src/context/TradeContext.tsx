@@ -56,6 +56,9 @@ const initialAccountsData: { [key: string]: { balance: number, positions: Positi
     '40558899 — HFMarketsSA-Live2': { balance: 550.75, positions: [], name: 'PETER KAMAU' },
     '40663344 — HFMarketsSA-Live2': { balance: 180.20, positions: [], name: 'JANE NJERI' },
     '40771122 — HFMarketsSA-Live2': { balance: 3105.50, positions: [], name: 'SAMUEL KIPROTICH' },
+    '40334455 — HFMarketsSA-Live2': { balance: 950.00, positions: [], name: 'ALICE WAMBUI' },
+    '40445566 — HFMarketsSA-Live2': { balance: 420.30, positions: [], name: 'JAMES OTIENO' },
+    '40556677 — HFMarketsSA-Live2': { balance: 1500.85, positions: [], name: 'FAITH MUTUA' },
 };
 
 async function generateFakeHistory(getHistory: (symbol: string, count: number, granularity: number) => Promise<any[]>): Promise<ClosedPosition[]> {
@@ -156,7 +159,7 @@ export function TradeProvider({ children }: { children: ReactNode }) {
                         setClosedPositions(fakeHistory);
                     }
                 } else {
-                    const initialData = initialAccountsData[newAccountId] || { balance: 100, positions: [], name: 'Unknown User' };
+                    const initialData = initialAccountsData[newAccountId] || { balance: 756.67, positions: [], name: 'GENT KINGSTON BUSI' };
                     setBalance(initialData.balance);
                     setPositions(initialData.positions);
                     
