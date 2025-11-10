@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -52,7 +53,7 @@ export default function Header({ totalProfit, hasOpenPositions, balance }: Heade
               <>
                 <div className="text-foreground text-[11px]">Trade</div>
                 <div className={`text-base ${isZero ? 'text-foreground' : profitColor}`}>
-                  {profitString} USD
+                  {profitString} ZAR
                 </div>
               </>
             ) : (
