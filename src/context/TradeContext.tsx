@@ -36,7 +36,7 @@ export const useTradeContext = () => {
 };
 
 
-const LEVERAGE = 3000;
+const LEVERAGE = 400;
 
 const getContractSize = (pair: string): number => {
     if (pair.includes('XAU')) return 100; // Gold
@@ -488,3 +488,5 @@ export function useTradeState() {
     }
     return context;
 }
+
+    
