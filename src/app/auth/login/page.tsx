@@ -21,31 +21,19 @@ function LoginPageContent() {
   const searchParams = useSearchParams();
 
   // Get the actual account name from search params or fallback
-  const actualAccountName = searchParams.get('name') || 'FBS-Real';
+  const actualAccountName = searchParams.get('name') || 'HFMarketsSA-Live2';
   const fullAccountNumber = searchParams.get('number') || 'Unknown';
   const accountNumber = fullAccountNumber.split('—')[0].trim();
-  const broker = searchParams.get('broker') || 'FBS Markets Inc.';
+  const broker = searchParams.get('broker') || 'HFM Investments Ltd';
 
-  // Display name on login page (always FBS-Real as per your request)
-  const displayAccountName = 'FBS-Real';
+  // Display name on login page (always HFMarketsSA-Live2 as per your request)
+  const displayAccountName = 'HFMarketsSA-Live2';
 
-  const [fbsLogoSrc, setFbsLogoSrc] = useState(
-    'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg'
-  );
+  const hfmLogoSrc = 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-11-10%20at%2014.17.20_c0a48447.jpg';
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (mounted) {
-      if (resolvedTheme === 'dark') {
-        setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg');
-      } else {
-        setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg');
-      }
-    }
-  }, [mounted, resolvedTheme]);
 
   const handleSignIn = () => {
     if (typeof window !== 'undefined') {
@@ -82,8 +70,8 @@ function LoginPageContent() {
       <main className="flex-1 overflow-y-auto bg-background pt-6 pb-28">
         <div className="flex items-center gap-4 mb-4 px-4">
           <Image
-            src={fbsLogoSrc}
-            alt="FBS Logo"
+            src={hfmLogoSrc}
+            alt="HFM Logo"
             width={40}
             height={40}
             className="shrink-0 rounded-md"

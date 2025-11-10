@@ -32,18 +32,18 @@ interface Account {
 }
 
 const initialAccounts: Account[] = [
-    { name: 'GENT KINGSTON BUSI', number: '40311301 — FBS-Real', broker: 'FBS Markets Inc.', balance: '756.67', currency: 'USD' },
-    { name: 'MARY KARANJA KIMEU', number: '40776538 — FBS-Real', broker: 'FBS Markets Inc.', balance: '240.45', currency: 'USD' },
-    { name: 'DENNIS WAITHERA', number: '40256784 — FBS-Real', broker: 'FBS Markets Inc.', balance: '456.46', currency: 'USD' },
-    { name: 'DAVID MWANGI', number: '40889123 — FBS-Real', broker: 'FBS Markets Inc.', balance: '1205.10', currency: 'USD' },
-    { name: 'SARAH JEPKEMOI', number: '40994567 — FBS-Real', broker: 'FBS Markets Inc.', balance: '88.90', currency: 'USD' },
-    { name: 'BRIAN OMONDI', number: '40112233 — FBS-Real', broker: 'FBS Markets Inc.', balance: '2800.00', currency: 'USD' },
-    { name: 'PETER KAMAU', number: '40558899 — FBS-Real', broker: 'FBS Markets Inc.', balance: '550.75', currency: 'USD' },
-    { name: 'JANE NJERI', number: '40663344 — FBS-Real', broker: 'FBS Markets Inc.', balance: '180.20', currency: 'USD' },
-    { name: 'SAMUEL KIPROTICH', number: '40771122 — FBS-Real', broker: 'FBS Markets Inc.', balance: '3105.50', currency: 'USD' },
-    { name: 'ALICE WAMBUI', number: '40334455 — FBS-Real', broker: 'FBS Markets Inc.', balance: '950.00', currency: 'USD' },
-    { name: 'JAMES OTIENO', number: '40445566 — FBS-Real', broker: 'FBS Markets Inc.', balance: '420.30', currency: 'USD' },
-    { name: 'FAITH MUTUA', number: '40556677 — FBS-Real', broker: 'FBS Markets Inc.', balance: '1500.85', currency: 'USD' },
+    { name: 'GENT KINGSTON BUSI', number: '40311301 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '756.67', currency: 'USD' },
+    { name: 'MARY KARANJA KIMEU', number: '40776538 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '240.45', currency: 'USD' },
+    { name: 'DENNIS WAITHERA', number: '40256784 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '456.46', currency: 'USD' },
+    { name: 'DAVID MWANGI', number: '40889123 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '1205.10', currency: 'USD' },
+    { name: 'SARAH JEPKEMOI', number: '40994567 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '88.90', currency: 'USD' },
+    { name: 'BRIAN OMONDI', number: '40112233 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '2800.00', currency: 'USD' },
+    { name: 'PETER KAMAU', number: '40558899 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '550.75', currency: 'USD' },
+    { name: 'JANE NJERI', number: '40663344 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '180.20', currency: 'USD' },
+    { name: 'SAMUEL KIPROTICH', number: '40771122 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '3105.50', currency: 'USD' },
+    { name: 'ALICE WAMBUI', number: '40334455 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '950.00', currency: 'USD' },
+    { name: 'JAMES OTIENO', number: '40445566 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '420.30', currency: 'USD' },
+    { name: 'FAITH MUTUA', number: '40556677 — HFMarketsSA-Live2', broker: 'HFM Investments Ltd', balance: '1500.85', currency: 'USD' },
 ];
 
 const defaultAccount: Account = initialAccounts[0];
@@ -199,9 +199,7 @@ export default function AccountsPage() {
   const [editBalance, setEditBalance] = useState('');
   const [editNumber, setEditNumber] = useState('');
 
-  const [fbsLogoSrc, setFbsLogoSrc] = useState(
-    'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg'
-  );
+  const hfmLogoSrc = 'https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-11-10%20at%2014.17.20_c0a48447.jpg';
 
   useEffect(() => {
     setMounted(true);
@@ -243,16 +241,6 @@ export default function AccountsPage() {
       window.removeEventListener('local-storage', handleStorageChange);
     };
   }, []);
-
-  useEffect(() => {
-    if (mounted) {
-      if (resolvedTheme === 'dark') {
-        setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-27%20at%2011.57.04_18cd5e88.jpg');
-      } else {
-        setFbsLogoSrc('https://on98bvtkqbnonyxs.public.blob.vercel-storage.com/WhatsApp%20Image%202025-08-24%20at%2001.18.11_7f6bd53c.jpg');
-      }
-    }
-  }, [mounted, resolvedTheme]);
 
   const openEditModal = (account: Account) => {
     setAccountToEdit(account);
@@ -313,11 +301,11 @@ export default function AccountsPage() {
         <div className="flex-1 overflow-y-auto pb-20 p-2 bg-background">
           <div className="mb-4">
             <AccountCard
-              logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
+              logo={<Image src={hfmLogoSrc} alt="HFM Logo" width={40} height={40} />}
               broker={activeAccount.broker}
               accountName={activeAccount.name}
               accountNumber={activeAccount.number}
-              accountDetails="DC-305-Johannesburg-5R1, Hedge"
+              accountDetails="MT5 Amsterdam DC"
               balance={balance.toFixed(2)}
               currency="USD"
               isMain={true}
@@ -336,7 +324,7 @@ export default function AccountsPage() {
                         <Link key={index} href={loginUrl} passHref legacyBehavior>
                             <a>
                                 <AccountCard
-                                    logo={<Image src={fbsLogoSrc} alt="FBS Logo" width={40} height={40} />}
+                                    logo={<Image src={hfmLogoSrc} alt="HFM Logo" width={40} height={40} />}
                                     broker={account.broker}
                                     accountName={account.name}
                                     accountNumber={account.number}
